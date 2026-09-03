@@ -9,7 +9,7 @@ export default function PracticeQuoteStatsSection() {
   ];
 
   return (
-    <section className="w-full bg-[#7A5C58] text-white overflow-hidden">
+    <section className="w-full bg-[#8D4D5D] text-white overflow-hidden">
       
       {/* Top Image Banner with Floating Quote */}
       <div className="relative w-full py-24 px-6 md:px-12 xl:px-20">

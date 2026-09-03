@@ -51,7 +51,7 @@ export default function BlogSection() {
               {/* Content Area */}
               <div className="flex flex-col flex-grow justify-between">
                 <div>
-                  <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-[#7A5C58] block mb-2">
+                  <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-[#8D4D5D] block mb-2">
                     {post.category}
                   </span>
                   <h3 className="text-xl sm:text-2xl font-serif font-normal text-[#111] leading-snug mb-8">
@@ -63,7 +63,7 @@ export default function BlogSection() {
                 <div className="pt-4 border-t border-[#E5DDD5]">
                   <a 
                     href={post.link} 
-                    className="text-xs font-sans uppercase tracking-[0.2em] text-[#111] font-medium hover:text-[#7A5C58] transition-colors inline-flex items-center gap-1.5"
+                    className="text-xs font-sans uppercase tracking-[0.2em] text-[#111] font-medium hover:text-[#8D4D5D] transition-colors inline-flex items-center gap-1.5"
                   >
                     READ MORE <span>↗</span>
                   </a>
@@ -75,7 +75,7 @@ export default function BlogSection() {
         </div>
 
         {/* View More Posts Button */}
-        <button className="bg-[#7A5C58] hover:bg-[#654945] text-white text-xs font-sans tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-all duration-300 shadow-lg">
+        <button className="bg-[#8D4D5D] hover:bg-[#654945] text-white text-xs font-sans tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-all duration-300 shadow-lg">
           VIEW MORE POSTS
         </button>
 
