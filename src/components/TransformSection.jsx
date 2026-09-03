@@ -29,7 +29,7 @@ export default function TransformSection() {
             Under Dr. Lanna's guidance, our expert injection specialists can revitalize your appearance through minimally invasive treatments. As one of the most sought-after names in non-invasive rejuvenation, our clients come from all over the world seeking the transformative work of Dr. Lanna and her skilled team.
           </p>
 
-          <button className="bg-[#6B4C4C] text-white text-xs font-sans tracking-widest px-8 py-4 rounded-full hover:bg-[#583D3D] transition-colors shadow-sm">
+          <button className="bg-[#8D4D5D] text-white text-xs font-sans tracking-widest px-8 py-4 rounded-full hover:bg-[#583D3D] transition-colors shadow-sm">
             LEARN MORE ABOUT US
           </button>
         </div>
