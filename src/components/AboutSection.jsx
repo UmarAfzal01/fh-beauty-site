@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AboutSection() {
   return (
     <section className="w-full bg-[#FAF7F3] text-[#514C48] py-24 px-6 md:px-12 xl:px-20 border-t border-[#E0DED8]">
@@ -14,9 +16,9 @@ export default function AboutSection() {
         </h2>
 
         {/* Discover More Button */}
-        <button className="bg-[#F5E7E4] text-[#514C48] text-xs font-sans tracking-widest px-8 py-3.5 rounded-full hover:bg-[#EEDDD9] transition-colors mb-24">
-          DISCOVER MORE
-        </button>
+        <Link href="/appointment" className="bg-[#F5E7E4] text-[#514C48] text-xs font-sans tracking-widest px-8 py-3.5 rounded-full hover:bg-[#EEDDD9] transition-colors mb-24">
+          BOOK AN APPOINTMENT
+        </Link>
 
         {/* Three Columns Features Grid with Dividers */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 items-center">
