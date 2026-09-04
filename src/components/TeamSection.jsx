@@ -24,7 +24,7 @@ export default function TeamSection() {
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         
         {/* Section Subheading & Title */}
-        <span className="text-xs font-sans uppercase tracking-[0.25em] text-[#7A5C58] mb-3">
+        <span className="text-xs font-sans uppercase tracking-[0.25em] text-[#8D4D5D] mb-3">
           MEET OUR TEAM
         </span>
         <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-serif font-normal text-[#111] text-center mb-16">
@@ -64,7 +64,7 @@ export default function TeamSection() {
               <div className="pt-4 border-t border-[#E5DDD5] flex items-center justify-between">
                 <a 
                   href="#profile" 
-                  className="text-xs font-sans uppercase tracking-[0.15em] text-[#111] font-medium hover:text-[#7A5C58] transition-colors flex items-center gap-1"
+                  className="text-xs font-sans uppercase tracking-[0.15em] text-[#111] font-medium hover:text-[#8D4D5D] transition-colors flex items-center gap-1"
                 >
                   OPEN PROFILE <span>↗</span>
                 </a>
@@ -74,7 +74,7 @@ export default function TeamSection() {
                   <a 
                     href="#twitter" 
                     aria-label="Twitter profile"
-                    className="w-8 h-8 rounded-full bg-[#EBE4DE] hover:bg-[#7A5C58] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors"
+                    className="w-8 h-8 rounded-full bg-[#EBE4DE] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors"
                   >
                     ✕
                   </a>
@@ -82,7 +82,7 @@ export default function TeamSection() {
                   <a 
                     href="#linkedin" 
                     aria-label="LinkedIn profile"
-                    className="w-8 h-8 rounded-full bg-[#EBE4DE] hover:bg-[#7A5C58] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors font-serif italic"
+                    className="w-8 h-8 rounded-full bg-[#EBE4DE] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors font-serif italic"
                   >
                     in
                   </a>
@@ -94,7 +94,7 @@ export default function TeamSection() {
         </div>
 
         {/* View All Doctors Button */}
-        <button className="bg-[#7A5C58] hover:bg-[#654945] text-white text-xs font-sans tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-all duration-300 shadow-lg">
+        <button className="bg-[#8D4D5D] hover:bg-[#654945] text-white text-xs font-sans tracking-[0.2em] uppercase px-8 py-4 rounded-full transition-all duration-300 shadow-lg">
           VIEW ALL DOCTORS
         </button>
 

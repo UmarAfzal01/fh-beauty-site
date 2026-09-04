@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function ExperienceMissionSection() {
   return (
-    <section className="w-full bg-[#7A5C58] text-white overflow-hidden">
+    <section className="w-full bg-[#8D4D5D] text-white overflow-hidden">
       
       {/* PART 1: Stats & Image Showcase */}
       <div className="relative w-full py-28 px-6 md:px-12 xl:px-20">
@@ -21,7 +21,7 @@ export default function ExperienceMissionSection() {
 
             {/* Floating Stat Card 1: Top Right */}
             <div className="absolute top-8 right-8 z-20 bg-white/95 backdrop-blur-md text-[#514C48] p-6 sm:p-8 rounded-3xl max-w-[280px] shadow-2xl hidden lg:block">
-              <div className="text-4xl font-serif text-[#7A5C58] mb-2 font-medium">25</div>
+              <div className="text-4xl font-serif text-[#8D4D5D] mb-2 font-medium">25</div>
               <h4 className="text-xs font-sans uppercase tracking-widest font-semibold text-[#111] mb-2">
                 Years of combined experience
               </h4>

@@ -46,7 +46,7 @@ export default function FeaturedTreatment() {
           {/* Action Link */}
           <a 
             href="#" 
-            className="inline-flex items-center gap-2 text-xs font-sans font-semibold tracking-[0.2em] uppercase text-[#111] hover:text-[#7A5C58] transition-colors group"
+            className="inline-flex items-center gap-2 text-xs font-sans font-semibold tracking-[0.2em] uppercase text-[#111] hover:text-[#8D4D5D] transition-colors group"
           >
             FIND OUT MORE 
             <span className="transition-transform duration-300 group-hover:translate-x-1">↘</span>

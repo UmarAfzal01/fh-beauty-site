@@ -54,7 +54,7 @@ export default function TopTreatments() {
             <div className="space-y-3">
               {treatmentsLeft.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <span className="flex items-center justify-center w-4 h-4 text-[#7A5C58] text-xs">✓</span>
+                  <span className="flex items-center justify-center w-4 h-4 text-[#8D4D5D] text-xs">✓</span>
                   <span>{item}</span>
                 </div>
               ))}
@@ -62,7 +62,7 @@ export default function TopTreatments() {
             <div className="space-y-3">
               {treatmentsRight.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <span className="flex items-center justify-center w-4 h-4 text-[#7A5C58] text-xs">✓</span>
+                  <span className="flex items-center justify-center w-4 h-4 text-[#8D4D5D] text-xs">✓</span>
                   <span>{item}</span>
                 </div>
               ))}

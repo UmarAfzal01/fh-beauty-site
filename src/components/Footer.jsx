@@ -44,11 +44,11 @@ export default function Footer() {
             </h3>
             <div className="space-y-2 mb-6 text-xs font-sans">
               <p className="flex items-center gap-2 text-[#514C48]/90 font-medium tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7A5C58]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
                 +1 800-123-1234
               </p>
               <p className="flex items-center gap-2 text-[#514C48]/90 font-medium tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7A5C58]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
                 CLINIC@EXAMPLE.COM
               </p>
             </div>
@@ -58,21 +58,21 @@ export default function Footer() {
               <a 
                 href="#facebook" 
                 aria-label="Facebook"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#7A5C58] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
               >
                 f
               </a>
               <a 
                 href="#instagram" 
                 aria-label="Instagram"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#7A5C58] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
               >
                 📷
               </a>
               <a 
                 href="#twitter" 
                 aria-label="X / Twitter"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#7A5C58] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
               >
                 ✕
               </a>
@@ -86,10 +86,10 @@ export default function Footer() {
           
           {/* Footer Nav Links */}
           <div className="flex items-center gap-6">
-            <a href="#home" className="hover:text-[#7A5C58] transition-colors">Home</a>
-            <a href="#about" className="hover:text-[#7A5C58] transition-colors">About Us</a>
-            <a href="#blog" className="hover:text-[#7A5C58] transition-colors">Blog Page</a>
-            <a href="#contacts" className="hover:text-[#7A5C58] transition-colors">Contacts</a>
+            <a href="#home" className="hover:text-[#8D4D5D] transition-colors">Home</a>
+            <a href="#about" className="hover:text-[#8D4D5D] transition-colors">About Us</a>
+            <a href="#blog" className="hover:text-[#8D4D5D] transition-colors">Blog Page</a>
+            <a href="#contacts" className="hover:text-[#8D4D5D] transition-colors">Contacts</a>
           </div>
 
           {/* Copyright Text */}

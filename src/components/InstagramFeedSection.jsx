@@ -20,9 +20,9 @@ export default function InstagramFeedSection() {
             href="https://instagram.com" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] text-[#514C48] hover:text-[#7A5C58] transition-colors"
+            className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] text-[#514C48] hover:text-[#8D4D5D] transition-colors"
           >
-            INSTAGRAM <span className="text-[#7A5C58] font-medium">@FHBEAUTY</span>
+            INSTAGRAM <span className="text-[#8D4D5D] font-medium">@FHBEAUTY</span>
           </a>
         </div>
 
