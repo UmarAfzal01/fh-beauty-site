@@ -45,8 +45,12 @@ const AppointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Confirmed', 'Pending', 'Cancelled'],
-      default: 'Confirmed',
+      enum: ['pending', 'active', 'Pending', 'Active'],
+      default: 'Pending',
+    },
+    googleEventId: {
+      type: String,
+      default: null,
     },
   },
   {

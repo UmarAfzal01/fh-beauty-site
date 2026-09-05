@@ -1,8 +1,36 @@
-// File path: app/api/appointments/route.js
-
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Appointment from '@/models/Appointment';
+
+export async function GET(request) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(request.url);
+    const date = searchParams.get('date');
+
+    let query = {};
+    if (date) {
+      query.preferredDate = date;
+    }
+
+    const appointments = await Appointment.find(query).sort({ createdAt: -1 });
+
+    return NextResponse.json(
+      {
+        success: true,
+        count: appointments.length,
+        data: appointments,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Fetch Appointments API Error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal Server Error. Please try again.' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request) {
   try {
@@ -21,7 +49,6 @@ export async function POST(request) {
       message,
     } = body;
 
-    // Validation
     if (!fullName || !phone || !preferredDate || !preferredTime) {
       return NextResponse.json(
         { success: false, error: 'Please fill in all required booking fields.' },
@@ -29,7 +56,7 @@ export async function POST(request) {
       );
     }
 
-    // Save appointment document to MongoDB
+    // Save appointment document to MongoDB with default status "pending"
     const newAppointment = await Appointment.create({
       fullName,
       phone,
@@ -40,13 +67,13 @@ export async function POST(request) {
       preferredDate,
       preferredTime,
       message: message || '',
-      status: 'Confirmed',
+      status: 'pending',
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Appointment successfully reserved.',
+        message: 'Appointment successfully reserved as pending.',
         data: newAppointment,
       },
       { status: 201 }
