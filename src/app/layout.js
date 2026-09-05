@@ -1,5 +1,7 @@
 import SmoothScroll from '@/components/SmoothScroll';
 import './globals.css';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'Bella Beauty',
@@ -11,7 +13,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <SmoothScroll>
+          <Header/>
           {children}
+          <Footer/>
         </SmoothScroll>
       </body>
     </html>

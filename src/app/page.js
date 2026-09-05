@@ -25,7 +25,7 @@ export default function Home() {
       <PracticeQuoteStatsSection />
       <BlogSection />
       <InstagramFeedSection />
-      <Footer/>
+      {/* <Footer/> */}
     </main>
   );
 }
