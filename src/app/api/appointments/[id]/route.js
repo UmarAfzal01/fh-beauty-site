@@ -14,7 +14,7 @@ function getCalendarClient() {
   return google.calendar({ version: 'v3', auth });
 }
 
-// Helper to convert "09:00 AM" into 24-hour time string "09:00:00"
+// Convert "09:00 AM" to 24-hour format "09:00:00"
 function convertTo24HourFormat(timeStr) {
   let [time, modifier] = timeStr.split(" ");
   let [hours, minutes] = time.split(":");
@@ -44,31 +44,30 @@ export async function PATCH(request, { params }) {
 
     if (status === 'active') {
       if (!appointment.googleEventId) {
-        // Parse date and time with explicit PKT (+05:00) offset to match your local timezone
-        const formattedTime = convertTo24HourFormat(appointment.preferredTime);
-        const timeZoneOffset = "+05:00"; 
-
-        const startDateTimeStr = `${appointment.preferredDate}T${formattedTime}${timeZoneOffset}`;
-        const startDateTime = new Date(startDateTimeStr);
-        const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
-
-        // Format back out to explicit ISO string with offset for Google Calendar API
+        const time24 = convertTo24HourFormat(appointment.preferredTime);
+        const startDateTimeStr = `${appointment.preferredDate}T${time24}`;
+        
+        // Calculate end time by parsing safely
+        const startDate = new Date(`${appointment.preferredDate}T${time24}`);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+        
         const pad = (n) => String(n).padStart(2, '0');
-        const formatWithOffset = (d) => {
-          const yyyy = d.getFullYear();
-          const mm = pad(d.getMonth() + 1);
-          const dd = pad(d.getDate());
-          const hh = pad(d.getHours());
-          const min = pad(d.getMinutes());
-          const ss = pad(d.getSeconds());
-          return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}${timeZoneOffset}`;
-        };
+        const endDateTimeStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}T${pad(endDate.getHours())}:${pad(endDate.getMinutes())}:${pad(endDate.getSeconds())}`;
+
+        // Explicitly set local time zone (Asia/Karachi) so Google Calendar handles the offset natively
+        const timeZoneName = 'Asia/Karachi';
 
         const event = {
           summary: `Appointment: ${appointment.fullName} (${appointment.service})`,
           description: `Phone: ${appointment.phone}\nType: ${appointment.patientType}\nNotes: ${appointment.message || 'None'}`,
-          start: { dateTime: formatWithOffset(startDateTime) },
-          end: { dateTime: formatWithOffset(endDateTime) },
+          start: { 
+            dateTime: startDateTimeStr,
+            timeZone: timeZoneName 
+          },
+          end: { 
+            dateTime: endDateTimeStr,
+            timeZone: timeZoneName 
+          },
         };
 
         const gResponse = await calendar.events.insert({
