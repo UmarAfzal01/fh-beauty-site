@@ -64,7 +64,7 @@ const ManageBlogs = () => {
           <div className="flex justify-between items-center border-b border-[#E6DEC9] pb-6">
             <h1 className="text-3xl font-serif font-normal text-[#111]">Manage Blogs</h1>
             <Link
-              href="/dashboard/blogs/add"
+              href="/dashboard/blogs/new"
               className="bg-[#111] hover:bg-[#333] text-[#FAF7F3] px-5 py-2.5 rounded-xl text-sm font-sans transition"
             >
               Add New Blog

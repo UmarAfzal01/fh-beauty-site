@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }) {
         {/* Bottom Section / Logout */}
         <div className="pt-6 border-t border-[#E6DEC9]">
           <Link
-            href="/logout"
+            href="#"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-500/10 transition font-serif"
           >
             <MdLogout size={20} />
