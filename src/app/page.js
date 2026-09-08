@@ -16,15 +16,15 @@ export default function Home() {
     <main className="min-h-screen w-full bg-[#FAF7F3]">
       <Hero />
       <AboutSection />
-      <TransformSection />
-      <FeaturedTreatment />
-      <TopTreatments />
-      <PopularTreatmentsSlider />
-      <ExperienceMissionSection />
-      <TeamSection />
-      <PracticeQuoteStatsSection />
-      <BlogSection />
-      <InstagramFeedSection />
+      {/* <TransformSection /> */}
+      {/* <FeaturedTreatment /> */}
+      {/* <TopTreatments /> */}
+      {/* <PopularTreatmentsSlider /> */}
+      {/* <ExperienceMissionSection /> */}
+      {/* <TeamSection /> */}
+      {/* <PracticeQuoteStatsSection /> */}
+      {/* <BlogSection /> */}
+      {/* <InstagramFeedSection /> */}
       {/* <Footer/> */}
     </main>
   );
