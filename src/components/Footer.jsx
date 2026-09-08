@@ -10,15 +10,15 @@ export default function Footer() {
           
           {/* Left Column: Logo & Brand Name */}
           <div className="lg:col-span-5 flex items-center gap-4">
-            <Image 
+            {/* <Image 
               src="/images/favicon-270x270.png" 
-              alt="Bella Beauty Logo" 
+              alt="Dr Warda Sikander Logo" 
               width={48} 
               height={48} 
               className="object-contain"
-            />
+            /> */}
             <span className="text-2xl sm:text-3xl font-serif tracking-widest text-[#111] uppercase font-normal">
-              BELLA BEAUTY
+              Dr Warda Sikander
             </span>
           </div>
 
@@ -94,7 +94,7 @@ export default function Footer() {
 
           {/* Copyright Text */}
           <p className="text-[11px] text-[#514C48]/60 text-center sm:text-right">
-            This is a sample website - fh beauty &copy; 2026 - All Rights Reserved
+            Dr Warda Sikander &copy; 2026 - All Rights Reserved
           </p>
 
         </div>

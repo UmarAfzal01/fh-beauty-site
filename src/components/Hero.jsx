@@ -27,7 +27,7 @@ export default function Hero() {
             style={{ transform: `translateY(${offsetY * 0.25}px)` }}
             className="text-[13vw] font-serif font-medium text-[#111] whitespace-nowrap leading-none tracking-tight opacity-5 will-change-transform transition-transform duration-75"
           >
-            BEAUTY, RESTORE, REJUVENATE
+            Dr. Warda Sikandar
           </span>
         </div>
 
@@ -45,7 +45,7 @@ export default function Hero() {
           <div className="flex justify-center col-span-1 lg:col-span-3">
             <div className="relative w-[300px] sm:w-[350px] lg:w-[600px] h-[52vh] sm:h-[58vh] lg:h-[67vh] rounded-[40px] overflow-hidden shadow-2xl shadow-[#514C48]/15">
               <Image 
-                src="/images/home-1-1.webp" 
+                src="/images/dr-warda.webp" 
                 alt="Beautiful woman portrait" 
                 fill 
                 className="object-cover object-center" 

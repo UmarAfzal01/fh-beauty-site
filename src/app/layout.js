@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata = {
-  title: 'Bella Beauty',
+  title: 'Dr Warda Sikander',
   description: 'Advanced Aesthetic Medicine',
 };
 

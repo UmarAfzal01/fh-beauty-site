@@ -4,18 +4,24 @@ import Image from 'next/image';
 const Header = () => {
     return (
         <>
-            <header className="w-full z-50 flex items-center justify-between px-6 py-5 md:px-12 xl:px-20 border-b border-[#E0DED8] shrink-0 bg-[#FAF7F3] ">
-                <div className="hidden md:flex flex-col gap-0.5 text-xs text-[#514C48]/70 font-sans">
+            <header className="w-full z-50 relative flex items-center justify-between px-6 py-5 md:px-12 xl:px-20 border-b border-[#E0DED8] shrink-0 bg-[#FAF7F3]">
+                {/* Left Side: Address & Phone */}
+                <div className="hidden md:flex flex-col gap-0.5 text-xs text-[#514C48]/70 font-sans z-10">
                     <p>511 SW 10th Ave 1206, Portland, OR United States</p>
                     <a href="tel:+18001231234" className="hover:text-[#111]">+1 800-123-1234</a>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <Image src="/images/favicon-270x270.png" alt="Bella Beauty Logo" width={36} height={36} />
-                    <h1 className="text-2xl font-medium tracking-widest text-[#111] font-serif">BELLA BEAUTY</h1>
+                {/* Empty mobile placeholder to balance layout on small screens if address is hidden */}
+                <div className="md:hidden"></div>
+
+                {/* Absolutely Centered Title */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+                    <h1 className="text-xl md:text-2xl font-medium tracking-widest text-[#111] font-serif whitespace-nowrap">DR WARDA SIKANDER</h1>
+                    {/* <Image src="/images/favicon-270x270.png" alt="Dr Warda Sikander Logo" width={36} height={36} /> */}
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Right Side: Actions */}
+                <div className="flex items-center gap-3 z-10">
                     <button className="bg-[#F5E7E4] text-[#514C48] text-xs px-5 py-2.5 rounded-full hover:bg-[#EEDDD9] transition-colors font-sans">
                         BOOK A VISIT
                     </button>

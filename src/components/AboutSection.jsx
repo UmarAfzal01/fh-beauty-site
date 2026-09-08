@@ -12,7 +12,7 @@ export default function AboutSection() {
 
         {/* Main Headline */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-serif font-normal leading-[1.35] text-[#111] max-w-4xl mb-10">
-          We help you be the best version of yourself by delivering bespoke treatment plans featuring the world's best beauty products backed by scientific data to ensure natural-looking, gorgeous results.
+          Transform your health and aesthetics with science-backed, non-surgical solutions led by <br/> Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence
         </h2>
 
         {/* Discover More Button */}

@@ -297,7 +297,7 @@ export default function AppointmentPage() {
 
           <div className="absolute bottom-10 left-10 right-10 text-white z-10 space-y-2">
             <span className="inline-block text-[11px] font-sans uppercase tracking-[0.3em] bg-white/25 backdrop-blur-md px-4 py-2 rounded-full border border-white/30">
-              BELLA BEAUTY STUDIO
+              Dr Warda Sikander STUDIO
             </span>
             <h2 className="text-3xl font-serif font-normal leading-snug">
               Extended Hours: Open 9:00 AM – 2:00 AM
@@ -518,7 +518,7 @@ export default function AppointmentPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
                     <div>
                       <label htmlFor="email" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
                         Email Address <span className="text-[#514C48]/40 normal-case">(Optional)</span>
@@ -534,7 +534,7 @@ export default function AppointmentPage() {
                       />
                     </div>
 
-                    <div>
+                    {/* <div>
                       <label htmlFor="patientType" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
                         Patient Type <span className="text-rose-500">*</span>
                       </label>
@@ -548,7 +548,7 @@ export default function AppointmentPage() {
                         <option value="New Patient">New Patient</option>
                         <option value="Existing Patient">Existing Patient</option>
                       </select>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div>
