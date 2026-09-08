@@ -14,6 +14,19 @@ function getCalendarClient() {
   return google.calendar({ version: 'v3', auth });
 }
 
+// Helper to convert "09:00 AM" into 24-hour time string "09:00:00"
+function convertTo24HourFormat(timeStr) {
+  let [time, modifier] = timeStr.split(" ");
+  let [hours, minutes] = time.split(":");
+  if (modifier === "PM" && hours !== "12") {
+    hours = String(parseInt(hours, 10) + 12);
+  }
+  if (modifier === "AM" && hours === "12") {
+    hours = "00";
+  }
+  return `${hours.padStart(2, '0')}:${minutes}:00`;
+}
+
 export async function PATCH(request, { params }) {
   try {
     await dbConnect();
@@ -31,14 +44,31 @@ export async function PATCH(request, { params }) {
 
     if (status === 'active') {
       if (!appointment.googleEventId) {
-        const startDateTime = new Date(`${appointment.preferredDate} ${appointment.preferredTime}`);
+        // Parse date and time with explicit PKT (+05:00) offset to match your local timezone
+        const formattedTime = convertTo24HourFormat(appointment.preferredTime);
+        const timeZoneOffset = "+05:00"; 
+
+        const startDateTimeStr = `${appointment.preferredDate}T${formattedTime}${timeZoneOffset}`;
+        const startDateTime = new Date(startDateTimeStr);
         const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
+
+        // Format back out to explicit ISO string with offset for Google Calendar API
+        const pad = (n) => String(n).padStart(2, '0');
+        const formatWithOffset = (d) => {
+          const yyyy = d.getFullYear();
+          const mm = pad(d.getMonth() + 1);
+          const dd = pad(d.getDate());
+          const hh = pad(d.getHours());
+          const min = pad(d.getMinutes());
+          const ss = pad(d.getSeconds());
+          return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}${timeZoneOffset}`;
+        };
 
         const event = {
           summary: `Appointment: ${appointment.fullName} (${appointment.service})`,
           description: `Phone: ${appointment.phone}\nType: ${appointment.patientType}\nNotes: ${appointment.message || 'None'}`,
-          start: { dateTime: startDateTime.toISOString() },
-          end: { dateTime: endDateTime.toISOString() },
+          start: { dateTime: formatWithOffset(startDateTime) },
+          end: { dateTime: formatWithOffset(endDateTime) },
         };
 
         const gResponse = await calendar.events.insert({
