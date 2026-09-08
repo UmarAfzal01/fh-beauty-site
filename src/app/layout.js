@@ -2,6 +2,7 @@ import SmoothScroll from '@/components/SmoothScroll';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: {
@@ -48,6 +49,7 @@ export default function RootLayout({ children }) {
         <SmoothScroll>
           {/* <Header/> */}
           {children}
+          <Toaster />
           {/* <Footer/> */}
         </SmoothScroll>
       </body>
