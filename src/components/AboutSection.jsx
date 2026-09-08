@@ -16,7 +16,7 @@ export default function AboutSection() {
         </h2>
 
         {/* Discover More Button */}
-        <Link href="/appointment" className="bg-[#F5E7E4] text-[#514C48] text-xs font-sans tracking-widest px-8 py-3.5 rounded-full hover:bg-[#EEDDD9] transition-colors mb-24">
+        <Link href="/appointment" className="bg-[#F5E7E4] text-[#514C48] text-xs font-sans tracking-widest px-8 py-3.5 rounded-full hover:bg-[#EEDDD9] transition-colors ">
           BOOK AN APPOINTMENT
         </Link>
 

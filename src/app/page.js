@@ -13,7 +13,7 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full bg-[#FAF7F3]">
+    <main className="w-full bg-[#FAF7F3]">
       <Hero />
       <AboutSection />
       {/* <TransformSection /> */}
