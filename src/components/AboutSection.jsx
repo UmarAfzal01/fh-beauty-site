@@ -21,9 +21,9 @@ export default function AboutSection() {
         </Link>
 
         {/* Three Columns Features Grid with Dividers */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 items-center">
+        {/* <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 items-center">
           
-          {/* Feature 1: Safety and hygiene */}
+          
           <div className="flex flex-col items-center justify-center px-4 md:border-r border-[#E0DED8]">
             <div className="h-14 flex items-center justify-center mb-4">
               <svg className="w-10 h-10 text-[#8D4D5D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -33,7 +33,7 @@ export default function AboutSection() {
             <h3 className="font-serif text-lg text-[#111]">Safety and hygiene</h3>
           </div>
 
-          {/* Feature 2: Top-quality products */}
+        
           <div className="flex flex-col items-center justify-center px-4 md:border-r border-[#E0DED8]">
             <div className="h-14 flex items-center justify-center mb-4">
               <svg className="w-10 h-10 text-[#8D4D5D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -44,7 +44,7 @@ export default function AboutSection() {
             <h3 className="font-serif text-lg text-[#111]">Top-quality products</h3>
           </div>
 
-          {/* Feature 3: Professional devices */}
+          
           <div className="flex flex-col items-center justify-center px-4">
             <div className="h-14 flex items-center justify-center mb-4">
               <svg className="w-10 h-10 text-[#8D4D5D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -55,7 +55,7 @@ export default function AboutSection() {
             <h3 className="font-serif text-lg text-[#111]">Professional devices</h3>
           </div>
 
-        </div>
+        </div> */}
 
       </div>
     </section>

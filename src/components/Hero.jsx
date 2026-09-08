@@ -43,7 +43,7 @@ export default function Hero() {
 
           {/* Center Image Column */}
           <div className="flex justify-center col-span-1 lg:col-span-3">
-            <div className="relative w-[300px] sm:w-[350px] lg:w-[600px] h-[52vh] sm:h-[58vh] lg:h-[67vh] rounded-[40px] overflow-hidden shadow-2xl shadow-[#514C48]/15">
+            <div className="relative w-[300px] sm:w-[350px] lg:w-[600px] h-[52vh] sm:h-[58vh] lg:h-[67vh] rounded-full overflow-hidden shadow-2xl shadow-[#514C48]/15">
               <Image 
                 src="/images/dr-warda.webp" 
                 alt="Beautiful woman portrait" 
