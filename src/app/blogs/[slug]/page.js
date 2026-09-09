@@ -23,7 +23,6 @@ export default function SingleBlogPage() {
         
         if (res.ok) {
           const blogsList = Array.isArray(data) ? data : (data.blogs || []);
-          // Find blog by either _id or slug
           const foundBlog = blogsList.find(
             (b) => b._id === idOrSlug || b.slug === idOrSlug || b.id === idOrSlug
           );
@@ -31,7 +30,6 @@ export default function SingleBlogPage() {
           if (foundBlog) {
             setBlog(foundBlog);
           } else {
-            // Fallback: try fetching directly if an endpoint supports it or show not found
             setError("Blog post not found.");
           }
         } else {
@@ -61,35 +59,69 @@ export default function SingleBlogPage() {
     }
   };
 
-  const renderBlogDetailItem = (item, index) => {
+  const renderBlogDetailItem = (item, index, allDetails) => {
     switch (item.type) {
       case 'Sub':
         return (
-          <h2 key={index} className="text-2xl sm:text-3xl font-serif font-normal text-[#111] mt-8 mb-4 leading-snug">
+          <h2 key={index} className="text-2xl sm:text-3xl font-serif font-normal text-[#111] mt-8 mb-4 leading-snug w-full">
             {item.value}
           </h2>
         );
       case 'description':
+        // If the previous item was a single-image and already consumed this description, skip rendering it here individually
+        if (index > 0 && allDetails[index - 1]?.type === 'single-image') {
+          return null;
+        }
         return (
-          <p key={index} className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed mb-6">
+          <p key={index} className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed mb-6 w-full">
             {item.value}
           </p>
         );
       case 'bullet':
         return (
-          <ul key={index} className="list-disc list-inside space-y-2 mb-6 text-[#514C48]/90 text-base sm:text-lg font-light">
+          <ul key={index} className="list-disc list-inside space-y-2 mb-6 text-[#514C48]/90 text-base sm:text-lg font-light w-full">
             <li className="leading-relaxed">{item.value}</li>
           </ul>
         );
       case 'single-image':
+        // Look ahead to check if the next item is a description
+        const nextItem = allDetails[index + 1];
+        const hasAdjacentDescription = nextItem && nextItem.type === 'description';
+
+        if (hasAdjacentDescription) {
+          return (
+            <div key={index} className="my-8 flex flex-col md:flex-row items-center gap-8 w-full">
+              <div className="w-full md:w-1/2 space-y-2 shrink-0">
+                <div className="relative w-full h-[500px] sm:h-[630px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.value || 'Blog Image'}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                {item.value && (
+                  <p className="text-center text-xs font-sans text-[#514C48]/60 italic">{item.value}</p>
+                )}
+              </div>
+              <div className="w-full md:w-1/2">
+                <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
+                  {nextItem.value}
+                </p>
+              </div>
+            </div>
+          );
+        }
+
+        // Default layout if no description follows right after
         return (
-          <div key={index} className="my-8 space-y-2">
-            <div className="relative w-full h-[320px] sm:h-[450px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
+          <div key={index} className="my-8 space-y-2 w-full">
+            <div className="relative w-full h-[500px] sm:h-[450px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
               <Image
                 src={item.imageUrl}
                 alt={item.value || 'Blog Image'}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
             {item.value && (
@@ -99,7 +131,7 @@ export default function SingleBlogPage() {
         );
       case 'double-image':
         return (
-          <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
+          <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8 w-full">
             {item.imageUrls?.map((url, imgIdx) => (
               <div key={imgIdx} className="space-y-2">
                 <div className="relative w-full h-[250px] sm:h-[300px] rounded-2xl overflow-hidden bg-slate-100 shadow-md">
@@ -120,13 +152,12 @@ export default function SingleBlogPage() {
           </div>
         );
       case 'youtube':
-        // Convert watch URL to embed URL if necessary
-        const getEmbedUrl = (url) => {
+        const getEmbedUrl = (urlStr) => {
           try {
-            const videoId = url.includes('v=') ? url.split('v=')[1]?.split('&')[0] : url.split('/').pop();
+            const videoId = urlStr.includes('v=') ? urlStr.split('v=')[1]?.split('&')[0] : urlStr.split('/').pop();
             return `https://www.youtube.com/embed/${videoId}`;
           } catch {
-            return url;
+            return urlStr;
           }
         };
         return (
@@ -212,7 +243,7 @@ export default function SingleBlogPage() {
 
         {/* Dynamic Blog Details Content */}
         <div className="space-y-6">
-          {Array.isArray(blog.blog_detail) && blog.blog_detail.map((detail, index) => renderBlogDetailItem(detail, index))}
+          {Array.isArray(blog.blog_detail) && blog.blog_detail.map((detail, index) => renderBlogDetailItem(detail, index, blog.blog_detail))}
         </div>
 
         {/* Tags Section */}
