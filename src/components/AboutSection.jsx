@@ -7,7 +7,7 @@ export default function AboutSection() {
         
         {/* Small Subtitle */}
         <span className="text-xs font-sans uppercase tracking-[0.25em] text-[#514C48]/60 mb-6">
-          ADVANCED AESTHETIC MEDICINE
+          Obesity Expert | Aesthetician | Wellness Expert
         </span>
 
         {/* Main Headline */}

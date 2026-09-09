@@ -356,8 +356,8 @@ const AddBlog = () => {
 
   return (
     <>
-      <main className="min-h-screen w-full bg-[#FAF7F3] text-[#514C48] py-12 px-6 md:px-12 xl:px-20">
-        <form className="max-w-5xl mx-auto p-8 space-y-8 bg-[#FAF7F3] text-[#514C48] rounded-3xl border border-[#E6DEC9] shadow-2xl shadow-[#514C48]/5">
+      <main className="min-h-screen w-full bg-[#FAF7F3] text-[#514C48] py-12 px-1 md:px-1 xl:px-1">
+        <form className="max-w-7xl mx-auto p-8 space-y-8 bg-[#FAF7F3] text-[#514C48] rounded-3xl border border-[#E6DEC9] shadow-2xl shadow-[#514C48]/5">
           <h1 className="text-3xl font-serif font-normal tracking-tight text-[#111] border-b border-[#E6DEC9] pb-6">
             Add New Blog Post
           </h1>

@@ -37,7 +37,7 @@ export default function  Hero() {
           {/* Top Left Heading Text with Playfair/Serif styling */}
           <div className="flex flex-col justify-start items-start lg:absolute lg:top-[-10vh] lg:left-0 z-20">
             <h2 className="text-xl md:text-2xl lg:text-[1.75rem] leading-[1.3] text-[#111] max-w-xs font-serif font-normal">
-              Feel Your Best With Advanced Aesthetic Medicine.
+              Pakistan Wellness Center by Dr. Warda Sikandar
             </h2>
           </div>
 
