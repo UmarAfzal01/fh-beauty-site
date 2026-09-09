@@ -7,8 +7,10 @@ import { BsTextParagraph } from "react-icons/bs";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { PiImage, PiImages } from "react-icons/pi";
 import { AiFillYoutube } from "react-icons/ai";
+import { MdDragIndicator } from "react-icons/md";
 import toast, { Toaster } from "react-hot-toast";
 import { CldUploadButton } from "next-cloudinary";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const AddBlog = () => {
   const router = useRouter();
@@ -117,11 +119,19 @@ const AddBlog = () => {
     setMoreFields(updated);
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(morefields);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setMoreFields(items);
+  };
+
   const renderField = (field, index) => {
     switch (field.type) {
       case "Sub":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <input
               type="text"
               placeholder="Sub Heading"
@@ -140,7 +150,7 @@ const AddBlog = () => {
         );
       case "description":
         return (
-          <div key={index} className="flex items-start gap-2 w-full">
+          <div className="flex items-start gap-2 w-full">
             <textarea
               rows={5}
               placeholder="Description"
@@ -159,7 +169,7 @@ const AddBlog = () => {
         );
       case "bullet":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <input
               type="text"
               placeholder="Bullet Heading"
@@ -178,7 +188,7 @@ const AddBlog = () => {
         );
       case "single-image":
         return (
-          <div key={index} className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
+          <div className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
             <div className="flex flex-col gap-3 w-full">
               {field.imageUrl && (
                 <img
@@ -219,7 +229,7 @@ const AddBlog = () => {
         );
       case "youtube":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <div className="w-full relative flex items-center">
               <input
                 type="text"
@@ -240,7 +250,7 @@ const AddBlog = () => {
         );
       case "double-image":
         return (
-          <div key={index} className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
+          <div className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               {[0, 1].map((i) => (
                 <div className="flex flex-col gap-3 p-3 bg-[#FAF7F3] rounded-xl border border-[#E6DEC9]" key={i}>
@@ -550,12 +560,50 @@ const AddBlog = () => {
             </div>
           </div>
 
-          {/* Additional Content Blocks Section */}
+          {/* Additional Content Blocks Section with Drag & Drop */}
           <div className="bg-[#F3EDE2]/50 p-8 rounded-2xl border border-[#E6DEC9] space-y-5">
-            <label className="font-serif text-lg text-[#111] block">Add Additional Information :</label>
-            <div className="flex flex-col gap-4 w-full">
-              {morefields.map((field, index) => renderField(field, index))}
+            <div className="flex justify-between items-center">
+              <label className="font-serif text-lg text-[#111] block">Add Additional Information :</label>
+              <span className="text-xs text-[#514C48]/60 italic font-serif">💡 Drag items using the handle to reorder</span>
             </div>
+
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="morefields-list">
+                {(provided) => (
+                  <div 
+                    {...provided.droppableProps} 
+                    ref={provided.innerRef}
+                    className="flex flex-col gap-4 w-full"
+                  >
+                    {morefields.map((field, index) => (
+                      <Draggable key={index} draggableId={`field-${index}`} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`flex items-center gap-2 w-full transition-all ${
+                              snapshot.isDragging ? "opacity-75 scale-[1.01]" : ""
+                            }`}
+                          >
+                            <div 
+                              {...provided.dragHandleProps} 
+                              className="cursor-grab active:cursor-grabbing text-[#514C48]/50 hover:text-[#514C48] p-1 flex items-center justify-center shrink-0"
+                              title="Drag to reorder"
+                            >
+                              <MdDragIndicator size={24} />
+                            </div>
+                            <div className="w-full">
+                              {renderField(field, index)}
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
             
             <div className="pt-3">
               <div className="flex flex-wrap gap-3">

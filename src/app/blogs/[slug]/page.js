@@ -1,50 +1,88 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
-export default function SingleBlogPage() {
-  const params = useParams();
-  const idOrSlug = params?.id || params?.slug;
+// Optional: Base URL for absolute Open Graph image paths
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
 
-  const [blog, setBlog] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// 1. Generate Dynamic Metadata for SEO & Social Sharing
+async function getBlogData(idOrSlug) {
+  try {
+    const res = await fetch(`${BASE_URL}/api/blogs`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const blogsList = Array.isArray(data) ? data : (data.blogs || []);
+    return blogsList.find(
+      (b) => b._id === idOrSlug || b.slug === idOrSlug || b.id === idOrSlug
+    ) || null;
+  } catch (err) {
+    console.error("Error fetching blog for metadata:", err);
+    return null;
+  }
+}
 
-  useEffect(() => {
-    if (!idOrSlug) return;
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+  const idOrSlug = resolvedParams?.id || resolvedParams?.slug;
+  const blog = await getBlogData(idOrSlug);
 
-    const fetchSingleBlog = async () => {
-      try {
-        const res = await fetch(`/api/blogs`);
-        const data = await res.json();
-        
-        if (res.ok) {
-          const blogsList = Array.isArray(data) ? data : (data.blogs || []);
-          const foundBlog = blogsList.find(
-            (b) => b._id === idOrSlug || b.slug === idOrSlug || b.id === idOrSlug
-          );
-
-          if (foundBlog) {
-            setBlog(foundBlog);
-          } else {
-            setError("Blog post not found.");
-          }
-        } else {
-          setError("Failed to fetch blog data.");
-        }
-      } catch (err) {
-        console.error("Error fetching single blog:", err);
-        setError("An error occurred while loading the blog.");
-      } finally {
-        setLoading(false);
-      }
+  if (!blog) {
+    return {
+      title: 'Article Not Found | My Blog',
+      description: 'The blog post you are looking for does not exist.',
     };
+  }
 
-    fetchSingleBlog();
-  }, [idOrSlug]);
+  const seoTitle = blog.title || 'Blog Post';
+  const seoDescription = blog.description || seoTitle;
+  const seoImage = blog.img ? (blog.img.startsWith('http') ? blog.img : `${BASE_URL}${blog.img}`) : `${BASE_URL}/default-og-image.jpg`;
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    openGraph: {
+      title: seoTitle,
+      description: seoDescription,
+      url: `${BASE_URL}/blogs/${idOrSlug}`,
+      images: [
+        {
+          url: seoImage,
+          width: 1200,
+          height: 630,
+          alt: blog.imgalt || seoTitle,
+        },
+      ],
+      type: 'article',
+      publishedTime: blog.createdAt,
+      authors: [blog.postedby || 'Author'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: seoTitle,
+      description: seoDescription,
+      images: [seoImage],
+    },
+  };
+}
+
+// 2. Client Component UI for Rendering the Blog Content
+export default async function SingleBlogPage({ params }) {
+  const resolvedParams = await params;
+  const idOrSlug = resolvedParams?.id || resolvedParams?.slug;
+  const blog = await getBlogData(idOrSlug);
+
+  if (!blog) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F3] flex flex-col items-center justify-center font-serif text-[#514C48] space-y-4 px-6 text-center">
+        <h1 className="text-3xl text-[#111]">Article Not Found</h1>
+        <p className="text-sm text-[#514C48]/70">The blog post you're looking for doesn't exist or has been removed.</p>
+        <Link href="/" className="px-6 py-2.5 bg-[#111] text-[#FAF7F3] rounded-xl text-sm font-sans transition hover:bg-[#333]">
+          Return Home
+        </Link>
+      </div>
+    );
+  }
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Recent';
@@ -68,7 +106,6 @@ export default function SingleBlogPage() {
           </h2>
         );
       case 'description':
-        // If the previous item was a single-image and already consumed this description, skip rendering it here individually
         if (index > 0 && allDetails[index - 1]?.type === 'single-image') {
           return null;
         }
@@ -84,7 +121,6 @@ export default function SingleBlogPage() {
           </ul>
         );
       case 'single-image':
-        // Look ahead to check if the next item is a description
         const nextItem = allDetails[index + 1];
         const hasAdjacentDescription = nextItem && nextItem.type === 'description';
 
@@ -92,17 +128,17 @@ export default function SingleBlogPage() {
           return (
             <div key={index} className="my-8 flex flex-col md:flex-row items-center gap-8 w-full">
               <div className="w-full md:w-1/2 space-y-2 shrink-0">
-                <div className="relative w-full h-[500px] sm:h-[630px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
+                <div className="relative w-full h-[500px] sm:h-[670px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
                   <Image
                     src={item.imageUrl}
                     alt={item.value || 'Blog Image'}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
-                {item.value && (
+                {/* {item.value && (
                   <p className="text-center text-xs font-sans text-[#514C48]/60 italic">{item.value}</p>
-                )}
+                )} */}
               </div>
               <div className="w-full md:w-1/2">
                 <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
@@ -113,7 +149,6 @@ export default function SingleBlogPage() {
           );
         }
 
-        // Default layout if no description follows right after
         return (
           <div key={index} className="my-8 space-y-2 w-full">
             <div className="relative w-full h-[500px] sm:h-[450px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
@@ -142,11 +177,11 @@ export default function SingleBlogPage() {
                     className="object-cover"
                   />
                 </div>
-                {item.value?.[imgIdx] && (
+                {/* {item.value?.[imgIdx] && (
                   <p className="text-center text-xs font-sans text-[#514C48]/60 italic">
                     {item.value[imgIdx]}
                   </p>
-                )}
+                )} */}
               </div>
             ))}
           </div>
@@ -175,26 +210,6 @@ export default function SingleBlogPage() {
         return null;
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF7F3] flex items-center justify-center font-serif text-[#514C48]">
-        Loading article...
-      </div>
-    );
-  }
-
-  if (error || !blog) {
-    return (
-      <div className="min-h-screen bg-[#FAF7F3] flex flex-col items-center justify-center font-serif text-[#514C48] space-y-4 px-6 text-center">
-        <h1 className="text-3xl text-[#111]">Article Not Found</h1>
-        <p className="text-sm text-[#514C48]/70">{error || "The blog post you're looking for doesn't exist or has been removed."}</p>
-        <Link href="/" className="px-6 py-2.5 bg-[#111] text-[#FAF7F3] rounded-xl text-sm font-sans transition hover:bg-[#333]">
-          Return Home
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-[#FAF7F3] text-[#514C48] py-16 px-6 md:px-12 xl:px-20">

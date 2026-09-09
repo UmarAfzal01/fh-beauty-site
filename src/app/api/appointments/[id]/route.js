@@ -48,8 +48,9 @@ export async function PATCH(request, { params }) {
         const startDateTimeStr = `${appointment.preferredDate}T${time24}`;
         
         // Calculate end time by parsing safely
+// Calculate end time by parsing safely (Changed to 30 minutes)
         const startDate = new Date(`${appointment.preferredDate}T${time24}`);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+        const endDate = new Date(startDate.getTime() + 30 * 60 * 1000); 
         
         const pad = (n) => String(n).padStart(2, '0');
         const endDateTimeStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}T${pad(endDate.getHours())}:${pad(endDate.getMinutes())}:${pad(endDate.getSeconds())}`;

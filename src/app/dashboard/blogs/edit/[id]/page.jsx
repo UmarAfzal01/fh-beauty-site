@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import { LuHeading2 } from "react-icons/lu";
+import { LuHeading2, LuGripVertical } from "react-icons/lu";
 import { BsTextParagraph } from "react-icons/bs";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { PiImage, PiImages } from "react-icons/pi";
 import { AiFillYoutube } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
 import { CldUploadButton } from "next-cloudinary";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const EditBlog = () => {
   const router = useRouter();
@@ -48,7 +49,6 @@ const EditBlog = () => {
           const blogData = await blogRes.json();
           
           if (blogRes.ok && blogData) {
-            // Adjust depending on how your API returns the blog object (e.g., blogData.blog or just blogData)
             const blog = blogData.blog || blogData; 
             setHeading(blog.title || "");
             setWriter(blog.postedby || "");
@@ -62,7 +62,6 @@ const EditBlog = () => {
             setMoreFields(blog.blog_detail || []);
             
             if (blog.scheduledAt) {
-              // Format date properly for datetime-local input (YYYY-MM-DDTHH:mm)
               const formattedDate = new Date(blog.scheduledAt).toISOString().slice(0, 16);
               setScheduledDate(formattedDate);
             }
@@ -155,11 +154,19 @@ const EditBlog = () => {
     setMoreFields(updated);
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(morefields);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setMoreFields(items);
+  };
+
   const renderField = (field, index) => {
     switch (field.type) {
       case "Sub":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <input
               type="text"
               placeholder="Sub Heading"
@@ -178,7 +185,7 @@ const EditBlog = () => {
         );
       case "description":
         return (
-          <div key={index} className="flex items-start gap-2 w-full">
+          <div className="flex items-start gap-2 w-full">
             <textarea
               rows={5}
               placeholder="Description"
@@ -197,7 +204,7 @@ const EditBlog = () => {
         );
       case "bullet":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <input
               type="text"
               placeholder="Bullet Heading"
@@ -216,7 +223,7 @@ const EditBlog = () => {
         );
       case "single-image":
         return (
-          <div key={index} className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
+          <div className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
             <div className="flex flex-col gap-3 w-full">
               {field.imageUrl && (
                 <img
@@ -257,7 +264,7 @@ const EditBlog = () => {
         );
       case "youtube":
         return (
-          <div key={index} className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full">
             <div className="w-full relative flex items-center">
               <input
                 type="text"
@@ -278,7 +285,7 @@ const EditBlog = () => {
         );
       case "double-image":
         return (
-          <div key={index} className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
+          <div className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               {[0, 1].map((i) => (
                 <div className="flex flex-col gap-3 p-3 bg-[#FAF7F3] rounded-xl border border-[#E6DEC9]" key={i}>
@@ -362,7 +369,7 @@ const EditBlog = () => {
           : null;
 
         const res = await fetch(`/api/blogs/${id}`, {
-          method: "PUT", // or PATCH depending on your backend
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             title: heading,
@@ -432,7 +439,6 @@ const EditBlog = () => {
                   className="w-full bg-[#FAF7F3] border border-[#E6DEC9] rounded-xl px-4 py-3.5 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
                 />
                 
-                {/* Category Dropdown & Quick Add Controls */}
                 <div className="flex flex-col gap-2 md:col-span-2">
                   <div className="flex gap-2">
                     <select
@@ -452,7 +458,6 @@ const EditBlog = () => {
                     </select>
                   </div>
 
-                  {/* Add / Remove Category Mini Bar */}
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -470,7 +475,6 @@ const EditBlog = () => {
                     </button>
                   </div>
 
-                  {/* List of custom categories with delete chips */}
                   {categories.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {categories.map((cat, idx) => (
@@ -598,12 +602,47 @@ const EditBlog = () => {
             </div>
           </div>
 
-          {/* Additional Content Blocks Section */}
+          {/* Additional Content Blocks Section with DragDropContext */}
           <div className="bg-[#F3EDE2]/50 p-8 rounded-2xl border border-[#E6DEC9] space-y-5">
             <label className="font-serif text-lg text-[#111] block">Add Additional Information :</label>
-            <div className="flex flex-col gap-4 w-full">
-              {morefields.map((field, index) => renderField(field, index))}
-            </div>
+            
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="blog-fields">
+                {(provided) => (
+                  <div 
+                    className="flex flex-col gap-4 w-full"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {morefields.map((field, index) => (
+                      <Draggable key={index} draggableId={`field-${index}`} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`flex items-start gap-2 w-full transition-all ${
+                              snapshot.isDragging ? "opacity-75 scale-[1.01]" : ""
+                            }`}
+                          >
+                            <div 
+                              {...provided.dragHandleProps}
+                              className="mt-3.5 text-[#514C48]/50 hover:text-[#111] cursor-grab active:cursor-grabbing shrink-0"
+                              title="Drag to reorder"
+                            >
+                              <LuGripVertical size={20} />
+                            </div>
+                            <div className="w-full">
+                              {renderField(field, index)}
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
             
             <div className="pt-3">
               <div className="flex flex-wrap gap-3">
