@@ -24,7 +24,7 @@ export default function AppointmentPage() {
   const [loading, setLoading] = useState(false);
   const [bookedTimes, setBookedTimes] = useState([]);
 
-  // Generate only from today onwards (up to 30 days)
+  // Generate only from today onwards (up to 30 days) and flag Sundays
   const generateMonthDays = () => {
     const days = [];
     const today = new Date();
@@ -42,18 +42,30 @@ export default function AppointmentPage() {
       const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
       const dd = String(dateObj.getDate()).padStart(2, "0");
 
+      const isSunday = dateObj.getDay() === 0;
+
       days.push({
         dayNum: dd,
         dayName: dayName,
         dateString: `${monthName} ${dateObj.getDate()}, ${yyyy}`,
         isoDate: `${yyyy}-${mm}-${dd}`,
+        isSunday,
       });
     }
     return days;
   };
 
   const daysList = generateMonthDays();
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+
+  // Helper to find the first valid non-Sunday index starting from current index
+  const findFirstAvailableDayIndex = (startIndex = 0) => {
+    for (let i = startIndex; i < daysList.length; i++) {
+      if (!daysList[i].isSunday) return i;
+    }
+    return 0;
+  };
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => findFirstAvailableDayIndex(0));
 
   // Generate 30-minute intervals from 09:00 AM to 09:00 PM
   const generateTimeSlots = () => {
@@ -85,8 +97,7 @@ export default function AppointmentPage() {
   const timeButtonRefs = useRef([]);
   const dayButtonRefs = useRef([]);
 
-  // Helper function to check if a specific time slot has already passed today
-// Helper function to check if a specific time slot has passed or is within the next 20 minutes
+  // Helper function to check if a specific time slot has passed or is within the next 20 minutes
   const isTimeSlotPassed = (timeString, selectedIsoDate) => {
     const todayStr = new Date().toISOString().split("T")[0];
     if (selectedIsoDate !== todayStr) return false;
@@ -148,8 +159,10 @@ export default function AppointmentPage() {
 
   // Fetch booked slots whenever selected date changes
   useEffect(() => {
-    const currentDate = daysList[selectedDayIndex]?.isoDate;
-    if (!currentDate) return;
+    const currentDayObj = daysList[selectedDayIndex];
+    if (!currentDayObj || currentDayObj.isSunday) return;
+
+    const currentDate = currentDayObj.isoDate;
 
     async function fetchBookedSlots() {
       try {
@@ -175,7 +188,9 @@ export default function AppointmentPage() {
   // Prevent hydration mismatch & initialize first valid time
   useEffect(() => {
     setMounted(true);
-    const initialIso = daysList[0].isoDate;
+    const initialValidIdx = findFirstAvailableDayIndex(0);
+    setSelectedDayIndex(initialValidIdx);
+    const initialIso = daysList[initialValidIdx].isoDate;
     const firstValidIdx = findFirstValidTimeIndex(initialIso, bookedTimes);
     setSelectedTimeIndex(firstValidIdx);
     setSelectedTimeSlot(timeSlots[firstValidIdx]);
@@ -206,7 +221,11 @@ export default function AppointmentPage() {
 
   const handlePrevDayScroll = () => {
     setSelectedDayIndex((prev) => {
-      const newIndex = Math.max(0, prev - 1);
+      let newIndex = prev - 1;
+      while (newIndex >= 0 && daysList[newIndex].isSunday) {
+        newIndex--;
+      }
+      if (newIndex < 0) return prev; // Don't move if blocked by a Sunday or start limit
       setFormData((f) => ({ ...f, preferredDate: daysList[newIndex].isoDate }));
       return newIndex;
     });
@@ -214,7 +233,11 @@ export default function AppointmentPage() {
 
   const handleNextDayScroll = () => {
     setSelectedDayIndex((prev) => {
-      const newIndex = Math.min(daysList.length - 1, prev + 1);
+      let newIndex = prev + 1;
+      while (newIndex < daysList.length && daysList[newIndex].isSunday) {
+        newIndex++;
+      }
+      if (newIndex >= daysList.length) return prev;
       setFormData((f) => ({ ...f, preferredDate: daysList[newIndex].isoDate }));
       return newIndex;
     });
@@ -233,6 +256,7 @@ export default function AppointmentPage() {
   };
 
   const handleDaySelect = (index) => {
+    if (daysList[index].isSunday) return; // Prevent selecting Sunday
     setSelectedDayIndex(index);
     setFormData((prev) => ({
       ...prev,
@@ -251,7 +275,12 @@ export default function AppointmentPage() {
 
   const handleNextStep = (e) => {
     e.preventDefault();
-    const currentDate = daysList[selectedDayIndex]?.isoDate;
+    const currentDay = daysList[selectedDayIndex];
+    if (!currentDay || currentDay.isSunday) {
+      alert("Sundays are closed. Please select another day.");
+      return;
+    }
+    const currentDate = currentDay.isoDate;
     if (bookedTimes.includes(selectedTimeSlot) || isTimeSlotPassed(selectedTimeSlot, currentDate)) {
       alert("This time slot is unavailable or has already passed. Please choose another slot.");
       return;
@@ -345,7 +374,7 @@ export default function AppointmentPage() {
               Dr Warda Sikander
             </span>
             <h2 className="text-3xl font-serif font-normal leading-snug">
-              Clinic Hours: Open 9:00 AM – 9:00 PM
+              Clinic Hours: Mon – Sat (9:00 AM – 9:00 PM)
             </h2>
             <p className="text-sm text-white/85 font-light max-w-md">
               Experience seamless booking with 30-minute interval medical and aesthetic consultation options.
@@ -427,6 +456,8 @@ export default function AppointmentPage() {
                   <div className="grid grid-cols-5 gap-2">
                     {visibleDays.map((day) => {
                       const isSelected = day.originalIndex === selectedDayIndex;
+                      const isSunday = day.isSunday;
+
                       return (
                         <button
                           key={day.dateString}
@@ -434,11 +465,14 @@ export default function AppointmentPage() {
                             if (el) dayButtonRefs.current[day.originalIndex] = el;
                           }}
                           type="button"
+                          disabled={isSunday}
                           onClick={() => handleDaySelect(day.originalIndex)}
-                          className={`aspect-square rounded-xl sm:rounded-2xl p-2 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer border ${
-                            isSelected
+                          className={`aspect-square rounded-xl sm:rounded-2xl p-2 flex flex-col items-center justify-center transition-all duration-300 relative border ${
+                            isSunday
+                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-80"
+                              : isSelected
                               ? "bg-[#111] text-white border-[#111] shadow-lg scale-105"
-                              : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/60 hover:bg-white hover:border-[#7A5C58]"
+                              : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/60 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
                           }`}
                         >
                           <span className={`text-[9px] sm:text-[10px] font-sans uppercase tracking-wider mb-0.5 ${isSelected ? "text-white/70" : "text-[#514C48]/60"}`}>
@@ -447,6 +481,13 @@ export default function AppointmentPage() {
                           <span className={`text-base sm:text-xl font-serif ${isSelected ? "font-bold text-white" : "font-medium text-[#111]"}`}>
                             {day.dayNum}
                           </span>
+
+                          {/* Sunday Overlay Label */}
+                          {isSunday && (
+                            <span className="absolute inset-x-1 bottom-1.5 bg-rose-100 text-rose-800 text-[8px] sm:text-[9px] uppercase tracking-wider font-bold py-0.5 rounded text-center shadow-xs">
+                              Closed
+                            </span>
+                          )}
                         </button>
                       );
                     })}

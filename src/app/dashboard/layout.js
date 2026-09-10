@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MdDashboard, MdArticle, MdEventNote, MdLogout } from 'react-icons/md';
+import { FaPeopleGroup } from "react-icons/fa6";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -36,9 +37,16 @@ export default function DashboardLayout({ children }) {
               <MdEventNote size={20} />
               <span>Appointments</span>
             </Link>
+            <Link
+              href="/dashboard/customers"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] transition border border-transparent hover:border-[#E6DEC9]"
+            >
+              <FaPeopleGroup size={20} />
+              <span>Customers</span>
+            </Link>
+
           </nav>
         </div>
-
         {/* Bottom Section / Logout */}
         <div className="pt-6 border-t border-[#E6DEC9]">
           <Link

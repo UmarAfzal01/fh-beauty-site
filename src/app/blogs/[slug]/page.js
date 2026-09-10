@@ -1,21 +1,24 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import BlogComments from "@/components/BlogComments";
 
 // Optional: Base URL for absolute Open Graph image paths
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
 
 // 1. Generate Dynamic Metadata for SEO & Social Sharing
 async function getBlogData(idOrSlug) {
   try {
-    const res = await fetch(`${BASE_URL}/api/blogs`, { cache: 'no-store' });
+    const res = await fetch(`${BASE_URL}/api/blogs`, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
-    const blogsList = Array.isArray(data) ? data : (data.blogs || []);
-    return blogsList.find(
-      (b) => b._id === idOrSlug || b.slug === idOrSlug || b.id === idOrSlug
-    ) || null;
+    const blogsList = Array.isArray(data) ? data : data.blogs || [];
+    return (
+      blogsList.find(
+        (b) => b._id === idOrSlug || b.slug === idOrSlug || b.id === idOrSlug,
+      ) || null
+    );
   } catch (err) {
     console.error("Error fetching blog for metadata:", err);
     return null;
@@ -29,14 +32,18 @@ export async function generateMetadata({ params }) {
 
   if (!blog) {
     return {
-      title: 'Article Not Found | My Blog',
-      description: 'The blog post you are looking for does not exist.',
+      title: "Article Not Found | My Blog",
+      description: "The blog post you are looking for does not exist.",
     };
   }
 
-  const seoTitle = blog.title || 'Blog Post';
+  const seoTitle = blog.title || "Blog Post";
   const seoDescription = blog.description || seoTitle;
-  const seoImage = blog.img ? (blog.img.startsWith('http') ? blog.img : `${BASE_URL}${blog.img}`) : `${BASE_URL}/default-og-image.jpg`;
+  const seoImage = blog.img
+    ? blog.img.startsWith("http")
+      ? blog.img
+      : `${BASE_URL}${blog.img}`
+    : `${BASE_URL}/default-og-image.jpg`;
 
   return {
     title: seoTitle,
@@ -53,12 +60,12 @@ export async function generateMetadata({ params }) {
           alt: blog.imgalt || seoTitle,
         },
       ],
-      type: 'article',
+      type: "article",
       publishedTime: blog.createdAt,
-      authors: [blog.postedby || 'Author'],
+      authors: [blog.postedby || "Author"],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: seoTitle,
       description: seoDescription,
       images: [seoImage],
@@ -76,8 +83,13 @@ export default async function SingleBlogPage({ params }) {
     return (
       <div className="min-h-screen bg-[#FAF7F3] flex flex-col items-center justify-center font-serif text-[#514C48] space-y-4 px-6 text-center">
         <h1 className="text-3xl text-[#111]">Article Not Found</h1>
-        <p className="text-sm text-[#514C48]/70">The blog post you're looking for doesn't exist or has been removed.</p>
-        <Link href="/" className="px-6 py-2.5 bg-[#111] text-[#FAF7F3] rounded-xl text-sm font-sans transition hover:bg-[#333]">
+        <p className="text-sm text-[#514C48]/70">
+          The blog post you're looking for doesn't exist or has been removed.
+        </p>
+        <Link
+          href="/"
+          className="px-6 py-2.5 bg-[#111] text-[#FAF7F3] rounded-xl text-sm font-sans transition hover:bg-[#333]"
+        >
           Return Home
         </Link>
       </div>
@@ -85,53 +97,66 @@ export default async function SingleBlogPage({ params }) {
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Recent';
+    if (!dateString) return "Recent";
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
+      return new Date(dateString).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
       });
     } catch {
-      return 'Recent';
+      return "Recent";
     }
   };
 
   const renderBlogDetailItem = (item, index, allDetails) => {
     switch (item.type) {
-      case 'Sub':
+      case "Sub":
         return (
-          <h2 key={index} className="text-2xl sm:text-3xl font-serif font-normal text-[#111] mt-8 mb-4 leading-snug w-full">
+          <h2
+            key={index}
+            className="text-2xl sm:text-3xl font-serif font-normal text-[#111] mt-8 mb-4 leading-snug w-full"
+          >
             {item.value}
           </h2>
         );
-      case 'description':
-        if (index > 0 && allDetails[index - 1]?.type === 'single-image') {
+      case "description":
+        if (index > 0 && allDetails[index - 1]?.type === "single-image") {
           return null;
         }
         return (
-          <p key={index} className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed mb-6 w-full">
+          <p
+            key={index}
+            className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed mb-6 w-full"
+          >
             {item.value}
           </p>
         );
-      case 'bullet':
+      case "bullet":
         return (
-          <ul key={index} className="list-disc list-inside space-y-2 mb-6 text-[#514C48]/90 text-base sm:text-lg font-light w-full">
+          <ul
+            key={index}
+            className="list-disc list-inside space-y-2 mb-6 text-[#514C48]/90 text-base sm:text-lg font-light w-full"
+          >
             <li className="leading-relaxed">{item.value}</li>
           </ul>
         );
-      case 'single-image':
+      case "single-image":
         const nextItem = allDetails[index + 1];
-        const hasAdjacentDescription = nextItem && nextItem.type === 'description';
+        const hasAdjacentDescription =
+          nextItem && nextItem.type === "description";
 
         if (hasAdjacentDescription) {
           return (
-            <div key={index} className="my-8 flex flex-col md:flex-row items-center gap-8 w-full">
+            <div
+              key={index}
+              className="my-8 flex flex-col md:flex-row items-center gap-8 w-full"
+            >
               <div className="w-full md:w-1/2 space-y-2 shrink-0">
                 <div className="relative w-full h-[500px] sm:h-[670px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
                   <Image
                     src={item.imageUrl}
-                    alt={item.value || 'Blog Image'}
+                    alt={item.value || "Blog Image"}
                     fill
                     className="object-contain"
                   />
@@ -154,19 +179,24 @@ export default async function SingleBlogPage({ params }) {
             <div className="relative w-full h-[500px] sm:h-[450px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
               <Image
                 src={item.imageUrl}
-                alt={item.value || 'Blog Image'}
+                alt={item.value || "Blog Image"}
                 fill
                 className="object-contain"
               />
             </div>
             {item.value && (
-              <p className="text-center text-xs font-sans text-[#514C48]/60 italic">{item.value}</p>
+              <p className="text-center text-xs font-sans text-[#514C48]/60 italic">
+                {item.value}
+              </p>
             )}
           </div>
         );
-      case 'double-image':
+      case "double-image":
         return (
-          <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8 w-full">
+          <div
+            key={index}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8 w-full"
+          >
             {item.imageUrls?.map((url, imgIdx) => (
               <div key={imgIdx} className="space-y-2">
                 <div className="relative w-full h-[250px] sm:h-[300px] rounded-2xl overflow-hidden bg-slate-100 shadow-md">
@@ -186,17 +216,22 @@ export default async function SingleBlogPage({ params }) {
             ))}
           </div>
         );
-      case 'youtube':
+      case "youtube":
         const getEmbedUrl = (urlStr) => {
           try {
-            const videoId = urlStr.includes('v=') ? urlStr.split('v=')[1]?.split('&')[0] : urlStr.split('/').pop();
+            const videoId = urlStr.includes("v=")
+              ? urlStr.split("v=")[1]?.split("&")[0]
+              : urlStr.split("/").pop();
             return `https://www.youtube.com/embed/${videoId}`;
           } catch {
             return urlStr;
           }
         };
         return (
-          <div key={index} className="my-8 aspect-video w-full rounded-2xl overflow-hidden shadow-lg bg-black">
+          <div
+            key={index}
+            className="my-8 aspect-video w-full rounded-2xl overflow-hidden shadow-lg bg-black"
+          >
             <iframe
               src={getEmbedUrl(item.value)}
               title="YouTube video player"
@@ -214,16 +249,17 @@ export default async function SingleBlogPage({ params }) {
   return (
     <main className="min-h-screen bg-[#FAF7F3] text-[#514C48] py-16 px-6 md:px-12 xl:px-20">
       <article className="max-w-4xl mx-auto space-y-10">
-        
         {/* Breadcrumb / Category & Date */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 bg-[#F3EDE2] border border-[#E6DEC9] px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-widest text-[#111] capitalize">
               <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
-              {blog.category || 'General'}
+              {blog.category || "General"}
             </span>
             <span className="text-xs font-sans text-[#514C48]/60">•</span>
-            <span className="text-xs font-sans text-[#514C48]/70">{formatDate(blog.createdAt)}</span>
+            <span className="text-xs font-sans text-[#514C48]/70">
+              {formatDate(blog.createdAt)}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-[#111] leading-tight">
@@ -231,7 +267,12 @@ export default async function SingleBlogPage({ params }) {
           </h1>
 
           <div className="flex items-center justify-between border-y border-[#E6DEC9] py-4 text-xs font-sans text-[#514C48]/80">
-            <span>By <strong className="text-[#111] font-medium">{blog.postedby || 'Author'}</strong></span>
+            <span>
+              By{" "}
+              <strong className="text-[#111] font-medium">
+                {blog.postedby || "Author"}
+              </strong>
+            </span>
             {blog.views !== undefined && <span>{blog.views} Views</span>}
           </div>
         </div>
@@ -258,13 +299,18 @@ export default async function SingleBlogPage({ params }) {
 
         {/* Dynamic Blog Details Content */}
         <div className="space-y-6">
-          {Array.isArray(blog.blog_detail) && blog.blog_detail.map((detail, index) => renderBlogDetailItem(detail, index, blog.blog_detail))}
+          {Array.isArray(blog.blog_detail) &&
+            blog.blog_detail.map((detail, index) =>
+              renderBlogDetailItem(detail, index, blog.blog_detail),
+            )}
         </div>
 
         {/* Tags Section */}
         {Array.isArray(blog.tags) && blog.tags.length > 0 && (
           <div className="pt-8 border-t border-[#E6DEC9] flex flex-wrap items-center gap-2">
-            <span className="text-xs font-sans uppercase tracking-wider text-[#514C48]/60 mr-2">Tags:</span>
+            <span className="text-xs font-sans uppercase tracking-wider text-[#514C48]/60 mr-2">
+              Tags:
+            </span>
             {blog.tags.map((tag, idx) => (
               <span
                 key={idx}
@@ -275,7 +321,11 @@ export default async function SingleBlogPage({ params }) {
             ))}
           </div>
         )}
-
+        {/* Comment Section Component */}
+        <BlogComments
+          blogId={blog._id.toString()}
+          initialComments={blog.comments || []}
+        />
       </article>
     </main>
   );
