@@ -55,11 +55,14 @@ export default function Hero() {
             </div>
             
             {/* Appointment Button (Centered Horizontally at Bottom of Image) */}
-            <div className="absolute bottom-[-80] left-1/2 -translate-x-1/2 z-30">
-              <Link href="/appointment" className="bg-[#8D4D5D] text-[#ffff] text-sm sm:text-base font-sans font-medium tracking-widest px-10 py-4 sm:px-12 sm:py-5 rounded-full hover:bg-[#A2596B] transition-colors shadow-lg inline-block whitespace-nowrap">
-                BOOK AN APPOINTMENT
-              </Link>
-            </div>
+         <div className="absolute bottom-[-80px] left-1/2 -translate-x-1/2 z-30">
+  <Link
+    href="/appointment"
+    className="bg-gradient-to-r from-[#8D4D5D] via-[#A2596B] to-[#8D4D5D] backdrop-blur-md border border-white/40 text-white text-sm sm:text-base font-sans font-medium tracking-widest px-10 py-4 sm:px-12 sm:py-5 rounded-full hover:bg-white hover:bg-none hover:border-[#8D4D5D] hover:text-[#8D4D5D] transition-all duration-300 shadow-2xl shadow-[#8D4D5D]/40 inline-block whitespace-nowrap hover:scale-105"
+  >
+    BOOK AN APPOINTMENT
+  </Link>
+</div>
           </div>
 
           {/* Right Column (Circle Badge & Footer Text) */}
