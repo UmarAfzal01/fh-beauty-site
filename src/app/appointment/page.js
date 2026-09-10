@@ -86,11 +86,15 @@ export default function AppointmentPage() {
   const dayButtonRefs = useRef([]);
 
   // Helper function to check if a specific time slot has already passed today
+// Helper function to check if a specific time slot has passed or is within the next 20 minutes
   const isTimeSlotPassed = (timeString, selectedIsoDate) => {
     const todayStr = new Date().toISOString().split("T")[0];
     if (selectedIsoDate !== todayStr) return false;
 
     const now = new Date();
+    // Add a 20-minute buffer to the current time
+    const bufferTime = new Date(now.getTime() + 20 * 60000);
+
     let [time, modifier] = timeString.split(" ");
     let [hours, minutes] = time.split(":").map(Number);
 
@@ -100,7 +104,8 @@ export default function AppointmentPage() {
     const slotDate = new Date();
     slotDate.setHours(hours, minutes, 0, 0);
 
-    return slotDate.getTime() <= now.getTime();
+    // Disable if the slot is in the past OR within the next 20 minutes
+    return slotDate.getTime() <= bufferTime.getTime();
   };
 
   // Helper to find the first valid (unbooked and unpassed) time slot index
@@ -109,6 +114,9 @@ export default function AppointmentPage() {
       const slot = timeSlots[i];
       const isBooked = currentBookedTimes.includes(slot);
       const isPast = isTimeSlotPassed(slot, dateIso);
+      
+      if (isPast && !isBooked) continue;
+
       if (!isBooked && !isPast) {
         return i;
       }
@@ -480,6 +488,10 @@ export default function AppointmentPage() {
                         const isSelected = index === selectedTimeIndex;
                         const isBooked = bookedTimes.includes(timeStr);
                         const isPast = isTimeSlotPassed(timeStr, currentDate);
+
+                        // Hide past time slots UNLESS they are booked
+                        if (isPast && !isBooked) return null;
+
                         const isDisabled = isBooked || isPast;
 
                         return (
@@ -491,15 +503,20 @@ export default function AppointmentPage() {
                             type="button"
                             disabled={isDisabled}
                             onClick={() => handleTimeSelect(index)}
-                            className={`flex-shrink-0 px-4 py-3 rounded-xl text-sm sm:text-base font-serif transition-all duration-300 border ${
+                            className={`flex-shrink-0 px-4 py-3 rounded-xl text-sm sm:text-base font-serif transition-all duration-300 border relative ${
                               isDisabled
-                                ? "bg-gray-100 text-gray-400 border-gray-200 opacity-50 cursor-not-allowed line-through"
+                                ? "bg-gray-100 text-gray-400 border-gray-200 opacity-75 cursor-not-allowed"
                                 : isSelected
                                 ? "bg-[#111] text-white border-[#111] shadow-md scale-105"
                                 : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/80 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
                             }`}
                           >
-                            {timeStr}
+                            <span>{timeStr}</span>
+                            {isBooked && (
+                              <span className="block text-[9px] uppercase tracking-wider text-green-600 font-sans font-semibold mt-0.5">
+                                Booked
+                              </span>
+                            )}
                           </button>
                         );
                       })}

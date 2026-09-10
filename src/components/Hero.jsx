@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
-export default function  Hero() {
+export default function Hero() {
   const [offsetY, setOffsetY] = useState(0);
 
   useEffect(() => {
@@ -41,8 +42,8 @@ export default function  Hero() {
             </h2>
           </div>
 
-          {/* Center Image Column */}
-          <div className="flex justify-center col-span-1 lg:col-span-3">
+          {/* Center Image Column with Centered Button Positioned at Bottom */}
+          <div className="flex justify-center col-span-1 lg:col-span-3 relative">
             <div className="relative w-[300px] sm:w-[350px] lg:w-[600px] h-[52vh] sm:h-[58vh] lg:h-[67vh] rounded-full overflow-hidden shadow-2xl shadow-[#514C48]/15">
               <Image 
                 src="/images/dr-warda.webp" 
@@ -51,6 +52,13 @@ export default function  Hero() {
                 className="object-cover object-center" 
                 priority
               />
+            </div>
+            
+            {/* Appointment Button (Centered Horizontally at Bottom of Image) */}
+            <div className="absolute bottom-[-80] left-1/2 -translate-x-1/2 z-30">
+              <Link href="/appointment" className="bg-[#8D4D5D] text-[#ffff] text-sm sm:text-base font-sans font-medium tracking-widest px-10 py-4 sm:px-12 sm:py-5 rounded-full hover:bg-[#A2596B] transition-colors shadow-lg inline-block whitespace-nowrap">
+                BOOK AN APPOINTMENT
+              </Link>
             </div>
           </div>
 

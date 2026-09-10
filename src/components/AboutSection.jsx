@@ -14,14 +14,12 @@ export default function AboutSection() {
         <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-[2.1rem] font-serif font-normal leading-[1.35] text-[#111] max-w-4xl mb-10">
           Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence
         </h2>
-         <p className="text-xl sm:text-1xl md:text-1xl lg:text-[1.4rem] font-serif font-light  leading-[1.35] text-[#111] max-w-4xl mb-10">
+         <p className="text-0.5xl sm:text-1xl md:text-1xl lg:text-[1.4rem] font-serif font-light  leading-[1.35] text-[#111] max-w-4xl mb-10">
           Dr. Warda Sikandar (Gold Medalist & Pioneer in Lifestyle Medicine) and her expert clinical team at Pakistan Wellness Center are bringing international treatment standards directly to you.
         </p>
 
         {/* Discover More Button */}
-        <Link href="/appointment" className="bg-[#F5E7E4] text-[#514C48] text-xs font-sans tracking-widest px-8 py-3.5 rounded-full hover:bg-[#EEDDD9] transition-colors ">
-          BOOK AN APPOINTMENT
-        </Link>
+        
 
         {/* Three Columns Features Grid with Dividers */}
         {/* <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 items-center">
