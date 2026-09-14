@@ -13,6 +13,7 @@ export async function POST(request, { params }) {
     await connectDB();
     const resolvedParams = await params;
     const blogId = resolvedParams.id;
+    const commentId = resolvedParams.commentId;
     const { name, email, message, img } = await request.json(); // <-- Add image here
 
     if (!name || !email || !message) {
@@ -24,22 +25,28 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
 
-    const newComment = {
+    const comment = blog.comments.id(commentId);
+    if (!comment) {
+      return NextResponse.json({ error: 'Parent comment not found' }, { status: 404 });
+    }
+
+    const newReply = {
       name,
       email,
       message,
       img, // <-- Include image here
       status: 'Active',
       postedAt: new Date(),
-      replies: [],
     };
 
-    blog.comments.push(newComment);
+    comment.replies.push(newReply);
     await blog.save();
 
-    return NextResponse.json({ success: true, comments: blog.comments }, { status: 201 });
+    const addedReply = comment.replies[comment.replies.length - 1];
+
+    return NextResponse.json({ success: true, reply: addedReply }, { status: 201 });
   } catch (err) {
-    console.error('Error posting comment:', err);
+    console.error('Error posting reply:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

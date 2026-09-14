@@ -13,7 +13,7 @@ export default function AppointmentPage() {
     email: "",
     patientType: "New Patient",
     appointmentFor: "Self",
-    service: "Clinic Consultation",
+    service: "",
     preferredDate: "",
     preferredTime: "09:00 AM",
     message: "",
@@ -23,6 +23,7 @@ export default function AppointmentPage() {
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
   const [bookedTimes, setBookedTimes] = useState([]);
+  const [servicesList, setServicesList] = useState([]);
 
   // Generate only from today onwards (up to 30 days) and flag Sundays
   const generateMonthDays = () => {
@@ -135,6 +136,26 @@ export default function AppointmentPage() {
     return 0;
   };
 
+  // Fetch services from API
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const res = await fetch("/api/services");
+        const data = await res.json();
+        if (res.ok && data.services) {
+          const names = data.services.map((s) => s.name);
+          setServicesList(names);
+          if (names.length > 0) {
+            setFormData((prev) => ({ ...prev, service: names[0] }));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch services:", err);
+      }
+    }
+    fetchServices();
+  }, []);
+
   // Auto-scroll active time slot into view when selected
   useEffect(() => {
     if (timeButtonRefs.current[selectedTimeIndex] && timeSliderRef.current) {
@@ -200,16 +221,6 @@ export default function AppointmentPage() {
       preferredTime: timeSlots[firstValidIdx],
     }));
   }, []);
-
-  const servicesList = [
-    "Clinic Consultation",
-    "Aesthetic Medicine",
-    "Wellness & Anti-Aging",
-    "Orthopedic Care",
-    "Maternity & Gynecology",
-    "Advanced Dermatology",
-    "Plastic Surgery",
-  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -647,9 +658,15 @@ export default function AppointmentPage() {
                       onChange={handleChange}
                       className="w-full bg-[#FAF7F3] border border-[#E0DED8] rounded-xl px-3 py-2.5 text-xs sm:text-sm text-[#111] focus:outline-none focus:border-[#7A5C58] focus:bg-white transition-all cursor-pointer"
                     >
-                      {servicesList.map((svc) => (
-                        <option key={svc} value={svc}>{svc}</option>
-                      ))}
+                      {servicesList.length === 0 ? (
+                        <option value="">Loading services...</option>
+                      ) : (
+                        servicesList.map((svc) => (
+                          <option key={svc} value={svc}>
+                            {svc}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
 

@@ -1,6 +1,7 @@
-import Link from 'next/link';
-import { MdDashboard, MdArticle, MdEventNote, MdLogout } from 'react-icons/md';
+import Link from "next/link";
+import { MdDashboard, MdArticle, MdEventNote, MdLogout } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { GrCatalog } from "react-icons/gr";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -10,8 +11,12 @@ export default function DashboardLayout({ children }) {
         <div className="space-y-8">
           {/* Logo / Brand */}
           <div>
-            <h2 className="text-xl font-serif font-medium text-[#111]">Admin Panel</h2>
-            <p className="text-xs text-[#514C48]/60 font-serif mt-0.5">Management Dashboard</p>
+            <h2 className="text-xl font-serif font-medium text-[#111]">
+              Admin Panel
+            </h2>
+            <p className="text-xs text-[#514C48]/60 font-serif mt-0.5">
+              Management Dashboard
+            </p>
           </div>
 
           {/* Navigation Links */}
@@ -44,7 +49,13 @@ export default function DashboardLayout({ children }) {
               <FaPeopleGroup size={20} />
               <span>Customers</span>
             </Link>
-
+            <Link
+              href="/dashboard/services"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] transition border border-transparent hover:border-[#E6DEC9]"
+            >
+              <GrCatalog size={20} />
+              <span>Services</span>
+            </Link>
           </nav>
         </div>
         {/* Bottom Section / Logout */}
