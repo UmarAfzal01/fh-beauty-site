@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { MdDashboard, MdArticle, MdEventNote, MdLogout } from "react-icons/md";
+import { MdDashboard, MdArticle, MdEventNote, MdLogout, MdInfo } from "react-icons/md"; // or standard react-icons import
+import { MdLocalHospital } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { GrCatalog } from "react-icons/gr";
 
@@ -29,6 +30,13 @@ export default function DashboardLayout({ children }) {
               <span>Dashboard</span>
             </Link>
             <Link
+              href="/dashboard/doctors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] transition border border-transparent hover:border-[#E6DEC9]"
+            >
+              <MdLocalHospital size={20} />
+              <span>Doctors</span>
+            </Link>
+            <Link
               href="/dashboard/blogs"
               className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] transition border border-transparent hover:border-[#E6DEC9]"
             >
@@ -55,6 +63,13 @@ export default function DashboardLayout({ children }) {
             >
               <GrCatalog size={20} />
               <span>Services</span>
+            </Link>
+            <Link
+              href="/dashboard/about"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] transition border border-transparent hover:border-[#E6DEC9]"
+            >
+              <MdInfo size={20} />
+              <span>About Page</span>
             </Link>
           </nav>
         </div>

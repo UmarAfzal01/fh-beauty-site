@@ -148,29 +148,25 @@ export default async function SingleBlogPage({ params }) {
 
         if (hasAdjacentDescription) {
           return (
-            <div
-              key={index}
-              className="my-8 flex flex-col md:flex-row items-center gap-8 w-full"
-            >
-              <div className="w-full md:w-1/2 space-y-2 shrink-0">
-                <div className="relative w-full h-[500px] sm:h-[670px] rounded-2xl overflow-hidden bg-slate-100 shadow-lg">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.value || "Blog Image"}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                {/* {item.value && (
-                  <p className="text-center text-xs font-sans text-[#514C48]/60 italic">{item.value}</p>
-                )} */}
-              </div>
-              <div className="w-full md:w-1/2">
-                <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
-                  {nextItem.value}
-                </p>
-              </div>
-            </div>
+         <div
+  key={index}
+  className="my-8 flex flex-col md:flex-row items-center gap-8 w-full"
+>
+  <div className="w-full md:w-1/2 space-y-2 shrink-0">
+  <div className="w-full">
+  <img
+    src={item.imageUrl}
+    alt={item.value || "Blog Image"}
+    className="w-full h-auto rounded-2xl shadow-lg object-contain" // or just w-full h-auto
+  />
+</div>
+  </div>
+  <div className="w-full md:w-1/2">
+    <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
+      {nextItem.value}
+    </p>
+  </div>
+</div>
           );
         }
 
