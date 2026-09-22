@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Appointment from '@/models/Appointment';
+import nodemailer from 'nodemailer';
+
+// Configure Nodemailer transporter (uses Gmail service shortcut)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 export async function GET(request) {
   try {
@@ -69,6 +79,43 @@ export async function POST(request) {
       message: message || '',
       status: 'pending',
     });
+
+    // Conditionally send email if an email address is provided
+    if (email && email.trim() !== '') {
+      try {
+        await transporter.sendMail({
+          from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+          to: email,
+          subject: `Appointment Request Pending: ${newAppointment.service}`,
+          html: `
+            <div style="font-family: Georgia, serif; color: #514C48; background-color: #FAF7F3; padding: 40px 20px; max-width: 600px; margin: 0 auto; border-radius: 24px;">
+              <div style="background-color: #ffffff; padding: 32px; border-radius: 20px; border: 1px solid #E0DED8;">
+                <h1 style="font-size: 24px; color: #111111; margin-top: 0; font-weight: normal;">Appointment Received (Pending)</h1>
+                <p style="font-size: 14px; color: #514C48; line-height: 1.6;">
+                  Dear <strong>${fullName}</strong>, we have received your appointment request. Our team will review and confirm shortly.
+                </p>
+                
+                <div style="margin: 24px 0; padding: 16px; background-color: #FAF7F3; border-radius: 12px; border: 1px solid rgba(224, 222, 216, 0.6);">
+                  <p style="margin: 4px 0; font-size: 13px;"><strong>Service:</strong> ${newAppointment.service}</p>
+                  <p style="margin: 4px 0; font-size: 13px;"><strong>Date:</strong> ${preferredDate}</p>
+                  <p style="margin: 4px 0; font-size: 13px;"><strong>Time:</strong> ${preferredTime}</p>
+                  <p style="margin: 4px 0; font-size: 13px;"><strong>Status:</strong> Pending Review</p>
+                </div>
+
+                ${message ? `<p style="font-size: 13px; color: #514C48;"><strong>Notes:</strong> ${message}</p>` : ''}
+                
+                <p style="font-size: 12px; color: rgba(81, 76, 72, 0.7); margin-top: 32px; border-top: 1px solid #E0DED8; padding-top: 16px;">
+                  Clinic Consultation Team • Thank you for choosing our care.
+                </p>
+              </div>
+            </div>
+          `,
+        });
+      } catch (emailError) {
+        console.error('Auto-mail sending failed:', emailError);
+        // We log the error, but don't fail the booking response if mail fails
+      }
+    }
 
     return NextResponse.json(
       {
