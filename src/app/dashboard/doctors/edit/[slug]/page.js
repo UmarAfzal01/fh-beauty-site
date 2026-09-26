@@ -6,7 +6,7 @@ import { IoMdTrash, IoMdAdd } from "react-icons/io";
 
 export default function EditDoctorPage({ params }) {
   const unwrappedParams = use(params);
-  const doctorId = unwrappedParams.id;
+  const slug = unwrappedParams.slug;
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -15,6 +15,7 @@ export default function EditDoctorPage({ params }) {
 
   const [formData, setFormData] = useState({
     name: "",
+    slug: "",
     image: "",
     designation: "",
     phone: "",
@@ -31,16 +32,17 @@ export default function EditDoctorPage({ params }) {
     },
   });
 
-  // Fetch existing doctor data on mount
+  // Fetch existing doctor data on mount using slug
   useEffect(() => {
     async function fetchDoctor() {
       try {
-        const res = await fetch(`/api/doctors/${doctorId}`);
+        const res = await fetch(`/api/doctors/${slug}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch doctor details");
         
         setFormData({
           name: data.data.name || "",
+          slug: data.data.slug || slug,
           image: data.data.image || "",
           designation: data.data.designation || "",
           phone: data.data.phone || "",
@@ -63,7 +65,7 @@ export default function EditDoctorPage({ params }) {
       }
     }
     fetchDoctor();
-  }, [doctorId]);
+  }, [slug]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -111,7 +113,7 @@ export default function EditDoctorPage({ params }) {
     setError("");
 
     try {
-      const res = await fetch(`/api/doctors/${doctorId}`, {
+      const res = await fetch(`/api/doctors/${slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -120,7 +122,8 @@ export default function EditDoctorPage({ params }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to update doctor");
 
-      router.push("/dashboard/doctors");
+      // If slug changed, push to the new slug path or general list
+      router.push(`/dashboard/doctors/edit/${formData.slug}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -162,6 +165,17 @@ export default function EditDoctorPage({ params }) {
                 name="name"
                 required
                 value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-[#E6DEC9] focus:outline-none focus:border-[#111] font-sans text-sm bg-[#FAF7F3]/30"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-sans uppercase tracking-wider mb-2 text-[#514C48]/80">Slug *</label>
+              <input
+                type="text"
+                name="slug"
+                required
+                value={formData.slug}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-[#E6DEC9] focus:outline-none focus:border-[#111] font-sans text-sm bg-[#FAF7F3]/30"
               />

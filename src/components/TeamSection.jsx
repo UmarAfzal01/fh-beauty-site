@@ -87,7 +87,7 @@ export default function TeamSection() {
               {/* Card Bottom: Open Profile Link & Social Icons */}
               <div className="pt-4 border-t border-[#E5DDD5] flex items-center justify-between">
                 <Link 
-                  href={`/doctors/${member._id}`} 
+                  href={`/doctors/${member.slug}`} 
                   className="text-xs font-sans uppercase tracking-[0.15em] text-[#111] font-medium hover:text-[#8D4D5D] transition-colors flex items-center gap-1"
                 >
                   OPEN PROFILE <span>↗</span>

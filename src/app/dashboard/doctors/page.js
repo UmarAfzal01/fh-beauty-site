@@ -75,8 +75,8 @@ export default function DoctorsListPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {doctors.map((doctor) => (
             <Link
-              href={`/dashboard/doctors/edit/${doctor._id}`}
-              key={doctor._id}
+              href={`/dashboard/doctors/edit/${doctor.slug}`}
+              key={doctor.slug}
               className="bg-white rounded-3xl border border-[#E6DEC9] overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition"
             >
               <div>

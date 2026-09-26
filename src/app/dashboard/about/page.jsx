@@ -6,7 +6,7 @@ import { LuHeading2 } from "react-icons/lu";
 import { BsTextParagraph } from "react-icons/bs";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { PiImage, PiColumns } from "react-icons/pi";
-import { MdDragIndicator } from "react-icons/md";
+import { MdDragIndicator, MdPersonAdd } from "react-icons/md";
 import toast, { Toaster } from "react-hot-toast";
 import { CldUploadButton } from "next-cloudinary";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -19,6 +19,10 @@ const AddAbout = () => {
   const [imgAlt, setImgAlt] = useState("");
   const [description, setDescription] = useState("");
   const [morefields, setMoreFields] = useState([]);
+  
+  // Doctor Selection States
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [selectedDoctors, setSelectedDoctors] = useState([]);
 
   // Accordion open/close state tracking ("hero" open by default)
   const [openSection, setOpenSection] = useState("hero");
@@ -37,12 +41,28 @@ const AddAbout = () => {
           setImgAlt(data.about.imgalt || "");
           setDescription(data.about.description || "");
           setMoreFields(data.about.about_detail || []);
+          setSelectedDoctors(data.about.doctors || []);
         }
       } catch (err) {
         console.error("Failed to fetch about data", err);
       }
     };
+
+    const fetchDoctorsList = async () => {
+      try {
+        const res = await fetch("/api/doctors");
+        const data = await res.json();
+        if (res.ok) {
+          // Adjust based on your API structure (e.g. data.data or data.doctors)
+          setAvailableDoctors(data.data || data.doctors || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch doctors list", err);
+      }
+    };
+
     fetchAboutData();
+    fetchDoctorsList();
   }, []);
 
   const toggleAccordion = (sectionKey) => {
@@ -97,6 +117,18 @@ const AddAbout = () => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     setMoreFields(items);
+  };
+
+  const handleDoctorToggle = (doctorId) => {
+    if (selectedDoctors.includes(doctorId)) {
+      setSelectedDoctors(selectedDoctors.filter((id) => id !== doctorId));
+    } else {
+      if (selectedDoctors.length >= 3) {
+        toast.error("You can select a maximum of 3 doctors.");
+        return;
+      }
+      setSelectedDoctors([...selectedDoctors, doctorId]);
+    }
   };
 
   const renderField = (field, index) => {
@@ -344,6 +376,7 @@ const AddAbout = () => {
             imgalt: imgAlt,
             description,
             about_detail: morefields,
+            doctors: selectedDoctors,
           }),
         });
 
@@ -447,7 +480,68 @@ const AddAbout = () => {
             )}
           </div>
 
-          {/* ACCORDION ITEM 2: Dynamic Content Blocks Section */}
+          {/* ACCORDION ITEM 2: Featured Doctors Selection Section */}
+          <div className="border border-[#E6DEC9] rounded-2xl overflow-hidden bg-[#F3EDE2]/30 transition-all">
+            <button
+              type="button"
+              onClick={() => toggleAccordion("doctors")}
+              className="w-full px-6 py-4 flex items-center justify-between bg-[#F3EDE2]/60 hover:bg-[#E6DEC9]/40 transition text-left"
+            >
+              <span className="font-serif font-medium text-lg text-[#111]">
+                2. Featured Doctors Selection ({selectedDoctors.length}/3 selected)
+              </span>
+              <IoIosArrowDown
+                size={20}
+                className={`transform transition-transform duration-300 ${
+                  openSection === "doctors" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openSection === "doctors" && (
+              <div className="p-6 bg-[#FAF7F3] border-t border-[#E6DEC9] space-y-4">
+                <p className="text-xs text-[#514C48]/70 font-serif">
+                  Select up to 3 doctors to display on your About page:
+                </p>
+
+                {availableDoctors.length === 0 ? (
+                  <p className="text-sm text-[#514C48]/50 italic">No doctors found. Please add doctors from your dashboard first.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {availableDoctors.map((doc) => {
+                      const docId = doc._id || doc.id;
+                      const isSelected = selectedDoctors.includes(docId);
+                      return (
+                        <div
+                          key={docId}
+                          onClick={() => handleDoctorToggle(docId)}
+                          className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-4 transition-all ${
+                            isSelected
+                              ? "bg-[#111] text-[#FAF7F3] border-[#111] shadow-md"
+                              : "bg-[#F3EDE2]/40 border-[#E6DEC9] hover:border-[#514C48]/40 text-[#514C48]"
+                          }`}
+                        >
+                          <img
+                            src={doc.image || DUMMY_IMAGE}
+                            alt={doc.name}
+                            className="w-12 h-12 rounded-full object-cover border border-neutral-300 shrink-0"
+                          />
+                          <div className="overflow-hidden">
+                            <h4 className="font-serif font-medium text-sm truncate">{doc.name}</h4>
+                            <p className={`text-xs truncate ${isSelected ? "text-neutral-300" : "text-[#514C48]/60"}`}>
+                              {doc.designation || "Doctor"}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ACCORDION ITEM 3: Dynamic Content Blocks Section */}
           <div className="border border-[#E6DEC9] rounded-2xl overflow-hidden bg-[#F3EDE2]/30 transition-all">
             <button
               type="button"
@@ -455,7 +549,7 @@ const AddAbout = () => {
               className="w-full px-6 py-4 flex items-center justify-between bg-[#F3EDE2]/60 hover:bg-[#E6DEC9]/40 transition text-left"
             >
               <span className="font-serif font-medium text-lg text-[#111]">
-                2. Additional Content Sections & Layouts ({morefields.length})
+                3. Additional Content Sections & Layouts ({morefields.length})
               </span>
               <IoIosArrowDown
                 size={20}

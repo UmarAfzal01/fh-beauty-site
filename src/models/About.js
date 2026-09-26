@@ -22,11 +22,44 @@ const AboutSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    // Using Mixed type allows you to save any object structure 
-    // (like triplet-batch, side-image, etc.) without strict schema validation errors
+    // Using Mixed type for flexible custom layouts/batches
     about_detail: [
       {
         type: mongoose.Schema.Types.Mixed, 
+      }
+    ],
+    // Array of Doctor references (storing ObjectIds as strings)
+    doctors: [
+      {
+        type: String,
+      }
+    ],
+    // Structured reviews section
+    reviews: [
+      {
+        image: {
+          type: String,
+          default: '',
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        email: {
+          type: String,
+          default: '',
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
+          default: 5,
+        },
+        message: {
+          type: String,
+          required: true,
+        },
       }
     ]
   },

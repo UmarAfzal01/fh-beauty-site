@@ -3,6 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BlogComments from "@/components/BlogComments";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BlogViewTracker from "@/components/BlogViewTracker";
 
 // Optional: Base URL for absolute Open Graph image paths
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
@@ -73,7 +76,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// 2. Client Component UI for Rendering the Blog Content
+// 2. Main Page Server Component
 export default async function SingleBlogPage({ params }) {
   const resolvedParams = await params;
   const idOrSlug = resolvedParams?.id || resolvedParams?.slug;
@@ -148,25 +151,25 @@ export default async function SingleBlogPage({ params }) {
 
         if (hasAdjacentDescription) {
           return (
-         <div
-  key={index}
-  className="my-8 flex flex-col md:flex-row items-center gap-8 w-full"
->
-  <div className="w-full md:w-1/2 space-y-2 shrink-0">
-  <div className="w-full">
-  <img
-    src={item.imageUrl}
-    alt={item.value || "Blog Image"}
-    className="w-full h-auto rounded-2xl shadow-lg object-contain" // or just w-full h-auto
-  />
-</div>
-  </div>
-  <div className="w-full md:w-1/2">
-    <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
-      {nextItem.value}
-    </p>
-  </div>
-</div>
+            <div
+              key={index}
+              className="my-8 flex flex-col md:flex-row items-center gap-8 w-full"
+            >
+              <div className="w-full md:w-1/2 space-y-2 shrink-0">
+                <div className="w-full">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.value || "Blog Image"}
+                    className="w-full h-auto rounded-2xl shadow-lg object-contain"
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-1/2">
+                <p className="text-base sm:text-lg font-light text-[#514C48]/90 leading-relaxed">
+                  {nextItem.value}
+                </p>
+              </div>
+            </div>
           );
         }
 
@@ -203,11 +206,6 @@ export default async function SingleBlogPage({ params }) {
                     className="object-cover"
                   />
                 </div>
-                {/* {item.value?.[imgIdx] && (
-                  <p className="text-center text-xs font-sans text-[#514C48]/60 italic">
-                    {item.value[imgIdx]}
-                  </p>
-                )} */}
               </div>
             ))}
           </div>
@@ -242,87 +240,101 @@ export default async function SingleBlogPage({ params }) {
     }
   };
 
+  const blogIdString = blog._id?.toString() || blog.id?.toString();
+
   return (
-    <main className="min-h-screen bg-[#FAF7F3] text-[#514C48] py-16 px-6 md:px-12 xl:px-20">
-      <article className="max-w-4xl mx-auto space-y-10">
-        {/* Breadcrumb / Category & Date */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-2 bg-[#F3EDE2] border border-[#E6DEC9] px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-widest text-[#111] capitalize">
-              <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
-              {blog.category || "General"}
-            </span>
-            <span className="text-xs font-sans text-[#514C48]/60">•</span>
-            <span className="text-xs font-sans text-[#514C48]/70">
-              {formatDate(blog.createdAt)}
-            </span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-[#111] leading-tight">
-            {blog.title}
-          </h1>
-
-          <div className="flex items-center justify-between border-y border-[#E6DEC9] py-4 text-xs font-sans text-[#514C48]/80">
-            <span>
-              By{" "}
-              <strong className="text-[#111] font-medium">
-                {blog.postedby || "Author"}
-              </strong>
-            </span>
-            {blog.views !== undefined && <span>{blog.views} Views</span>}
-          </div>
-        </div>
-
-        {/* Featured Image */}
-        {blog.img && (
-          <div className="relative w-full h-[350px] sm:h-[480px] rounded-3xl overflow-hidden shadow-xl bg-slate-200">
-            <Image
-              src={blog.img}
-              alt={blog.imgalt || blog.title}
-              fill
-              priority
-              className="object-cover"
-            />
-          </div>
-        )}
-
-        {/* Short Description / Excerpt */}
-        {blog.description && (
-          <p className="text-lg sm:text-xl font-serif italic text-[#111]/80 leading-relaxed bg-[#F3EDE2]/40 border-l-4 border-[#111] p-6 rounded-r-2xl">
-            {blog.description}
-          </p>
-        )}
-
-        {/* Dynamic Blog Details Content */}
-        <div className="space-y-6">
-          {Array.isArray(blog.blog_detail) &&
-            blog.blog_detail.map((detail, index) =>
-              renderBlogDetailItem(detail, index, blog.blog_detail),
-            )}
-        </div>
-
-        {/* Tags Section */}
-        {Array.isArray(blog.tags) && blog.tags.length > 0 && (
-          <div className="pt-8 border-t border-[#E6DEC9] flex flex-wrap items-center gap-2">
-            <span className="text-xs font-sans uppercase tracking-wider text-[#514C48]/60 mr-2">
-              Tags:
-            </span>
-            {blog.tags.map((tag, idx) => (
-              <span
-                key={idx}
-                className="text-xs bg-[#F3EDE2] border border-[#E6DEC9] px-3 py-1 rounded-lg font-serif text-[#111]"
-              >
-                #{tag}
+    <>
+      <Header />
+      <main className="min-h-screen bg-[#FAF7F3] text-[#514C48] py-16 px-6 md:px-12 xl:px-20">
+        <article className="max-w-4xl mx-auto space-y-10">
+          {/* Breadcrumb / Category & Date */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-2 bg-[#F3EDE2] border border-[#E6DEC9] px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-widest text-[#111] capitalize">
+                <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
+                {blog.category || "General"}
               </span>
-            ))}
+              <span className="text-xs font-sans text-[#514C48]/60">•</span>
+              <span className="text-xs font-sans text-[#514C48]/70">
+                {formatDate(blog.createdAt)}
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-[#111] leading-tight">
+              {blog.title}
+            </h1>
+
+            <div className="flex items-center justify-between border-y border-[#E6DEC9] py-4 text-xs font-sans text-[#514C48]/80">
+              <span>
+                By{" "}
+                <strong className="text-[#111] font-medium">
+                  {blog.postedby || "Author"}
+                </strong>
+              </span>
+              {blogIdString && (
+                <BlogViewTracker
+                  blogId={blogIdString}
+                  initialViews={blog.views}
+                />
+              )}
+            </div>
           </div>
-        )}
-        {/* Comment Section Component */}
-        <BlogComments
-          blogId={blog._id.toString()}
-          initialComments={blog.comments || []}
-        />
-      </article>
-    </main>
+
+          {/* Featured Image */}
+          {blog.img && (
+            <div className="relative w-full h-[350px] sm:h-[480px] rounded-3xl overflow-hidden shadow-xl bg-slate-200">
+              <Image
+                src={blog.img}
+                alt={blog.imgalt || blog.title}
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+          )}
+
+          {/* Short Description / Excerpt */}
+          {blog.description && (
+            <p className="text-lg sm:text-xl font-serif italic text-[#111]/80 leading-relaxed bg-[#F3EDE2]/40 border-l-4 border-[#111] p-6 rounded-r-2xl">
+              {blog.description}
+            </p>
+          )}
+
+          {/* Dynamic Blog Details Content */}
+          <div className="space-y-6">
+            {Array.isArray(blog.blog_detail) &&
+              blog.blog_detail.map((detail, index) =>
+                renderBlogDetailItem(detail, index, blog.blog_detail),
+              )}
+          </div>
+
+          {/* Tags Section */}
+          {Array.isArray(blog.tags) && blog.tags.length > 0 && (
+            <div className="pt-8 border-t border-[#E6DEC9] flex flex-wrap items-center gap-2">
+              <span className="text-xs font-sans uppercase tracking-wider text-[#514C48]/60 mr-2">
+                Tags:
+              </span>
+              {blog.tags.map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="text-xs bg-[#F3EDE2] border border-[#E6DEC9] px-3 py-1 rounded-lg font-serif text-[#111]"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Comment Section Component */}
+          {blogIdString && (
+            <BlogComments
+              blogId={blogIdString}
+              initialComments={blog.comments || []}
+            />
+          )}
+        </article>
+      </main>
+      <Footer />
+    </>
   );
 }

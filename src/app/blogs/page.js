@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function BlogMagazineLayout() {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +16,6 @@ export default function BlogMagazineLayout() {
         const res = await fetch('/api/blogs');
         const data = await res.json();
         if (res.ok) {
-          // Filter to show only Active blogs if status is available
           const activeBlogs = Array.isArray(data) 
             ? data.filter(b => !b.status || b.status === "Active")
             : (data.blogs || []).filter(b => !b.status || b.status === "Active");
@@ -33,7 +34,7 @@ export default function BlogMagazineLayout() {
   // Fallback data if no blogs exist in DB yet
   const fallbackHero = {
     title: 'Enhancing Team Collaboration with SaaS Products: A Game-Changer for Modern Workflows',
-    category: 'Category',
+    category: 'Aesthetics',
     createdAt: 'Aug 10',
     readTime: '10 min read',
     img: '/images/home-1-1.webp',
@@ -47,15 +48,26 @@ export default function BlogMagazineLayout() {
     { title: 'How to use color to influence user emotions and actions.', createdAt: 'Aug 10', readTime: '10 min read', img: '/images/home-1-4.webp', _id: '4' },
   ];
 
-  const fallbackFounders = [
-    { category: 'Category', title: 'Our people make the difference', description: 'We’re an extension of your customer service team, and all of our resources are free.', createdAt: 'Aug 10', readTime: '10 min read', img: '/images/home-1-1.webp', _id: 'f1' },
-    { category: 'Category', title: 'Our people make the difference', description: 'We’re an extension of your customer service team, and all of our resources are free.', createdAt: 'Aug 10', readTime: '10 min read', img: '/images/home-1-2.webp', _id: 'f2' },
-    { category: 'Category', title: 'Our people make the difference', description: 'We’re an extension of your customer service team, and all of our resources are free.', createdAt: 'Aug 10', readTime: '10 min read', img: '/images/home-1-3.webp', _id: 'f3' },
-  ];
-
+  // Top section assignments
   const heroPost = blogs.length > 0 ? blogs[0] : fallbackHero;
   const latestPosts = blogs.length > 1 ? blogs.slice(1, 5) : fallbackLatest;
-  const foundersCorner = blogs.length > 5 ? blogs.slice(5, 8) : fallbackFounders;
+
+  // Group blogs by category for dynamic category-based sections
+  const blogsToCategorize = blogs.length > 0 ? blogs : [
+    { category: 'Founders Corner', title: 'Our people make the difference', description: 'We’re an extension of your customer service team.', img: '/images/home-1-1.webp', _id: 'f1' },
+    { category: 'Founders Corner', title: 'Building sustainable workflows', description: 'Explore how we scale team culture effectively.', img: '/images/home-1-2.webp', _id: 'f2' },
+    { category: 'Aesthetics', title: 'Modern design trends explained', description: 'Deep dive into minimalist UI/UX components.', img: '/images/home-1-3.webp', _id: 'a1' }
+  ];
+
+  // Extract unique categories and map blogs to their respective category keys
+  const categoryMap = blogsToCategorize.reduce((acc, blog) => {
+    const cat = blog.category ? blog.category.trim() : 'General';
+    if (!acc[cat]) {
+      acc[cat] = [];
+    }
+    acc[cat].push(blog);
+    return acc;
+  }, {});
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Aug 10';
@@ -75,8 +87,10 @@ export default function BlogMagazineLayout() {
   }
 
   return (
+    <>
+    <Header/>
     <main className="w-full bg-[#FAF7F3] text-[#514C48] min-h-screen py-16 px-6 md:px-12 xl:px-20">
-      <div className="max-w-[1400px] mx-auto space-y-16">
+      <div className="max-w-[1400px] mx-auto space-y-20">
         
         {/* Top Section: Featured Hero Post (Left) & Latest Posts (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -149,66 +163,70 @@ export default function BlogMagazineLayout() {
 
         </div>
 
-        {/* Bottom Section: Founders Corner Cards */}
-        <div>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl sm:text-3xl font-serif font-normal text-[#111]">
-              Founders corner
-            </h2>
-            <div className="flex items-center gap-3">
-              <button className="w-10 h-10 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors">
-                ←
-              </button>
-              <button className="w-10 h-10 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors">
-                →
-              </button>
+        {/* Dynamic Category Sections: Generates a distinct section block for each unique category */}
+        {Object.entries(categoryMap).map(([categoryName, categoryBlogs]) => (
+          <div key={categoryName} className="space-y-8 pt-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl sm:text-3xl font-serif font-normal text-[#111] capitalize">
+                {categoryName}
+              </h2>
+              <div className="flex items-center gap-3">
+                <button className="w-10 h-10 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors">
+                  ←
+                </button>
+                <button className="w-10 h-10 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors">
+                  →
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categoryBlogs.map((item, index) => {
+                const itemId = item.slug || item._id || item.id || index;
+                return (
+                  <Link 
+                    key={itemId}
+                    href={`/blogs/${itemId}`}
+                    className="bg-white rounded-[32px] p-6 shadow-xl shadow-[#514C48]/5 border border-[#514C48]/10 group flex flex-col justify-between transition-all duration-500 hover:shadow-2xl hover:border-[#7A5C58]/30 block"
+                  >
+                    <div>
+                      <div className="relative w-full h-[200px] rounded-2xl overflow-hidden mb-6 bg-[#2A2625]">
+                        <Image 
+                          src={item.img || item.imageUrl || '/images/home-1-3.webp'} 
+                          alt={item.imgalt || item.title} 
+                          fill 
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+
+                      <div className="inline-flex items-center gap-2 bg-[#FAF7F3] px-3 py-1 rounded-full text-[10px] font-sans uppercase tracking-[0.2em] text-[#514C48] mb-3 capitalize">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" />
+                        {item.category || categoryName}
+                      </div>
+
+                      <h3 className="text-lg sm:text-xl font-serif text-[#111] mb-3 group-hover:text-[#7A5C58] transition-colors leading-snug">
+                        {item.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-[#514C48]/80 font-light leading-relaxed mb-6 line-clamp-3">
+                        {item.description || item.metaDescription || 'Read more about this post to learn key insights and updates.'}
+                      </p>
+                    </div>
+
+                    <div className="text-[11px] font-sans text-[#514C48]/60 pt-4 border-t border-[#514C48]/10 flex justify-between items-center">
+                      <span>{formatDate(item.createdAt)}</span>
+                      <span className="truncate max-w-[150px]">{item.postedby || '10 min read'}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {foundersCorner.map((item, index) => {
-              const itemId = item.slug || item._id || item.id || index;
-              return (
-                <Link 
-                  key={itemId}
-                  href={`/blogs/${itemId}`}
-                  className="bg-white rounded-[32px] p-6 shadow-xl shadow-[#514C48]/5 border border-[#514C48]/10 group flex flex-col justify-between transition-all duration-500 hover:shadow-2xl hover:border-[#7A5C58]/30 block"
-                >
-                  <div>
-                    <div className="relative w-full h-[200px] rounded-2xl overflow-hidden mb-6 bg-[#2A2625]">
-                      <Image 
-                        src={item.img || item.imageUrl || '/images/home-1-3.webp'} 
-                        alt={item.imgalt || item.title} 
-                        fill 
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-
-                    <div className="inline-flex items-center gap-2 bg-[#FAF7F3] px-3 py-1 rounded-full text-[10px] font-sans uppercase tracking-[0.2em] text-[#514C48] mb-3 capitalize">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" />
-                      {item.category || 'Category'}
-                    </div>
-
-                    <h3 className="text-lg sm:text-xl font-serif text-[#111] mb-3 group-hover:text-[#7A5C58] transition-colors leading-snug">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-xs sm:text-sm text-[#514C48]/80 font-light leading-relaxed mb-6 line-clamp-3">
-                      {item.description || item.metaDescription}
-                    </p>
-                  </div>
-
-                  <div className="text-[11px] font-sans text-[#514C48]/60 pt-4 border-t border-[#514C48]/10 flex justify-between items-center">
-                    <span>{formatDate(item.createdAt)}</span>
-                    <span className="truncate max-w-[150px]">{item.postedby}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+        ))}
 
       </div>
     </main>
+    <Footer/>
+ </>
   );
 }
