@@ -224,8 +224,9 @@ const AddAbout = () => {
                 </div>
 
                 <div className="flex flex-col gap-3 w-full md:w-1/2 bg-[#FAF7F3] p-4 rounded-xl border border-[#E6DEC9]">
-                  <img
-                    src={field.imageUrl || DUMMY_IMAGE}
+                <span >Image Size <span className="font-bold"> 700x580 </span></span>
+                  <img  
+                    src={field.imageUrl || "https://www.dummyimage.com/700x580/f3f3f3/000"}
                     alt={field.imgAlt || "Dummy Preview"}
                     className="w-full h-28 object-cover rounded-xl border border-[#E6DEC9]"
                   />
@@ -303,7 +304,7 @@ const AddAbout = () => {
                 onChange={(e) => handleNestedChange(index, "description", e.target.value)}
                 className="w-full bg-[#FAF7F3] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif resize-none"
               />
-
+              <span >Image Sizes <span className="font-bold"> Small : 380x380 Large : 580x680 </span></span>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[0, 1, 2].map((i) => {
                   const isMain = (field.mainImageIndex ?? 2) === i;
@@ -318,7 +319,7 @@ const AddAbout = () => {
                         Image #{i + 1} {isMain && "⭐ (Main)"}
                       </span>
                       <img
-                        src={field.imageUrls[i] || DUMMY_IMAGE}
+                        src={field.imageUrls[i] || "https://www.dummyimage.com/500x500/f3f3f3/000"}
                         alt={field.altTags[i] || `Dummy Preview ${i + 1}`}
                         className="w-full h-20 object-cover rounded-lg border border-[#E6DEC9]"
                       />
@@ -451,6 +452,7 @@ const AddAbout = () => {
 
                 <div className="flex flex-col gap-4 w-full justify-between bg-[#FAF7F3] p-6 rounded-2xl border border-[#E6DEC9]">
                   <div className="flex flex-col gap-4">
+                    <span >Image Size <span className="font-bold"> 1240x800 </span></span>
                     <div
                       className="w-full h-44 rounded-2xl bg-cover bg-center border border-[#E6DEC9] shadow-inner"
                       style={{
