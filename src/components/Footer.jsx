@@ -1,4 +1,7 @@
 import Image from 'next/image';
+import { AiFillInstagram } from "react-icons/ai";
+import { FaFacebook } from "react-icons/fa";
+import { FaSquareXTwitter } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -28,12 +31,11 @@ export default function Footer() {
               Address
             </h3>
             <p className="text-xs font-sans text-[#514C48]/90 leading-relaxed mb-4">
-              9 E 68th Street, 1C, New York,<br />
-              NY 10065
+              High Q Tower, Gulberg V, <br/> Lahore, 54000, Pakistan
             </p>
             <p className="text-xs font-sans text-[#514C48]/75 leading-relaxed">
-              Mon-Fri: 9am - 5pm; Sat: By<br />
-              Appointment Only
+              Mon - Sat (9:00 AM - 9:00 PM) By<br />
+              Dr Warda Sikander
             </p>
           </div>
 
@@ -45,11 +47,11 @@ export default function Footer() {
             <div className="space-y-2 mb-6 text-xs font-sans">
               <p className="flex items-center gap-2 text-[#514C48]/90 font-medium tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
-                +1 800-123-1234
+                +92 325 4777981
               </p>
               <p className="flex items-center gap-2 text-[#514C48]/90 font-medium tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
-                CLINIC@EXAMPLE.COM
+                drwardasikander@gmail.com
               </p>
             </div>
 
@@ -58,23 +60,23 @@ export default function Footer() {
               <a 
                 href="#facebook" 
                 aria-label="Facebook"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center transition-colors shadow-sm"
               >
-                f
+               <FaFacebook/>
               </a>
               <a 
                 href="#instagram" 
                 aria-label="Instagram"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center transition-colors shadow-sm"
               >
-                📷
+                <AiFillInstagram/>
               </a>
               <a 
                 href="#twitter" 
                 aria-label="X / Twitter"
-                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center text-xs text-[#514C48] transition-colors shadow-sm"
+                className="w-9 h-9 rounded-full bg-[#F5EFEA] hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center transition-colors shadow-sm"
               >
-                ✕
+                <FaSquareXTwitter/>
               </a>
             </div>
           </div>
@@ -86,10 +88,10 @@ export default function Footer() {
           
           {/* Footer Nav Links */}
           <div className="flex items-center gap-6">
-            <a href="#home" className="hover:text-[#8D4D5D] transition-colors">Home</a>
-            <a href="#about" className="hover:text-[#8D4D5D] transition-colors">About Us</a>
-            <a href="#blog" className="hover:text-[#8D4D5D] transition-colors">Blog Page</a>
-            <a href="#contacts" className="hover:text-[#8D4D5D] transition-colors">Contacts</a>
+            <a href="/" className="hover:text-[#8D4D5D] transition-colors">Home</a>
+            <a href="/about" className="hover:text-[#8D4D5D] transition-colors">About</a>
+            <a href="/blogs" className="hover:text-[#8D4D5D] transition-colors">Blogs</a>
+            <a href="/contact" className="hover:text-[#8D4D5D] transition-colors">Contacts</a>
           </div>
 
           {/* Copyright Text */}
