@@ -33,11 +33,11 @@ export default async function InstagramFeedSection() {
   const feedImages = livePosts.length > 0 ? livePosts : fallbackImages;
 
   return (
-    <section className="w-full bg-[#FAF7F3] py-16 px-6 md:px-12 xl:px-20 overflow-hidden">
+    <section className="w-full bg-[#FAF7F3] py-16 overflow-hidden">
       <div className="max-w mx-auto flex flex-col items-center">
         
         {/* Instagram Handle Header */}
-        <div className="w-full flex justify-center md:justify-start mb-8">
+        <div className="w-full flex justify-center md:justify-start mb-8 px-6 md:px-12 xl:px-20">
           <a 
             href="https://instagram.com/drwardasikandar" 
             target="_blank" 
@@ -48,28 +48,30 @@ export default async function InstagramFeedSection() {
           </a>
         </div>
 
-        {/* 6-Column Responsive Grid with Portrait/Rectangular Aspect Ratio */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 w-full">
-          {feedImages.map((item, index) => (
-            <a 
-              key={item.id || index} 
-              href={item.permalink} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group relative w-full aspect-[4/7] rounded-[24px] overflow-hidden bg-[#EBE4DE] shadow-sm hover:shadow-md transition-all duration-300 block"
-            >
-              <Image 
-                src={item.src} 
-                alt={item.alt} 
-                fill 
-                className="object-contain object-center group-hover:scale-105 transition-transform duration-500"
-              />
-              {/* Subtle hover overlay */}
-              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="text-white text-lg font-serif opacity-90">↗</span>
-              </div>
-            </a>
-          ))}
+        {/* Slider Container: Horizontal scroll on mobile/tablet, grid or auto-fit on desktop */}
+        <div className="w-full overflow-x-auto scrollbar-none px-6 md:px-12 xl:px-20 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-6 w-max lg:w-full">
+            {feedImages.map((item, index) => (
+              <a 
+                key={item.id || index} 
+                href={item.permalink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group relative w-[160px] sm:w-[200px] lg:w-full aspect-[4/7] flex-shrink-0 rounded-[24px] overflow-hidden bg-[#EBE4DE] shadow-sm hover:shadow-md transition-all duration-300 block"
+              >
+                <Image 
+                  src={item.src} 
+                  alt={item.alt} 
+                  fill 
+                  className="object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                />
+                {/* Subtle hover overlay */}
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-lg font-serif opacity-90">↗</span>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
 
       </div>
