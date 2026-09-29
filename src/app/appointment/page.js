@@ -66,7 +66,9 @@ export default function AppointmentPage() {
     return 0;
   };
 
-  const [selectedDayIndex, setSelectedDayIndex] = useState(() => findFirstAvailableDayIndex(0));
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() =>
+    findFirstAvailableDayIndex(0),
+  );
 
   // Generate 30-minute intervals from 09:00 AM to 09:00 PM
   const generateTimeSlots = () => {
@@ -121,12 +123,15 @@ export default function AppointmentPage() {
   };
 
   // Helper to find the first valid (unbooked and unpassed) time slot index
-  const findFirstValidTimeIndex = (dateIso, currentBookedTimes = bookedTimes) => {
+  const findFirstValidTimeIndex = (
+    dateIso,
+    currentBookedTimes = bookedTimes,
+  ) => {
     for (let i = 0; i < timeSlots.length; i++) {
       const slot = timeSlots[i];
       const isBooked = currentBookedTimes.includes(slot);
       const isPast = isTimeSlotPassed(slot, dateIso);
-      
+
       if (isPast && !isBooked) continue;
 
       if (!isBooked && !isPast) {
@@ -161,8 +166,12 @@ export default function AppointmentPage() {
     if (timeButtonRefs.current[selectedTimeIndex] && timeSliderRef.current) {
       const activeBtn = timeButtonRefs.current[selectedTimeIndex];
       const container = timeSliderRef.current;
-      
-      const scrollLeft = activeBtn.offsetLeft - container.offsetLeft - (container.clientWidth / 2) + (activeBtn.clientWidth / 2);
+
+      const scrollLeft =
+        activeBtn.offsetLeft -
+        container.offsetLeft -
+        container.clientWidth / 2 +
+        activeBtn.clientWidth / 2;
       container.scrollTo({ left: scrollLeft, behavior: "smooth" });
     }
   }, [selectedTimeIndex]);
@@ -196,7 +205,10 @@ export default function AppointmentPage() {
           const firstValidIdx = findFirstValidTimeIndex(currentDate, times);
           setSelectedTimeIndex(firstValidIdx);
           setSelectedTimeSlot(timeSlots[firstValidIdx]);
-          setFormData((f) => ({ ...f, preferredTime: timeSlots[firstValidIdx] }));
+          setFormData((f) => ({
+            ...f,
+            preferredTime: timeSlots[firstValidIdx],
+          }));
         }
       } catch (err) {
         console.error("Failed to fetch booked slots", err);
@@ -277,8 +289,12 @@ export default function AppointmentPage() {
 
   const handleTimeSelect = (index) => {
     const currentDate = daysList[selectedDayIndex]?.isoDate;
-    if (bookedTimes.includes(timeSlots[index]) || isTimeSlotPassed(timeSlots[index], currentDate)) return;
-    
+    if (
+      bookedTimes.includes(timeSlots[index]) ||
+      isTimeSlotPassed(timeSlots[index], currentDate)
+    )
+      return;
+
     setSelectedTimeIndex(index);
     setSelectedTimeSlot(timeSlots[index]);
     setFormData((prev) => ({ ...prev, preferredTime: timeSlots[index] }));
@@ -292,8 +308,13 @@ export default function AppointmentPage() {
       return;
     }
     const currentDate = currentDay.isoDate;
-    if (bookedTimes.includes(selectedTimeSlot) || isTimeSlotPassed(selectedTimeSlot, currentDate)) {
-      alert("This time slot is unavailable or has already passed. Please choose another slot.");
+    if (
+      bookedTimes.includes(selectedTimeSlot) ||
+      isTimeSlotPassed(selectedTimeSlot, currentDate)
+    ) {
+      alert(
+        "This time slot is unavailable or has already passed. Please choose another slot.",
+      );
       return;
     }
     setFormData((f) => ({
@@ -320,7 +341,8 @@ export default function AppointmentPage() {
     try {
       const finalPayload = {
         ...formData,
-        preferredDate: formData.preferredDate || daysList[selectedDayIndex].isoDate,
+        preferredDate:
+          formData.preferredDate || daysList[selectedDayIndex].isoDate,
         preferredTime: selectedTimeSlot,
       };
 
@@ -368,7 +390,6 @@ export default function AppointmentPage() {
   return (
     <main className="w-full min-h-[100svh] bg-[#FAF7F3] text-[#514C48] flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-x-hidden">
       <div className="w-full max-w-[1400px] bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl shadow-[#514C48]/10 grid grid-cols-1 lg:grid-cols-12 border border-[#E0DED8]/60 overflow-hidden my-auto">
-        
         {/* Left Side: Visual Showcase */}
         <div className="hidden lg:col-span-6 lg:block relative bg-[#EFECE6] min-h-[600px] overflow-hidden group">
           <Image
@@ -388,7 +409,8 @@ export default function AppointmentPage() {
               Clinic Hours: Mon – Sat (9:00 AM – 9:00 PM)
             </h2>
             <p className="text-sm text-white/85 font-light max-w-md">
-              Experience seamless booking with 30-minute interval medical and aesthetic consultation options.
+              Experience seamless booking with 30-minute interval medical and
+              aesthetic consultation options.
             </p>
           </div>
         </div>
@@ -396,7 +418,6 @@ export default function AppointmentPage() {
         {/* Right Side: Responsive Form Container */}
         <div className="lg:col-span-6 p-4 sm:p-8 lg:p-10 flex flex-col justify-between bg-[#FAF7F3]/40 w-full">
           <div className="max-w-xl mx-auto w-full">
-            
             <div className="mb-4 sm:mb-6 flex items-center justify-between border-b border-[#E0DED8]/60 pb-3">
               <div>
                 <span className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] text-[#7A5C58] font-bold block mb-0.5">
@@ -408,8 +429,12 @@ export default function AppointmentPage() {
               </div>
 
               <div className="flex items-center gap-1.5">
-                <div className={`h-2 rounded-full transition-all duration-500 ${step === 1 ? "w-8 bg-[#111]" : "w-2 bg-[#E0DED8]"}`} />
-                <div className={`h-2 rounded-full transition-all duration-500 ${step === 2 ? "w-8 bg-[#111]" : "w-2 bg-[#E0DED8]"}`} />
+                <div
+                  className={`h-2 rounded-full transition-all duration-500 ${step === 1 ? "w-8 bg-[#111]" : "w-2 bg-[#E0DED8]"}`}
+                />
+                <div
+                  className={`h-2 rounded-full transition-all duration-500 ${step === 2 ? "w-8 bg-[#111]" : "w-2 bg-[#E0DED8]"}`}
+                />
               </div>
             </div>
 
@@ -439,7 +464,6 @@ export default function AppointmentPage() {
             ) : step === 1 ? (
               <form onSubmit={handleNextStep} className="space-y-4">
                 <div className="bg-white rounded-[24px] sm:rounded-[32px] p-4 sm:p-6 shadow-sm border border-[#E0DED8]/80 space-y-4">
-                  
                   {/* Date Navigation Header */}
                   <div className="flex items-center justify-between px-1">
                     <button
@@ -473,7 +497,8 @@ export default function AppointmentPage() {
                         <button
                           key={day.dateString}
                           ref={(el) => {
-                            if (el) dayButtonRefs.current[day.originalIndex] = el;
+                            if (el)
+                              dayButtonRefs.current[day.originalIndex] = el;
                           }}
                           type="button"
                           disabled={isSunday}
@@ -482,14 +507,18 @@ export default function AppointmentPage() {
                             isSunday
                               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-80"
                               : isSelected
-                              ? "bg-[#111] text-white border-[#111] shadow-lg scale-105"
-                              : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/60 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
+                                ? "bg-[#111] text-white border-[#111] shadow-lg scale-105"
+                                : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/60 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
                           }`}
                         >
-                          <span className={`text-[9px] sm:text-[10px] font-sans uppercase tracking-wider mb-0.5 ${isSelected ? "text-white/70" : "text-[#514C48]/60"}`}>
+                          <span
+                            className={`text-[9px] sm:text-[10px] font-sans uppercase tracking-wider mb-0.5 ${isSelected ? "text-white/70" : "text-[#514C48]/60"}`}
+                          >
                             {day.dayName}
                           </span>
-                          <span className={`text-base sm:text-xl font-serif ${isSelected ? "font-bold text-white" : "font-medium text-[#111]"}`}>
+                          <span
+                            className={`text-base sm:text-xl font-serif ${isSelected ? "font-bold text-white" : "font-medium text-[#111]"}`}
+                          >
                             {day.dayNum}
                           </span>
 
@@ -510,7 +539,7 @@ export default function AppointmentPage() {
                       <span className="text-sm font-serif font-medium text-[#111]">
                         Select Time Slot (30 mins)
                       </span>
-                      
+
                       {/* Left & Right Time Navigation Buttons */}
                       <div className="flex items-center gap-1.5">
                         <button
@@ -532,7 +561,7 @@ export default function AppointmentPage() {
                       </div>
                     </div>
 
-                    <div 
+                    <div
                       ref={timeSliderRef}
                       className="flex items-center gap-3 overflow-x-auto pb-3 pt-1 scroll-smooth [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#FAF7F3] [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#E0DED8] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#7A5C58]"
                     >
@@ -559,8 +588,8 @@ export default function AppointmentPage() {
                               isDisabled
                                 ? "bg-gray-100 text-gray-400 border-gray-200 opacity-75 cursor-not-allowed"
                                 : isSelected
-                                ? "bg-[#111] text-white border-[#111] shadow-md scale-105"
-                                : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/80 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
+                                  ? "bg-[#111] text-white border-[#111] shadow-md scale-105"
+                                  : "bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/80 hover:bg-white hover:border-[#7A5C58] cursor-pointer"
                             }`}
                           >
                             <span>{timeStr}</span>
@@ -578,7 +607,8 @@ export default function AppointmentPage() {
                   <div className="pt-2 border-t border-[#E0DED8]/40 flex items-center justify-between text-xs sm:text-sm text-[#514C48]/80">
                     <span>Active Selection:</span>
                     <strong className="text-[#111] font-serif text-xs sm:text-sm truncate ml-2">
-                      {daysList[selectedDayIndex]?.dateString} @ {selectedTimeSlot}
+                      {daysList[selectedDayIndex]?.dateString} @{" "}
+                      {selectedTimeSlot}
                     </strong>
                   </div>
                 </div>
@@ -588,7 +618,9 @@ export default function AppointmentPage() {
                   className="w-full bg-[#111] hover:bg-[#7A5C58] text-white text-xs font-sans tracking-widest uppercase py-3.5 rounded-full transition-all duration-300 shadow-md cursor-pointer flex items-center justify-center gap-2 group"
                 >
                   <span>Proceed to Details</span>
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
                 </button>
               </form>
             ) : (
@@ -600,7 +632,10 @@ export default function AppointmentPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label htmlFor="fullName" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
+                      <label
+                        htmlFor="fullName"
+                        className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                      >
                         Full Name <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -616,8 +651,12 @@ export default function AppointmentPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="phone" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
-                        Phone / Whatsapp <span className="text-rose-500">*</span>
+                      <label
+                        htmlFor="phone"
+                        className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                      >
+                        Phone / Whatsapp{" "}
+                        <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="phone"
@@ -633,8 +672,14 @@ export default function AppointmentPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
-                      Email Address <span className="text-[#514C48]/40 normal-case">(Optional)</span>
+                    <label
+                      htmlFor="email"
+                      className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                    >
+                      Email Address{" "}
+                      <span className="text-[#514C48]/40 normal-case">
+                        (Optional)
+                      </span>
                     </label>
                     <input
                       id="email"
@@ -648,7 +693,10 @@ export default function AppointmentPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="service" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
+                    <label
+                      htmlFor="service"
+                      className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                    >
                       Select Service <span className="text-rose-500">*</span>
                     </label>
                     <select
@@ -658,21 +706,29 @@ export default function AppointmentPage() {
                       onChange={handleChange}
                       className="w-full bg-[#FAF7F3] border border-[#E0DED8] rounded-xl px-3 py-2.5 text-xs sm:text-sm text-[#111] focus:outline-none focus:border-[#7A5C58] focus:bg-white transition-all cursor-pointer"
                     >
-                      {servicesList.length === 0 ? (
-                        <option value="">Loading services...</option>
-                      ) : (
-                        servicesList.map((svc) => (
-                          <option key={svc} value={svc}>
-                            {svc}
-                          </option>
-                        ))
-                      )}
+                      <option value="" disabled>
+                        Select a service...
+                      </option>
+                      <option value="wedwell">Wedwell</option>
+                      <option value="health-wellness">Health & Wellness</option>
+                      <option value="aesthetics">Aesthetics </option>
+                      <option value="weight-loss">Weight Loss</option>
+                      <option value="advanced-dermatology">Advanced Dermatology</option>
+                      <option value="wellness-anti-aging">Wellness & Anti-Aging</option>
+                      <option value="aesthetic-medicine">Aesthetic Medicine</option>
+                      <option value="clinic-consultation">Clinic Consultation</option>
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium">
-                      Reason for Visit <span className="text-[#514C48]/40 normal-case">(Optional)</span>
+                    <label
+                      htmlFor="message"
+                      className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                    >
+                      Reason for Visit{" "}
+                      <span className="text-[#514C48]/40 normal-case">
+                        (Optional)
+                      </span>
                     </label>
                     <textarea
                       id="message"
@@ -696,7 +752,9 @@ export default function AppointmentPage() {
                         className="mt-0.5 accent-[#7A5C58] w-3.5 h-3.5 rounded cursor-pointer"
                       />
                       <span className="text-[11px] sm:text-xs text-[#514C48] leading-relaxed">
-                        I agree to privacy & communication guidelines regarding appointment alerts. <span className="text-rose-500">*</span>
+                        I agree to privacy & communication guidelines regarding
+                        appointment alerts.{" "}
+                        <span className="text-rose-500">*</span>
                       </span>
                     </label>
                   </div>
