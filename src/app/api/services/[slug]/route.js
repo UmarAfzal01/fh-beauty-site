@@ -40,3 +40,24 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ success: false, error: error.message || 'Failed to update service' }, { status: 400 });
   }
 }
+
+// DELETE: Remove an existing service by slug
+export async function DELETE(request, { params }) {
+  try {
+    await connectDB();
+
+    // Await params to unwrap the Promise in Next.js App Router
+    const { slug } = await params;
+
+    const deletedService = await Service.findOneAndDelete({ slug });
+
+    if (!deletedService) {
+      return NextResponse.json({ success: false, error: 'Service not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: 'Service deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Delete Service Error:', error);
+    return NextResponse.json({ success: false, error: error.message || 'Failed to delete service' }, { status: 400 });
+  }
+}

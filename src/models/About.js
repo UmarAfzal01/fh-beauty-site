@@ -34,6 +34,12 @@ const AboutSchema = new mongoose.Schema(
         type: String,
       }
     ],
+    // Array of Service references (storing ObjectIds as strings)
+    services: [
+      {
+        type: String,
+      }
+    ],
     // Structured reviews section
     reviews: [
       {
