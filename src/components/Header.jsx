@@ -36,7 +36,7 @@ export default function Header() {
           <img className="w-full h-full object-cover" src="https://res.cloudinary.com/wapixih0/image/upload/v1790707283/Logo.png" alt="" />
         </div>
         <span className="font-serif tracking-[0.2em] text-[#111] text-lg sm:text-xl font-normal">
-          DR WARDA SIKANDER
+          Pakistan Wellness Center 
         </span>
       </Link>
 
