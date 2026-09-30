@@ -361,10 +361,10 @@ export default function AdminServicesPage() {
                   {/* Hero Image Upload */}
                   <div className="flex flex-col gap-4 w-full justify-between bg-[#FAF7F3] p-6 rounded-2xl border border-[#EBE4DE]">
                     <div className="space-y-3">
-                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Hero Background Image</label>
+                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Hero Background Image (1024x702)</label>
                       <div
                         className="w-full h-40 sm:h-48 rounded-xl bg-cover bg-center border border-[#EBE4DE] shadow-inner"
-                        style={{ backgroundImage: `url(${form.hero.image || "https://res.cloudinary.com/dgtk4rthy/image/upload/v1756465642/Blog-Size_bzpiux.jpg"})` }}
+                        style={{ backgroundImage: `url(${form.hero.image || "https://www.dummyimage.com/1024x702/f3f3f3/000"})` }}
                       ></div>
                     </div>
                     <CldUploadButton
@@ -448,10 +448,10 @@ export default function AdminServicesPage() {
                   {/* How it works Image Upload */}
                   <div className="flex flex-col gap-4 w-full justify-between bg-[#FAF7F3] p-6 rounded-2xl border border-[#EBE4DE]">
                     <div className="space-y-3">
-                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Section Visual Graphic</label>
+                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Section Visual Graphic (1024x875)</label>
                       <div
                         className="w-full h-40 sm:h-48 rounded-xl bg-cover bg-center border border-[#EBE4DE] shadow-inner"
-                        style={{ backgroundImage: `url(${form.howItWorks.image || "https://res.cloudinary.com/dgtk4rthy/image/upload/v1756465642/Blog-Size_bzpiux.jpg"})` }}
+                        style={{ backgroundImage: `url(${form.howItWorks.image || "https://www.dummyimage.com/1024x875/f3f3f3/000"})` }}
                       ></div>
                     </div>
                     <CldUploadButton
@@ -520,10 +520,10 @@ export default function AdminServicesPage() {
                   {/* Requirements Image Upload */}
                   <div className="flex flex-col gap-4 w-full justify-between bg-[#FAF7F3] p-6 rounded-2xl border border-[#EBE4DE]">
                     <div className="space-y-3">
-                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Requirements Graphic Banner</label>
+                      <label className="text-[11px] font-sans uppercase tracking-wider text-[#514C48]/70 font-semibold block">Requirements Graphic Banner (768x934)</label>
                       <div
                         className="w-full h-40 sm:h-48 rounded-xl bg-cover bg-center border border-[#EBE4DE] shadow-inner"
-                        style={{ backgroundImage: `url(${form.candidateRequirements.image || "https://res.cloudinary.com/dgtk4rthy/image/upload/v1756465642/Blog-Size_bzpiux.jpg"})` }}
+                        style={{ backgroundImage: `url(${form.candidateRequirements.image || "https://www.dummyimage.com/768x934/f3f3f3/000"})` }}
                       ></div>
                     </div>
                     <CldUploadButton
