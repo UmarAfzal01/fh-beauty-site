@@ -6,7 +6,7 @@ import { LuHeading2 } from "react-icons/lu";
 import { BsTextParagraph } from "react-icons/bs";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { PiImage, PiColumns } from "react-icons/pi";
-import { MdDragIndicator, MdPersonAdd } from "react-icons/md";
+import { MdDragIndicator, MdMedicalServices, MdDelete, MdStar } from "react-icons/md";
 import toast, { Toaster } from "react-hot-toast";
 import { CldUploadButton } from "next-cloudinary";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -23,6 +23,13 @@ const AddAbout = () => {
   // Doctor Selection States
   const [availableDoctors, setAvailableDoctors] = useState([]);
   const [selectedDoctors, setSelectedDoctors] = useState([]);
+
+  // Service Selection States
+  const [availableServices, setAvailableServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+
+  // Reviews State
+  const [reviews, setReviews] = useState([]);
 
   // Accordion open/close state tracking ("hero" open by default)
   const [openSection, setOpenSection] = useState("hero");
@@ -42,6 +49,8 @@ const AddAbout = () => {
           setDescription(data.about.description || "");
           setMoreFields(data.about.about_detail || []);
           setSelectedDoctors(data.about.doctors || []);
+          setSelectedServices(data.about.services || []);
+          setReviews(data.about.reviews || []);
         }
       } catch (err) {
         console.error("Failed to fetch about data", err);
@@ -53,7 +62,6 @@ const AddAbout = () => {
         const res = await fetch("/api/doctors");
         const data = await res.json();
         if (res.ok) {
-          // Adjust based on your API structure (e.g. data.data or data.doctors)
           setAvailableDoctors(data.data || data.doctors || []);
         }
       } catch (err) {
@@ -61,8 +69,27 @@ const AddAbout = () => {
       }
     };
 
+    const fetchServicesList = async () => {
+      try {
+        const res = await fetch("/api/services");
+        const data = await res.json();
+        if (res.ok) {
+          const formattedServices = (data.data || data.services || []).map((s) => ({
+            _id: s._id,
+            title: s.hero?.name || s.title || s.name,
+            image: s.hero?.image || s.image,
+            category: s.category || "Service",
+          }));
+          setAvailableServices(formattedServices);
+        }
+      } catch (err) {
+        console.error("Failed to fetch services list", err);
+      }
+    };
+
     fetchAboutData();
     fetchDoctorsList();
+    fetchServicesList();
   }, []);
 
   const toggleAccordion = (sectionKey) => {
@@ -128,6 +155,37 @@ const AddAbout = () => {
         return;
       }
       setSelectedDoctors([...selectedDoctors, doctorId]);
+    }
+  };
+
+  const handleServiceToggle = (serviceId) => {
+    if (selectedServices.includes(serviceId)) {
+      setSelectedServices(selectedServices.filter((id) => id !== serviceId));
+    } else {
+      setSelectedServices([...selectedServices, serviceId]);
+    }
+  };
+
+  // Delete Review Handler
+  const handleDeleteReview = async (reviewId) => {
+    if (!confirm("Are you sure you want to delete this review?")) return;
+
+    try {
+      const res = await fetch(`/api/about/reviews`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setReviews(data.reviews);
+        toast.success("Review deleted successfully");
+      } else {
+        toast.error(data.message || "Failed to delete review");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error while deleting review");
     }
   };
 
@@ -224,7 +282,7 @@ const AddAbout = () => {
                 </div>
 
                 <div className="flex flex-col gap-3 w-full md:w-1/2 bg-[#FAF7F3] p-4 rounded-xl border border-[#E6DEC9]">
-                <span >Image Size <span className="font-bold"> 700x580 </span></span>
+                  <span>Image Size <span className="font-bold"> 700x580 </span></span>
                   <img  
                     src={field.imageUrl || "https://www.dummyimage.com/700x580/f3f3f3/000"}
                     alt={field.imgAlt || "Dummy Preview"}
@@ -304,7 +362,7 @@ const AddAbout = () => {
                 onChange={(e) => handleNestedChange(index, "description", e.target.value)}
                 className="w-full bg-[#FAF7F3] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif resize-none"
               />
-              <span >Image Sizes <span className="font-bold"> Small : 380x380 Large : 580x680 </span></span>
+              <span>Image Sizes <span className="font-bold"> Small : 380x380 Large : 580x680 </span></span>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[0, 1, 2].map((i) => {
                   const isMain = (field.mainImageIndex ?? 2) === i;
@@ -378,6 +436,7 @@ const AddAbout = () => {
             description,
             about_detail: morefields,
             doctors: selectedDoctors,
+            services: selectedServices,
           }),
         });
 
@@ -452,7 +511,7 @@ const AddAbout = () => {
 
                 <div className="flex flex-col gap-4 w-full justify-between bg-[#FAF7F3] p-6 rounded-2xl border border-[#E6DEC9]">
                   <div className="flex flex-col gap-4">
-                    <span >Image Size <span className="font-bold"> 1240x800 </span></span>
+                    <span>Image Size <span className="font-bold"> 1240x800 </span></span>
                     <div
                       className="w-full h-44 rounded-2xl bg-cover bg-center border border-[#E6DEC9] shadow-inner"
                       style={{
@@ -543,7 +602,74 @@ const AddAbout = () => {
             )}
           </div>
 
-          {/* ACCORDION ITEM 3: Dynamic Content Blocks Section */}
+          {/* ACCORDION ITEM 3: Featured Services Selection Section */}
+          <div className="border border-[#E6DEC9] rounded-2xl overflow-hidden bg-[#F3EDE2]/30 transition-all">
+            <button
+              type="button"
+              onClick={() => toggleAccordion("services")}
+              className="w-full px-6 py-4 flex items-center justify-between bg-[#F3EDE2]/60 hover:bg-[#E6DEC9]/40 transition text-left"
+            >
+              <span className="font-serif font-medium text-lg text-[#111]">
+                3. Featured Services Selection ({selectedServices.length} selected)
+              </span>
+              <IoIosArrowDown
+                size={20}
+                className={`transform transition-transform duration-300 ${
+                  openSection === "services" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openSection === "services" && (
+              <div className="p-6 bg-[#FAF7F3] border-t border-[#E6DEC9] space-y-4">
+                <p className="text-xs text-[#514C48]/70 font-serif">
+                  Select services to display on your About page:
+                </p>
+
+                {availableServices.length === 0 ? (
+                  <p className="text-sm text-[#514C48]/50 italic">No services found. Please add services from your dashboard first.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {availableServices.map((service) => {
+                      const serviceId = service._id || service.id;
+                      const isSelected = selectedServices.includes(serviceId);
+                      return (
+                        <div
+                          key={serviceId}
+                          onClick={() => handleServiceToggle(serviceId)}
+                          className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-4 transition-all ${
+                            isSelected
+                              ? "bg-[#111] text-[#FAF7F3] border-[#111] shadow-md"
+                              : "bg-[#F3EDE2]/40 border-[#E6DEC9] hover:border-[#514C48]/40 text-[#514C48]"
+                          }`}
+                        >
+                          {service.image ? (
+                            <img
+                              src={service.image}
+                              alt={service.title || service.name}
+                              className="w-12 h-12 rounded-xl object-cover border border-neutral-300 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-xl bg-[#F3EDE2] flex items-center justify-center shrink-0 border border-neutral-300">
+                              <MdMedicalServices size={20} />
+                            </div>
+                          )}
+                          <div className="overflow-hidden">
+                            <h4 className="font-serif font-medium text-sm truncate">{service.title || service.name}</h4>
+                            <p className={`text-xs truncate ${isSelected ? "text-neutral-300" : "text-[#514C48]/60"}`}>
+                              {service.category || "Service"}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ACCORDION ITEM 4: Dynamic Content Blocks Section */}
           <div className="border border-[#E6DEC9] rounded-2xl overflow-hidden bg-[#F3EDE2]/30 transition-all">
             <button
               type="button"
@@ -551,7 +677,7 @@ const AddAbout = () => {
               className="w-full px-6 py-4 flex items-center justify-between bg-[#F3EDE2]/60 hover:bg-[#E6DEC9]/40 transition text-left"
             >
               <span className="font-serif font-medium text-lg text-[#111]">
-                3. Additional Content Sections & Layouts ({morefields.length})
+                4. Additional Content Sections & Layouts ({morefields.length})
               </span>
               <IoIosArrowDown
                 size={20}
@@ -649,6 +775,75 @@ const AddAbout = () => {
             )}
           </div>
 
+          {/* ACCORDION ITEM 5: Manage Reviews Section */}
+          <div className="border border-[#E6DEC9] rounded-2xl overflow-hidden bg-[#F3EDE2]/30 transition-all">
+            <button
+              type="button"
+              onClick={() => toggleAccordion("reviews")}
+              className="w-full px-6 py-4 flex items-center justify-between bg-[#F3EDE2]/60 hover:bg-[#E6DEC9]/40 transition text-left"
+            >
+              <span className="font-serif font-medium text-lg text-[#111]">
+                5. Manage Reviews ({reviews.length})
+              </span>
+              <IoIosArrowDown
+                size={20}
+                className={`transform transition-transform duration-300 ${
+                  openSection === "reviews" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {openSection === "reviews" && (
+              <div className="p-6 bg-[#FAF7F3] border-t border-[#E6DEC9] space-y-4">
+                <p className="text-xs text-[#514C48]/70 font-serif">
+                  View and manage customer reviews submitted on the About page:
+                </p>
+
+                {reviews.length === 0 ? (
+                  <p className="text-sm text-[#514C48]/50 italic">No reviews found.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {reviews.map((rev) => (
+                      <div
+                        key={rev._id}
+                        className="bg-[#F3EDE2]/40 border border-[#E6DEC9] rounded-2xl p-4 flex items-start justify-between gap-4"
+                      >
+                        <div className="flex items-start gap-3">
+                          <img
+                            src={rev.image || DUMMY_IMAGE}
+                            alt={rev.name}
+                            className="w-10 h-10 rounded-full object-cover border border-[#E6DEC9] shrink-0 mt-1"
+                          />
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-serif font-medium text-sm text-[#111]">{rev.name}</h4>
+                              <span className="text-xs text-[#514C48]/50">({rev.email})</span>
+                            </div>
+                            <div className="flex items-center text-amber-500 gap-0.5">
+                              {[...Array(5)].map((_, i) => (
+                                <MdStar key={i} size={14} className={i < rev.rating ? "text-amber-500" : "text-neutral-300"} />
+                              ))}
+                            </div>
+                            <p className="text-xs font-serif text-[#514C48] pt-1">{rev.message || rev.reviewText}</p>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReview(rev._id)}
+                          className="bg-red-500/10 hover:bg-red-500/20 text-red-600 p-2.5 rounded-xl transition shrink-0"
+                          title="Delete Review"
+                        >
+                          <MdDelete size={18} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Submit Actions */}
           <div className="flex items-center gap-4 pt-4 border-t border-[#E6DEC9]">
             <button 
@@ -660,16 +855,18 @@ const AddAbout = () => {
             </button>
             <a 
               href="/dashboard" 
-              className="bg-[#F3EDE2] hover:bg-[#E6DEC9] text-[#514C48] font-medium px-8 py-4 rounded-2xl transition text-center font-sans border border-[#E6DEC9]"
+              className="bg-[#F3EDE2] hover:bg-[#E6DEC9] text-[#514C48] font-medium px-8 py-4 rounded-2xl transition text-center font-sans"
             >
               Cancel
             </a>
           </div>
         </form>
       </main>
-      <Toaster />
+      <Toaster position="bottom-right" />
     </>
   );
 };
+
+AddAbout.displayName = "AddAbout";
 
 export default AddAbout;

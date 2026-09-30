@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import AboutView from "@/components/AboutView";
+import AboutView from "@/components/about/AboutView";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
