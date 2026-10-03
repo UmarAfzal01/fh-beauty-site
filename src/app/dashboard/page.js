@@ -1,30 +1,36 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { FiFileText, FiPlusCircle, FiTag, FiEye, FiTrendingUp, FiArrowUpRight, FiEdit3, FiCalendar, FiBarChart2 } from "react-icons/fi";
+import { FiFileText, FiPlusCircle, FiTag, FiEye, FiTrendingUp, FiArrowUpRight, FiEdit3, FiCalendar, FiBarChart2, FiClock } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
 
 const Dashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [blogRes, catRes] = await Promise.all([
+        const [blogRes, catRes, appRes] = await Promise.all([
           fetch("/api/blogs"),
-          fetch("/api/categories")
+          fetch("/api/categories"),
+          fetch("/api/appointments")
         ]);
 
         const blogData = await blogRes.json();
         const catData = await catRes.json();
+        const appData = await appRes.json();
 
         if (blogRes.ok) {
           setBlogs(Array.isArray(blogData) ? blogData : blogData.blogs || []);
         }
         if (catRes.ok) {
           setCategories(catData.categories || []);
+        }
+        if (appRes.ok) {
+          setAppointments(Array.isArray(appData) ? appData : appData.appointments || appData.data || []);
         }
       } catch (err) {
         console.error(err);
@@ -43,6 +49,15 @@ const Dashboard = () => {
   // Aggregate metrics
   const totalViews = blogs.reduce((acc, blog) => acc + (blog.views || blog.viewCount || 0), 0);
   const maxViews = Math.max(...blogs.map(b => b.views || b.viewCount || 0), 1);
+
+  // Appointment calculations
+  const totalAppointments = appointments.length;
+  const todayStr = new Date().toDateString();
+  const todaysAppointmentsCount = appointments.filter(app => {
+    const appDate = app.date || app.appointmentDate || app.createdAt;
+    if (!appDate) return false;
+    return new Date(appDate).toDateString() === todayStr;
+  }).length;
 
   if (loading) {
     return (
@@ -67,7 +82,7 @@ const Dashboard = () => {
                 Welcome, Dr Warda Sikander <span className="inline-block animate-wave">👋</span>
               </h1>
               <p className="text-sm font-serif text-[#514C48]/70">
-                Manage blogs, track total views, and review performance — all in one place.
+                Manage blogs, track total views, review appointments, and performance — all in one place.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -83,8 +98,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* 3 Metric Cards Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 4 Metric Cards Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Card 1: Total Blogs */}
             <div className="bg-white p-7 rounded-3xl border border-[#E6DEC9] shadow-xs space-y-4 relative overflow-hidden">
@@ -117,26 +132,44 @@ const Dashboard = () => {
               <div className="flex items-baseline justify-between pt-2">
                 <h3 className="text-4xl font-serif font-normal text-[#111]">{totalViews.toLocaleString()}</h3>
                 <span className="text-xs font-sans font-medium text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full flex items-center gap-1">
-                  <FiTrendingUp size={12} /> +12% vs last month
+                  <FiTrendingUp size={12} /> +12%
                 </span>
               </div>
             </div>
 
-            {/* Card 3: Active vs Inactive */}
+            {/* Card 3: Total Appointments */}
             <div className="bg-white p-7 rounded-3xl border border-[#E6DEC9] shadow-xs space-y-4 relative overflow-hidden">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-serif uppercase tracking-wider text-[#514C48]/60">
                   <span className="p-2 bg-[#FAF7F3] border border-[#E6DEC9] rounded-xl text-[#111]">
-                    <FiBarChart2 size={14} />
+                    <FiCalendar size={14} />
                   </span>
-                  Blog Status
+                  Total Appointments
                 </div>
               </div>
               <div className="flex items-baseline justify-between pt-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-4xl font-serif font-normal text-emerald-700">{activeBlogsCount}</h3>
-                  <span className="text-sm font-serif text-[#514C48]/40">/ {inactiveBlogsCount} Inactive</span>
+                <h3 className="text-4xl font-serif font-normal text-[#111]">{totalAppointments}</h3>
+                <span className="text-xs font-sans font-medium text-[#111] bg-[#FAF7F3] border border-[#E6DEC9] px-2.5 py-1 rounded-full flex items-center gap-1">
+                  All Time
+                </span>
+              </div>
+            </div>
+
+            {/* Card 4: Today's Appointments */}
+            <div className="bg-white p-7 rounded-3xl border border-[#E6DEC9] shadow-xs space-y-4 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-serif uppercase tracking-wider text-[#514C48]/60">
+                  <span className="p-2 bg-[#FAF7F3] border border-[#E6DEC9] rounded-xl text-[#111]">
+                    <FiClock size={14} />
+                  </span>
+                  Today's Appointments
                 </div>
+              </div>
+              <div className="flex items-baseline justify-between pt-2">
+                <h3 className="text-4xl font-serif font-normal text-emerald-700">{todaysAppointmentsCount}</h3>
+                <span className="text-xs font-sans font-medium text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <FiTrendingUp size={12} /> Today
+                </span>
               </div>
             </div>
 
@@ -179,7 +212,7 @@ const Dashboard = () => {
                     {blogs.slice(0, 6).map((blog, idx) => {
                       const views = blog.views || blog.viewCount || 0;
                       const heightPercent = Math.max(Math.round((views / maxViews) * 100), 15);
-                      const isHighlighted = idx === 2; // Mimics the selected dark bar in the reference image
+                      const isHighlighted = idx === 2;
 
                       return (
                         <div key={blog._id || idx} className="flex flex-col items-center gap-2 h-full justify-end group relative">

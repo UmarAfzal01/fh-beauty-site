@@ -14,10 +14,32 @@ export default function DashboardAppointmentsPage() {
   // Popup modal state for full customer details view
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
+  // Edit/Reschedule modal state
+  const [editingAppointment, setEditingAppointment] = useState(null);
+
+  // Edit modal day slider offset
+  const [editDayOffset, setEditDayOffset] = useState(0);
+
   // State to track which row's three-dot dropdown menu is open and its button coordinates
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [dropdownCoords, setDropdownCoords] = useState({ top: 0, right: 0 });
   const dropdownRef = useRef(null);
+
+  // Generate 30-minute time slots from 09:00 AM to 09:00 PM
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 9; hour <= 21; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        if (hour === 21 && minute > 0) break;
+        const h24 = hour % 12 === 0 ? 12 : hour % 12;
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const formattedMinute = String(minute).padStart(2, '0');
+        slots.push(`${String(h24).padStart(2, '0')}:${formattedMinute} ${ampm}`);
+      }
+    }
+    return slots;
+  };
+  const timeSlots = generateTimeSlots();
 
   const fetchAppointments = async () => {
     try {
@@ -29,6 +51,7 @@ export default function DashboardAppointmentsPage() {
         ? data 
         : data.appointments || data.data || [];
         
+      console.log('--- FETCHED APPOINTMENTS ---', fetchedArray);
       setAppointments(fetchedArray);
     } catch (err) {
       setError(err.message);
@@ -69,7 +92,6 @@ export default function DashboardAppointmentsPage() {
         prev.map((app) => (app._id === id || app.id === id ? { ...app, status: nextStatus } : app))
       );
 
-      // If modal is open, update its appointments state as well
       setSelectedCustomer((prev) => {
         if (!prev) return null;
         const updatedAppointments = prev.appointments.map((app) =>
@@ -77,6 +99,37 @@ export default function DashboardAppointmentsPage() {
         );
         return { ...prev, appointments: updatedAppointments };
       });
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editingAppointment) return;
+
+    try {
+      const recordId = editingAppointment._id || editingAppointment.id;
+      const res = await fetch(`/api/appointments/${recordId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          preferredDate: editingAppointment.preferredDate,
+          preferredTime: editingAppointment.preferredTime,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to update appointment schedule');
+
+      const updatedRecord = result.data || result;
+
+      setAppointments((prev) =>
+        prev.map((app) => ((app._id || app.id) === recordId ? updatedRecord : app))
+      );
+
+      setEditingAppointment(null);
+      alert('Appointment schedule updated successfully!');
     } catch (err) {
       alert(err.message);
     }
@@ -95,7 +148,6 @@ export default function DashboardAppointmentsPage() {
 
       setAppointments((prev) => prev.filter((app) => (app._id || app.id) !== id));
 
-      // If modal is open, remove it from modal appointments and close if empty
       setSelectedCustomer((prev) => {
         if (!prev) return null;
         const remaining = prev.appointments.filter((app) => (app._id || app.id) !== id);
@@ -107,7 +159,6 @@ export default function DashboardAppointmentsPage() {
     }
   };
 
-  // Helper to get today's date in YYYY-MM-DD format
   const getTodayString = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -120,13 +171,11 @@ export default function DashboardAppointmentsPage() {
     setSelectedDate(getTodayString());
   };
 
-  // Function to open customer details modal by gathering all appointments for this customer
   const handleViewCustomerDetails = (appointment) => {
     const targetEmail = (appointment.email || '').toLowerCase().trim();
     const targetPhone = (appointment.phone || '').toLowerCase().trim();
     const targetName = (appointment.fullName || '').toLowerCase().trim();
 
-    // Find all appointments matching this customer (by email, phone, or name)
     const customerAppointments = appointments.filter((app) => {
       const appEmail = (app.email || '').toLowerCase().trim();
       const appPhone = (app.phone || '').toLowerCase().trim();
@@ -147,7 +196,6 @@ export default function DashboardAppointmentsPage() {
     });
   };
 
-  // Toggle dropdown and calculate absolute positioning relative to the viewport/document
   const handleToggleDropdown = (e, recordId) => {
     e.stopPropagation();
     if (openDropdownId === recordId) {
@@ -162,17 +210,57 @@ export default function DashboardAppointmentsPage() {
     }
   };
 
-  // Filter appointments based on search query (phone or email) and date selection
+  const getBookedSlotsForDate = (dateStr, currentAppId) => {
+    if (!dateStr) return new Set();
+    const targetDate = dateStr.split('T')[0];
+    const booked = new Set();
+    appointments.forEach((app) => {
+      const appId = app._id || app.id;
+      const appDate = app.preferredDate ? app.preferredDate.split('T')[0] : '';
+      if (appId !== currentAppId && appDate === targetDate && app.preferredTime) {
+        booked.add(app.preferredTime);
+      }
+    });
+    console.log(`--- BOOKED SLOTS FOR DATE [${targetDate}] (Excluding ID: ${currentAppId}) ---`, Array.from(booked));
+    return booked;
+  };
+
   const filteredAppointments = appointments.filter((app) => {
     const query = searchQuery.toLowerCase().trim();
     const phoneMatch = app.phone ? app.phone.toLowerCase().includes(query) : false;
     const emailMatch = app.email ? app.email.toLowerCase().includes(query) : false;
     const matchesSearch = !query || phoneMatch || emailMatch;
 
-    const matchesDate = !selectedDate || (app.preferredDate && app.preferredDate.includes(selectedDate));
+    const appDateClean = app.preferredDate ? app.preferredDate.split('T')[0] : '';
+    const matchesDate = !selectedDate || appDateClean.includes(selectedDate);
 
     return matchesSearch && matchesDate;
   });
+
+  const getModalVisibleDays = () => {
+    const days = [];
+    const baseDate = new Date();
+    baseDate.setDate(baseDate.getDate() + editDayOffset);
+
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const dateString = `${yyyy}-${mm}-${dd}`;
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+      const dayNum = String(d.getDate()).padStart(2, '0');
+      const isSunday = d.getDay() === 0;
+
+      days.push({ dateString, dayName, dayNum, isSunday });
+    }
+    return days;
+  };
+
+  // Pre-calculate booked slots for the active editing appointment
+  const currentRecordId = editingAppointment ? (editingAppointment._id || editingAppointment.id) : null;
+  const bookedSet = editingAppointment ? getBookedSlotsForDate(editingAppointment.preferredDate, currentRecordId) : new Set();
 
   if (loading) {
     return (
@@ -281,6 +369,7 @@ export default function DashboardAppointmentsPage() {
                     const status = app.status || 'pending';
                     const isActive = status === 'active';
                     const recordId = app._id || app.id;
+                    const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : '';
 
                     return (
                       <tr key={recordId} className="hover:bg-[#FAF7F3]/50 transition-colors">
@@ -292,7 +381,7 @@ export default function DashboardAppointmentsPage() {
                         </td>
                         <td className="p-4">{app.service}</td>
                         <td className="p-4 whitespace-nowrap">
-                          <span className="font-medium text-[#111]">{app.preferredDate}</span>
+                          <span className="font-medium text-[#111]">{cleanDate}</span>
                           <span className="block text-xs text-[#514C48]/70">{app.preferredTime}</span>
                         </td>
                         <td className="p-4 whitespace-nowrap">
@@ -314,7 +403,6 @@ export default function DashboardAppointmentsPage() {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end">
-                            {/* Three Dots Button */}
                             <button
                               onClick={(e) => handleToggleDropdown(e, recordId)}
                               className="w-9 h-9 rounded-xl bg-[#FAF7F3] border border-[#E0DED8] flex items-center justify-center text-[#111] hover:border-[#111] transition-all cursor-pointer shadow-sm font-bold text-lg"
@@ -333,7 +421,7 @@ export default function DashboardAppointmentsPage() {
           </div>
         </div>
 
-        {/* Absolutely Positioned Dropdown Menu (Escapes table overflow scrollbar clipping) */}
+        {/* Absolutely Positioned Dropdown Menu */}
         {openDropdownId && (
           <div
             ref={dropdownRef}
@@ -365,6 +453,27 @@ export default function DashboardAppointmentsPage() {
                   <button
                     onClick={() => {
                       setOpenDropdownId(null);
+                      console.log('--- OPENING EDIT MODAL FOR APPOINTMENT ---', app);
+                      const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : getTodayString();
+                      if (cleanDate) {
+                        const today = new Date();
+                        today.setHours(0,0,0,0);
+                        const target = new Date(cleanDate + 'T00:00:00');
+                        const diffTime = target.getTime() - today.getTime();
+                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        setEditDayOffset(Math.max(0, diffDays));
+                      } else {
+                        setEditDayOffset(0);
+                      }
+                      setEditingAppointment({ ...app, preferredDate: cleanDate });
+                    }}
+                    className="w-full px-4 py-2.5 text-xs font-sans uppercase tracking-wider text-[#111] hover:bg-[#FAF7F3] transition flex items-center gap-2.5 cursor-pointer"
+                  >
+                    <span>✏️</span> Edit Date & Time
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOpenDropdownId(null);
                       handleToggleStatus(recordId, status);
                     }}
                     className="w-full px-4 py-2.5 text-xs font-sans uppercase tracking-wider text-[#111] hover:bg-[#FAF7F3] transition flex items-center gap-2.5 cursor-pointer"
@@ -383,6 +492,149 @@ export default function DashboardAppointmentsPage() {
                 </>
               );
             })()}
+          </div>
+        )}
+
+        {/* Edit Date & Time Modal */}
+        {editingAppointment && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-[24px] border border-[#E0DED8] max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between border-b border-[#E0DED8] pb-4">
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-[#514C48]/60 font-sans block mb-1">Reschedule Appointment</span>
+                  <h3 className="text-xl font-serif font-medium text-[#111]">{editingAppointment.fullName}</h3>
+                </div>
+                <button
+                  onClick={() => setEditingAppointment(null)}
+                  className="w-8 h-8 rounded-full bg-[#FAF7F3] border border-[#E0DED8] flex items-center justify-center text-xs font-sans text-[#111] hover:bg-[#E0DED8] transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEdit} className="space-y-6">
+                {/* Date Slider Section */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setEditDayOffset((prev) => Math.max(0, prev - 5))}
+                      className="w-8 h-8 rounded-xl bg-[#FAF7F3] border border-[#E0DED8] flex items-center justify-center text-sm font-bold text-[#111] hover:bg-[#E0DED8] transition cursor-pointer"
+                    >
+                      &lt;
+                    </button>
+                    <span className="text-sm font-serif font-medium text-[#111]">
+                      {editingAppointment.preferredDate 
+                        ? new Date(editingAppointment.preferredDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                        : 'Select Date'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setEditDayOffset((prev) => prev + 5)}
+                      className="w-8 h-8 rounded-xl bg-[#FAF7F3] border border-[#E0DED8] flex items-center justify-center text-sm font-bold text-[#111] hover:bg-[#E0DED8] transition cursor-pointer"
+                    >
+                      &gt;
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-5 gap-2">
+                    {getModalVisibleDays().map((day) => {
+                      const isSelected = editingAppointment.preferredDate === day.dateString;
+                      const isSunday = day.isSunday;
+
+                      return (
+                        <button
+                          key={day.dateString}
+                          type="button"
+                          disabled={isSunday}
+                          onClick={() => {
+                            if (!isSunday) {
+                              console.log('--- SELECTED NEW DATE IN MODAL ---', day.dateString);
+                              setEditingAppointment({ 
+                                ...editingAppointment, 
+                                preferredDate: day.dateString
+                              });
+                            }
+                          }}
+                          className={`aspect-square rounded-2xl p-2 flex flex-col items-center justify-center transition-all duration-300 relative border ${
+                            isSunday
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-80'
+                              : isSelected
+                              ? 'bg-[#111] text-white border-[#111] shadow-lg scale-105'
+                              : 'bg-[#FAF7F3] text-[#514C48] border-[#E0DED8]/60 hover:bg-white hover:border-[#7A5C58] cursor-pointer'
+                          }`}
+                        >
+                          <span className={`text-[9px] uppercase tracking-wider mb-0.5 ${isSelected ? 'text-white/70' : 'text-[#514C48]/60'}`}>
+                            {day.dayName}
+                          </span>
+                          <span className={`text-base sm:text-lg font-serif ${isSelected ? 'font-bold text-white' : 'font-medium text-[#111]'}`}>
+                            {day.dayNum}
+                          </span>
+                          {isSunday && (
+                            <span className="absolute inset-x-1 bottom-1 bg-rose-100 text-rose-800 text-[8px] uppercase tracking-wider font-bold py-0.5 rounded text-center shadow-xs">
+                              Closed
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Time Slots Grid Section (9 AM to 9 PM) */}
+                <div className="space-y-3">
+                  <label className="block text-xs font-sans uppercase tracking-wider text-[#514C48]/70">
+                    Select Time Slot (30 mins) — Active Date: {editingAppointment.preferredDate || 'None'}
+                  </label>
+
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-3 bg-[#FAF7F3] rounded-2xl border border-[#E0DED8]/80 max-h-60 overflow-y-auto">
+                    {timeSlots.map((slot) => {
+                      const isBooked = bookedSet.has(slot);
+                      const isSelected = editingAppointment.preferredTime === slot;
+
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={isBooked}
+                          onClick={() => {
+                            console.log('--- SELECTED TIME SLOT ---', slot);
+                            setEditingAppointment({ ...editingAppointment, preferredTime: slot });
+                          }}
+                          className={`py-2 px-2 rounded-xl border text-xs font-medium transition-all text-center block ${
+                            isBooked
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60 line-through'
+                              : isSelected
+                              ? 'bg-[#111] text-white border-[#111] shadow-md scale-105'
+                              : 'bg-white text-[#514C48] border-[#E0DED8] hover:border-[#111] cursor-pointer'
+                          }`}
+                        >
+                          <span>{slot}</span>
+                          {isBooked && <span className="block text-[8px] text-rose-500 font-normal">Booked</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[#E0DED8] flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditingAppointment(null)}
+                    className="px-5 py-2.5 bg-[#FAF7F3] border border-[#E0DED8] text-[#111] rounded-xl text-xs font-sans uppercase tracking-widest hover:border-[#111] transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!editingAppointment.preferredDate || !editingAppointment.preferredTime}
+                    className="px-6 py-2.5 bg-[#111] text-white rounded-xl text-xs font-sans uppercase tracking-widest hover:bg-[#333] transition cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 
@@ -415,6 +667,7 @@ export default function DashboardAppointmentsPage() {
                     const status = app.status || 'pending';
                     const isActive = status === 'active';
                     const recordId = app._id || app.id;
+                    const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : '';
 
                     return (
                       <div key={recordId || appIdx} className="bg-[#FAF7F3] p-4 rounded-xl border border-[#E0DED8]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -432,12 +685,32 @@ export default function DashboardAppointmentsPage() {
                             </span>
                           </div>
                           <p className="text-xs text-[#514C48]/70">
-                            {app.preferredDate} at {app.preferredTime} {app.appointmentFor ? `• (${app.appointmentFor})` : ''}
+                            {cleanDate} at {app.preferredTime} {app.appointmentFor ? `• (${app.appointmentFor})` : ''}
                           </p>
                         </div>
                         
-                        {/* Action buttons inside the modal item */}
                         <div className="flex items-center gap-2 self-end sm:self-auto">
+                          <button
+                            onClick={() => {
+                              setSelectedCustomer(null);
+                              console.log('--- OPENING EDIT MODAL FROM CUSTOMER DETAILS FOR ---', app);
+                              const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : getTodayString();
+                              if (cleanDate) {
+                                const today = new Date();
+                                today.setHours(0,0,0,0);
+                                const target = new Date(cleanDate + 'T00:00:00');
+                                const diffTime = target.getTime() - today.getTime();
+                                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                                setEditDayOffset(Math.max(0, diffDays));
+                              } else {
+                                setEditDayOffset(0);
+                              }
+                              setEditingAppointment({ ...app, preferredDate: cleanDate });
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-[10px] font-sans uppercase tracking-wider bg-white border border-[#E0DED8] text-[#111] hover:border-[#111] transition-all cursor-pointer shadow-sm whitespace-nowrap"
+                          >
+                            Edit
+                          </button>
                           <button
                             onClick={() => handleToggleStatus(recordId, status)}
                             className={`px-3 py-1.5 rounded-lg text-[10px] font-sans uppercase tracking-wider transition-all cursor-pointer shadow-sm whitespace-nowrap ${
