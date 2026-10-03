@@ -2,8 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function AppointmentPage() {
+  const searchParams = useSearchParams();
+  const bundleParam = searchParams.get("bundle");
+
   const [step, setStep] = useState(1);
   const [mounted, setMounted] = useState(false);
 
@@ -13,7 +18,7 @@ export default function AppointmentPage() {
     email: "",
     patientType: "New Patient",
     appointmentFor: "Self",
-    service: "",
+    service: bundleParam ? decodeURIComponent(bundleParam) : "",
     preferredDate: "",
     preferredTime: "09:00 AM",
     message: "",
@@ -106,7 +111,6 @@ export default function AppointmentPage() {
     if (selectedIsoDate !== todayStr) return false;
 
     const now = new Date();
-    // Add a 20-minute buffer to the current time
     const bufferTime = new Date(now.getTime() + 20 * 60000);
 
     let [time, modifier] = timeString.split(" ");
@@ -118,7 +122,6 @@ export default function AppointmentPage() {
     const slotDate = new Date();
     slotDate.setHours(hours, minutes, 0, 0);
 
-    // Disable if the slot is in the past OR within the next 20 minutes
     return slotDate.getTime() <= bufferTime.getTime();
   };
 
@@ -141,8 +144,16 @@ export default function AppointmentPage() {
     return 0;
   };
 
-  // Fetch services from API
+  // Fetch services from API if no bundle parameter is present
   useEffect(() => {
+    if (bundleParam) {
+      setFormData((prev) => ({
+        ...prev,
+        service: decodeURIComponent(bundleParam),
+      }));
+      return;
+    }
+
     async function fetchServices() {
       try {
         const res = await fetch("/api/services");
@@ -159,7 +170,7 @@ export default function AppointmentPage() {
       }
     }
     fetchServices();
-  }, []);
+  }, [bundleParam]);
 
   // Auto-scroll active time slot into view when selected
   useEffect(() => {
@@ -248,7 +259,7 @@ export default function AppointmentPage() {
       while (newIndex >= 0 && daysList[newIndex].isSunday) {
         newIndex--;
       }
-      if (newIndex < 0) return prev; // Don't move if blocked by a Sunday or start limit
+      if (newIndex < 0) return prev;
       setFormData((f) => ({ ...f, preferredDate: daysList[newIndex].isoDate }));
       return newIndex;
     });
@@ -279,7 +290,7 @@ export default function AppointmentPage() {
   };
 
   const handleDaySelect = (index) => {
-    if (daysList[index].isSunday) return; // Prevent selecting Sunday
+    if (daysList[index].isSunday) return;
     setSelectedDayIndex(index);
     setFormData((prev) => ({
       ...prev,
@@ -449,17 +460,18 @@ export default function AppointmentPage() {
                 <p className="text-xs sm:text-sm text-[#514C48]/90 mb-6 font-light leading-relaxed">
                   Your slot has been securely logged in our database.
                 </p>
-                <button
-                  onClick={() => {
-                    setSubmitted(false);
-                    setStep(1);
-                    setFormData(initialFormState);
-                    window.location.reload();
-                  }}
+                <Link
+                  href="/services"
+                  // onClick={() => {
+                  //   setSubmitted(false);
+                  //   setStep(1);
+                  //   setFormData(initialFormState);
+                  //   window.location.reload();
+                  // }}
                   className="bg-[#111] hover:bg-[#7A5C58] text-white text-xs font-sans tracking-widest uppercase py-3.5 px-8 rounded-full transition-all cursor-pointer shadow-md"
                 >
-                  Book Another Session
-                </button>
+                  Explore Services
+                </Link>
               </div>
             ) : step === 1 ? (
               <form onSubmit={handleNextStep} className="space-y-4">
@@ -570,7 +582,6 @@ export default function AppointmentPage() {
                         const isBooked = bookedTimes.includes(timeStr);
                         const isPast = isTimeSlotPassed(timeStr, currentDate);
 
-                        // Hide past time slots UNLESS they are booked
                         if (isPast && !isBooked) return null;
 
                         const isDisabled = isBooked || isPast;
@@ -692,33 +703,58 @@ export default function AppointmentPage() {
                     />
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="service"
-                      className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
-                    >
-                      Select Service <span className="text-rose-500">*</span>
-                    </label>
-                    <select
-                      id="service"
-                      name="service"
-                      value={formData.service}
-                      onChange={handleChange}
-                      className="w-full bg-[#FAF7F3] border border-[#E0DED8] rounded-xl px-3 py-2.5 text-xs sm:text-sm text-[#111] focus:outline-none focus:border-[#7A5C58] focus:bg-white transition-all cursor-pointer"
-                    >
-                      <option value="" disabled>
-                        Select a service...
-                      </option>
-                      <option value="wedwell">Wedwell</option>
-                      <option value="health-wellness">Health & Wellness</option>
-                      <option value="aesthetics">Aesthetics </option>
-                      <option value="weight-loss">Weight Loss</option>
-                      <option value="advanced-dermatology">Advanced Dermatology</option>
-                      <option value="wellness-anti-aging">Wellness & Anti-Aging</option>
-                      <option value="aesthetic-medicine">Aesthetic Medicine</option>
-                      <option value="clinic-consultation">Clinic Consultation</option>
-                    </select>
-                  </div>
+                  {/* Conditional Rendering: Show selected bundle card if bundle parameter exists, otherwise show normal service select dropdown */}
+                  {bundleParam ? (
+                    <div className="bg-[#FAF7F3] border border-[#E0DED8] rounded-xl p-3 sm:p-4 flex flex-col gap-1">
+                      <span className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 font-medium">
+                        Selected Bundle
+                      </span>
+                      <div className="text-xs sm:text-sm font-serif font-semibold text-[#111] flex items-center justify-between">
+                        <span>{decodeURIComponent(bundleParam)}</span>
+                        <span className="text-[10px] uppercase bg-[#7A5C58]/10 text-[#7A5C58] px-2.5 py-1 rounded-full font-sans tracking-wider">
+                          Pre-selected
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <label
+                        htmlFor="service"
+                        className="block text-[10px] sm:text-xs font-sans uppercase tracking-wider text-[#514C48]/80 mb-1 font-medium"
+                      >
+                        Select Service <span className="text-rose-500">*</span>
+                      </label>
+                      <select
+                        id="service"
+                        name="service"
+                        value={formData.service}
+                        onChange={handleChange}
+                        className="w-full bg-[#FAF7F3] border border-[#E0DED8] rounded-xl px-3 py-2.5 text-xs sm:text-sm text-[#111] focus:outline-none focus:border-[#7A5C58] focus:bg-white transition-all cursor-pointer"
+                      >
+                        <option value="" disabled>
+                          Select a service...
+                        </option>
+                        <option value="wedwell">Wedwell</option>
+                        <option value="health-wellness">
+                          Health & Wellness
+                        </option>
+                        <option value="aesthetics">Aesthetics </option>
+                        <option value="weight-loss">Weight Loss</option>
+                        <option value="advanced-dermatology">
+                          Advanced Dermatology
+                        </option>
+                        <option value="wellness-anti-aging">
+                          Wellness & Anti-Aging
+                        </option>
+                        <option value="aesthetic-medicine">
+                          Aesthetic Medicine
+                        </option>
+                        <option value="clinic-consultation">
+                          Clinic Consultation
+                        </option>
+                      </select>
+                    </div>
+                  )}
 
                   <div>
                     <label
@@ -764,25 +800,20 @@ export default function AppointmentPage() {
                   <button
                     type="button"
                     onClick={handlePrevStep}
-                    disabled={loading}
-                    className="w-1/3 bg-transparent border border-[#514C48]/30 hover:border-[#111] text-[#514C48] text-xs font-sans tracking-widest uppercase py-3.5 rounded-full transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-1/3 bg-[#FAF7F3] hover:bg-[#E0DED8] text-[#514C48] text-xs font-sans tracking-widest uppercase py-3.5 rounded-full transition-all duration-300 border border-[#E0DED8] cursor-pointer"
                   >
-                    <span>←</span> Back
+                    Back
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-2/3 bg-[#111] hover:bg-[#7A5C58] text-white text-xs font-sans tracking-widest uppercase py-3.5 rounded-full transition-all duration-300 shadow-md cursor-pointer disabled:opacity-50 flex items-center justify-center"
+                    className="w-2/3 bg-[#111] hover:bg-[#7A5C58] text-white text-xs font-sans tracking-widest uppercase py-3.5 rounded-full transition-all duration-300 shadow-md cursor-pointer disabled:opacity-50"
                   >
-                    {loading ? "Saving..." : "Confirm Booking"}
+                    {loading ? "Confirming..." : "Confirm Appointment"}
                   </button>
                 </div>
               </form>
             )}
-          </div>
-
-          <div className="pt-2 text-center text-[10px] sm:text-xs text-[#514C48]/50">
-            Secure 256-bit encrypted reservation protocol
           </div>
         </div>
       </div>
