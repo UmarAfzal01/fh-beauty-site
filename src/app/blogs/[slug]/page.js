@@ -6,6 +6,8 @@ import BlogComments from "@/components/BlogComments";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogViewTracker from "@/components/BlogViewTracker";
+import VideoRenderer from "@/components/VideoRenderer";
+import { PiLinkBold } from "react-icons/pi";
 
 // Optional: Base URL for absolute Open Graph image paths
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
@@ -211,28 +213,37 @@ export default async function SingleBlogPage({ params }) {
           </div>
         );
       case "youtube":
-        const getEmbedUrl = (urlStr) => {
-          try {
-            const videoId = urlStr.includes("v=")
-              ? urlStr.split("v=")[1]?.split("&")[0]
-              : urlStr.split("/").pop();
-            return `https://www.youtube.com/embed/${videoId}`;
-          } catch {
-            return urlStr;
-          }
-        };
+        return <VideoRenderer key={index} url={item.value} index={index} />;
+      case "embed-link":
+        const linkUrl = item.value || "#";
+        const linkDisplay = item.linkText || linkUrl;
+        if (item.displayType === "button") {
+          return (
+            <div key={index} className="my-6 w-full flex">
+              <a
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#111] hover:bg-[#333] text-[#FAF7F3] font-medium px-6 py-3.5 rounded-xl transition inline-flex items-center gap-2 font-sans text-sm shadow-md"
+              >
+                <PiLinkBold size={16} />
+                <span>{linkDisplay}</span>
+                <span className="text-xs opacity-75 ml-1">↗</span>
+              </a>
+            </div>
+          );
+        }
         return (
-          <div
-            key={index}
-            className="my-8 aspect-video w-full rounded-2xl overflow-hidden shadow-lg bg-black"
-          >
-            <iframe
-              src={getEmbedUrl(item.value)}
-              title="YouTube video player"
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          <div key={index} className="my-6 w-full">
+            <a
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1.5 transition-colors font-serif text-base underline underline-offset-4"
+            >
+              <span>{linkDisplay}</span>
+              <span>→</span>
+            </a>
           </div>
         );
       default:

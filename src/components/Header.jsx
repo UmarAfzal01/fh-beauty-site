@@ -10,17 +10,19 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  // Fetch services for the dropdown and mobile drawer list
+  // Fetch services from the unified /api/items endpoint
   useEffect(() => {
     async function fetchServices() {
       try {
-        const res = await fetch('/api/services');
+        const res = await fetch('/api/items');
         const data = await res.json();
-        if (Array.isArray(data)) {
-          setServices(data);
-        } else if (data.services && Array.isArray(data.services)) {
-          setServices(data.services);
-        }
+        const items = Array.isArray(data) ? data : data.items || [];
+        
+        // Filter items where type is Service
+        const fetchedServices = items.filter(
+          (item) => item.type?.toLowerCase() === 'service'
+        );
+        setServices(fetchedServices);
       } catch (err) {
         console.error("Failed to fetch services for header dropdown:", err);
       }
@@ -33,7 +35,7 @@ export default function Header() {
       {/* Left: Brand Logo & Name */}
       <Link href="/" className="flex items-center gap-3.5 group">
         <div className="w-20 h-20 flex items-center justify-center text-[#8C6D6B] font-serif text-lg">
-          <img className="w-full h-full object-cover" src="https://res.cloudinary.com/wapixih0/image/upload/v1790707283/Logo.png" alt="" />
+          <img className="w-full h-full object-cover" src="https://res.cloudinary.com/wapixih0/image/upload/v1790707283/Logo.png" alt="Logo" />
         </div>
         <span className="font-serif tracking-[0.2em] text-[#111] text-lg sm:text-xl font-normal">
           Pakistan Wellness Center 
@@ -60,6 +62,12 @@ export default function Header() {
           {/* Dropdown Menu Box */}
           {isDropdownOpen && (
             <div className="absolute top-full left-0 w-64 bg-white border border-[#EBE4DE] shadow-xl rounded-2xl py-3 mt-1 flex flex-col transition-all animate-fadeIn">
+              <Link
+                href="/services"
+                className="px-5 py-2.5 text-xs tracking-wider text-[#8D4D5D] font-semibold hover:bg-[#FAF7F3] transition-colors border-b border-[#EBE4DE]"
+              >
+                View All Services →
+              </Link>
               {services.length > 0 ? (
                 services.map((service) => (
                   <Link
@@ -67,7 +75,7 @@ export default function Header() {
                     href={`/services/${service.slug}`}
                     className="px-5 py-2.5 text-xs tracking-wider text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#2C2623] transition-colors truncate"
                   >
-                    {service.hero?.name || service.name}
+                    {service.name || service.hero?.name}
                   </Link>
                 ))
               ) : (
@@ -77,6 +85,12 @@ export default function Header() {
           )}
         </div>
 
+        <Link href="/products" className="hover:text-[#111] transition">
+          PRODUCTS
+        </Link>
+        <Link href="/bundles" className="hover:text-[#111] transition">
+          BUNDLES
+        </Link>
         <Link href="/blogs" className="hover:text-[#111] transition">
           BLOGS
         </Link>
@@ -165,13 +179,27 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                         className="text-[11px] tracking-wider text-[#514C48] hover:text-[#111] truncate"
                       >
-                        {service.hero?.name || service.name}
+                        {service.name || service.hero?.name}
                       </Link>
                     ))}
                   </div>
                 )}
               </div>
 
+              <Link 
+                href="/products" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
+              >
+                PRODUCTS
+              </Link>
+              <Link 
+                href="/bundles" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
+              >
+                BUNDLES
+              </Link>
               <Link 
                 href="/blogs" 
                 onClick={() => setMobileMenuOpen(false)}

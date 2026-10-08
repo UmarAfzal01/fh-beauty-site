@@ -5,6 +5,9 @@ import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { CartProvider } from "@/context/CartContext";
+import FloatingCart from "@/components/FloatingCart";
+import CartSidebar from "@/components/CartSidebar";
 
 export default async function RootLayout({ children }) {
   const session = await auth();
@@ -15,7 +18,11 @@ export default async function RootLayout({ children }) {
         <SessionProvider session={session}>
           <SmoothScroll>
             {/* <Header/> */}
-            {children}
+            <CartProvider>
+              <CartSidebar />
+              {children}
+            <FloatingCart />
+            </CartProvider>
             <Toaster />
             {/* <Footer/> */}
           </SmoothScroll>

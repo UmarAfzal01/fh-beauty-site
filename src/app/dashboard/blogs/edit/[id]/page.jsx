@@ -1,11 +1,11 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { LuHeading2, LuGripVertical } from "react-icons/lu";
 import { BsTextParagraph } from "react-icons/bs";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
-import { PiImage, PiImages } from "react-icons/pi";
+import { PiImage, PiImages, PiLinkBold } from "react-icons/pi";
 import { AiFillYoutube } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
 import { CldUploadButton } from "next-cloudinary";
@@ -141,16 +141,16 @@ const EditBlog = () => {
         ...morefields,
         { type, value: ["", ""], imageUrls: ["", ""] },
       ]);
-    } else if (type === "youtube") {
-      setMoreFields([...morefields, { type, value: "" }]);
+    } else if (type === "embed-link") {
+      setMoreFields([...morefields, { type, value: "", displayType: "plain", linkText: "" }]);
     } else {
       setMoreFields([...morefields, { type, value: "" }]);
     }
   };
 
-  const handleChange = (index, value) => {
+  const handleChange = (index, key, val) => {
     const updated = [...morefields];
-    updated[index].value = value;
+    updated[index][key] = val;
     setMoreFields(updated);
   };
 
@@ -170,8 +170,8 @@ const EditBlog = () => {
             <input
               type="text"
               placeholder="Sub Heading"
-              value={field.value}
-              onChange={(e) => handleChange(index, e.target.value)}
+              value={field.value || ""}
+              onChange={(e) => handleChange(index, "value", e.target.value)}
               className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
             />
             <button
@@ -189,8 +189,8 @@ const EditBlog = () => {
             <textarea
               rows={5}
               placeholder="Description"
-              value={field.value}
-              onChange={(e) => handleChange(index, e.target.value)}
+              value={field.value || ""}
+              onChange={(e) => handleChange(index, "value", e.target.value)}
               className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif resize-none"
             />
             <button
@@ -208,8 +208,8 @@ const EditBlog = () => {
             <input
               type="text"
               placeholder="Bullet Heading"
-              value={field.value}
-              onChange={(e) => handleChange(index, e.target.value)}
+              value={field.value || ""}
+              onChange={(e) => handleChange(index, "value", e.target.value)}
               className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
             />
             <button
@@ -228,7 +228,7 @@ const EditBlog = () => {
               {field.imageUrl && (
                 <img
                   src={field.imageUrl}
-                  alt={field.value}
+                  alt={field.value || ""}
                   className="w-32 h-20 object-cover rounded-xl border border-[#E6DEC9]"
                 />
               )}
@@ -248,8 +248,8 @@ const EditBlog = () => {
               <input
                 type="text"
                 placeholder="Image Alt Tag"
-                value={field.value}
-                onChange={(e) => handleChange(index, e.target.value)}
+                value={field.value || ""}
+                onChange={(e) => handleChange(index, "value", e.target.value)}
                 className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
               />
             </div>
@@ -269,8 +269,8 @@ const EditBlog = () => {
               <input
                 type="text"
                 placeholder="Paste YouTube Video URL (e.g., https://www.youtube.com/watch?v=...)"
-                value={field.value}
-                onChange={(e) => handleChange(index, e.target.value)}
+                value={field.value || ""}
+                onChange={(e) => handleChange(index, "value", e.target.value)}
                 className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
               />
             </div>
@@ -283,6 +283,61 @@ const EditBlog = () => {
             </button>
           </div>
         );
+      case "embed-link":
+        return (
+          <div className="flex flex-col gap-3 w-full bg-[#FAF7F3] p-4 rounded-2xl border border-[#E6DEC9]">
+            <div className="flex items-center gap-2 w-full">
+              <input
+                type="text"
+                placeholder="Paste Embed / Link URL (YouTube, Instagram, Website, etc.)"
+                value={field.value || ""}
+                onChange={(e) => handleChange(index, "value", e.target.value)}
+                className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif"
+              />
+              <button
+                className="bg-red-500/10 hover:bg-red-500/20 text-red-600 border border-red-500/30 p-3 rounded-xl transition shrink-0"
+                type="button"
+                onClick={() => handleRemoveField(index)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Display Text / Title for this link"
+              value={field.linkText || ""}
+              onChange={(e) => handleChange(index, "linkText", e.target.value)}
+              className="w-full bg-[#F3EDE2] border border-[#E6DEC9] rounded-xl px-4 py-3 text-[#514C48] placeholder-[#514C48]/40 focus:outline-none focus:border-[#111] transition font-serif text-sm"
+            />
+
+            <div className="flex flex-wrap items-center gap-4 text-xs font-sans pt-2 border-t border-[#E6DEC9]/60">
+              <span className="text-[#514C48]/70 font-medium">Render Style:</span>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`displayType-${index}`}
+                    checked={field.displayType === "plain" || !field.displayType}
+                    onChange={() => handleChange(index, "displayType", "plain")}
+                    className="text-[#111]"
+                  />
+                  <span>Plain Card / Link</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`displayType-${index}`}
+                    checked={field.displayType === "button"}
+                    onChange={() => handleChange(index, "displayType", "button")}
+                    className="text-[#111]"
+                  />
+                  <span>Button Style</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        );
       case "double-image":
         return (
           <div className="flex items-center gap-3 w-full bg-[#F3EDE2]/60 p-4 rounded-2xl border border-[#E6DEC9]">
@@ -292,7 +347,7 @@ const EditBlog = () => {
                   {field.imageUrls?.[i] && (
                     <img
                       src={field.imageUrls[i]}
-                      alt={field.value?.[i]}
+                      alt={field.value?.[i] || ""}
                       className="w-32 h-20 object-cover rounded-xl border border-[#E6DEC9]"
                     />
                   )}
@@ -687,6 +742,13 @@ const EditBlog = () => {
                   className="bg-[#FAF7F3] hover:bg-[#E6DEC9]/40 border border-[#E6DEC9] text-[#514C48] px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition font-sans"
                 >
                   <AiFillYoutube size={18} className="text-red-600" /> Video
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => addField("embed-link")}
+                  className="bg-[#FAF7F3] hover:bg-[#E6DEC9]/40 border border-[#E6DEC9] text-[#514C48] px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition font-sans"
+                >
+                  <PiLinkBold size={16} /> Embed Link
                 </button>
               </div>
             </div>
