@@ -72,7 +72,7 @@ export default function Header() {
                 services.map((service) => (
                   <Link
                     key={service._id || service.slug}
-                    href={`/services/${service.slug}`}
+                    href={`/service/${service.slug}`}
                     className="px-5 py-2.5 text-xs tracking-wider text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#2C2623] transition-colors truncate"
                   >
                     {service.name || service.hero?.name}
