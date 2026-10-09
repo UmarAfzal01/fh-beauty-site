@@ -4,10 +4,13 @@ import ProductReviews from "@/components/ProductReviews";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
+// Use your live domain as the fallback base URL for production on Vercel
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 async function getItemData(type, slug) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/items?type=${type}&slug=${slug}`,
+      `${BASE_URL}/api/items?type=${type}&slug=${slug}`,
       {
         cache: "no-store",
       },
@@ -38,7 +41,7 @@ export default async function DynamicItemPage({ params }) {
 
   return (
     <>
-      <Header/>
+      <Header />
       <ItemDetailClient item={item} />
       <ProductReviews itemId={item._id} initialReviews={item.reviews || []} />
       <Footer />
