@@ -147,7 +147,7 @@ function ReportModal({ patient, onClose }) {
       <div
         id="patient-report"
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-[24px] border border-[#E0DED8] max-w-4xl w-full max-h-[92svh] overflow-y-auto shadow-2xl print:max-h-none print:overflow-visible print:shadow-none print:border-none print:rounded-none"
+        className="bg-white text-[#514C48] rounded-[24px] border border-[#E0DED8] max-w-4xl w-full max-h-[92svh] overflow-y-auto shadow-2xl print:max-h-none print:overflow-visible print:shadow-none print:border-none print:rounded-none"
       >
         {/* Toolbar */}
         <div className="sticky top-0 z-10 flex items-center justify-between gap-3 px-5 sm:px-8 py-4 bg-white/90 backdrop-blur-md border-b border-[#E0DED8] print:hidden">
@@ -253,9 +253,9 @@ function ReportModal({ patient, onClose }) {
                       {history.map((record, idx) => (
                         <tr key={record._id || idx}>
                           <td className="p-3 font-serif text-[#111] whitespace-nowrap">{formatDate(record.date)}</td>
-                          <td className="p-3 text-right whitespace-nowrap">{record.baselineMeasurements?.height} cm</td>
-                          <td className="p-3 text-right whitespace-nowrap">{record.baselineMeasurements?.weight} kg</td>
-                          <td className="p-3 text-right whitespace-nowrap">{record.baselineMeasurements?.waistCircumference} cm</td>
+                          <td className="p-3 text-right whitespace-nowrap text-[#111]">{record.baselineMeasurements?.height} cm</td>
+                          <td className="p-3 text-right whitespace-nowrap text-[#111]">{record.baselineMeasurements?.weight} kg</td>
+                          <td className="p-3 text-right whitespace-nowrap text-[#111]">{record.baselineMeasurements?.waistCircumference} cm</td>
                           <td className="p-3 whitespace-nowrap"><BmiBadge bmi={record.baselineMeasurements?.bmi} /></td>
                         </tr>
                       ))}
