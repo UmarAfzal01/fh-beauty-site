@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import Image from "next/image";
 
 export default function PatientLogin() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -15,9 +15,9 @@ export default function PatientLogin() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/patient/portal");
+      router.replace(session?.user?.role === "admin" ? "/dashboard" : "/patient/portal");
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,7 +34,8 @@ export default function PatientLogin() {
         toast.error("Invalid Email or Password");
       } else {
         toast.success("Login successful!");
-        router.replace("/patient/portal");
+        const freshSession = await getSession();
+        router.replace(freshSession?.user?.role === "admin" ? "/dashboard" : "/patient/portal");
       }
     } catch (err) {
       console.error(err);

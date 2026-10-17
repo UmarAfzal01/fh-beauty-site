@@ -30,8 +30,6 @@ export default auth((req) => {
   return NextResponse.next();
 });
 
-// Using a broad negative look-ahead matcher ensures Next.js runs this check 
-// on all application pages and assets uniformly without skipping dynamic sub-routes.
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

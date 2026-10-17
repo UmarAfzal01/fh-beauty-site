@@ -9,6 +9,9 @@ export async function GET() {
     if (!session?.user?.email) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+    if (session.user.role !== "admin") {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
 
     await dbConnect();
     // Retrieve all patient records with selected fields

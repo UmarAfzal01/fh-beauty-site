@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { 
   MdDashboard, 
   MdArticle, 
@@ -15,7 +16,8 @@ import {
   MdInventory2,
   MdShoppingBag,
   MdKeyboardArrowDown,
-  MdKeyboardArrowUp
+  MdKeyboardArrowUp,
+  MdAssessment
 } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 
@@ -67,7 +69,8 @@ export default function DashboardLayout({ children }) {
       items: [
         { href: "/dashboard/appointments", label: "Appointments", icon: MdEventNote },
         { href: "/dashboard/customers", label: "Customers", icon: FaPeopleGroup },
-        { href: "/dashboard/doctors", label: "Doctors", icon: MdLocalHospital }
+        { href: "/dashboard/doctors", label: "Doctors", icon: MdLocalHospital },
+        { href: "/dashboard/reports", label: "Patient Reports", icon: MdAssessment }
       ]
     },
     {
@@ -168,13 +171,14 @@ export default function DashboardLayout({ children }) {
 
         {/* Bottom Section / Logout */}
         <div className="pt-6 border-t border-[#E6DEC9] w-72">
-          <Link
-            href="#"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-rose-700 hover:bg-rose-500/10 transition font-serif text-sm font-medium"
+          <button
+            type="button"
+            onClick={() => signOut({ redirectTo: "/login" })}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-700 hover:bg-rose-500/10 transition font-serif text-sm font-medium cursor-pointer"
           >
             <MdLogout size={18} className="shrink-0" />
             <span>Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
