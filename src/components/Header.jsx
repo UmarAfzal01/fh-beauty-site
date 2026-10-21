@@ -31,7 +31,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="w-full bg-[#FAF7F3] border-b border-[#E6DEC9] py-5 px-6 md:px-16 flex items-center justify-between relative z-50">
+    <header className="w-full bg-[#FAF7F3] border-b border-[#E6DEC9] py-0 px-6 md:px-16 flex items-center justify-between relative z-50">
       {/* Left: Brand Logo & Name */}
       <Link href="/" className="flex items-center gap-3.5 group">
         <div className="w-20 h-20 flex items-center justify-center text-[#8C6D6B] font-serif text-lg">
