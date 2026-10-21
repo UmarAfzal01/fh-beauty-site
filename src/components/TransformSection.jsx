@@ -21,17 +21,17 @@ export default function TransformSection() {
         
         {/* Left Column: Text & CTA */}
         <div className="flex flex-col items-start max-w-xl">
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-serif font-normal leading-[1.2] text-[#111] mb-6">
-            Transform Your Look with Expert Aesthetic Procedures
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-serif font-normal leading-[1.2] text-[#111] mb-6">
+            Aesthetic Treatments Tailored to Your Skin and Goals
           </h2>
           
           <p className="text-sm sm:text-base text-[#514C48]/80 font-sans leading-relaxed mb-10">
-            Under Dr. Lanna's guidance, our expert injection specialists can revitalize your appearance through minimally invasive treatments. As one of the most sought-after names in non-invasive rejuvenation, our clients come from all over the world seeking the transformative work of Dr. Lanna and her skilled team.
+            Pakistan Wellness Center offers facial aesthetics, laser treatments and injectables, selected after a professional skin assessment. Whether your concern is dullness, acne scars, pigmentation, fine lines or facial volume, your treatment is chosen around your skin type and goals. Results vary from person to person, and your doctor will explain the options, limitations and aftercare before you decide.
           </p>
 
-          <button className="bg-[#8D4D5D] text-white text-xs font-sans tracking-widest px-8 py-4 rounded-full hover:bg-[#583D3D] transition-colors shadow-sm">
+          <a href="/about" className="bg-[#8D4D5D] text-white text-xs font-sans tracking-widest px-8 py-4 rounded-full hover:bg-[#583D3D] transition-colors shadow-sm">
             LEARN MORE ABOUT US
-          </button>
+          </a>
         </div>
 
         {/* Right Column: Layered Images Grid with Parallax */}

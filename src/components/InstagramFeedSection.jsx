@@ -63,7 +63,7 @@ export default async function InstagramFeedSection() {
                   src={item.src} 
                   alt={item.alt} 
                   fill 
-                  className="object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 />
                 {/* Subtle hover overlay */}
                 <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

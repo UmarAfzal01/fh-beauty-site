@@ -133,7 +133,7 @@ export async function POST(request) {
                     </tr>
                     <tr>
                       <td style="padding: 6px 0; color: #514C48; opacity: 0.7;">Status:</td>
-                      <td style="padding: 6px 0; color: #b45309; font-weight: bold; text-align: right;">Pending Review</td>
+                      <td style="padding: 6px 0; color: #079933; font-weight: bold; text-align: right;">Confirmed</td>
                     </tr>
                   </table>
                 </div>

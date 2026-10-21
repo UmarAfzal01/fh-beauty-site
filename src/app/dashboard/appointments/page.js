@@ -75,6 +75,32 @@ export default function DashboardAppointmentsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // WhatsApp Confirmation Message Helper
+  const handleSendWhatsAppConfirmation = (app) => {
+    if (!app.phone) {
+      alert('No phone number available for this appointment.');
+      return;
+    }
+
+    // Sanitize phone number (remove spaces, dashes, brackets, leading plus)
+    let cleanPhone = app.phone.replace(/[^0-9]/g, '');
+    
+    // Convert local zero-prefixed phone numbers (e.g., 0300...) to international format if needed
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '92' + cleanPhone.substring(1); // Default to PK country code or adjust as required
+    }
+
+    const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : 'N/A';
+    const patientName = app.fullName || 'Valued Patient';
+    const serviceName = app.service || 'Clinical Treatment';
+    const appointmentTime = app.preferredTime || 'Scheduled Time';
+
+    const message = `Hello ${patientName},\nYour appointment has been confirmed!\n *Service:* ${serviceName}\n *Date:* ${cleanDate}\n *Time:* ${appointmentTime}\nThank you for choosing our clinic. Please let us know if you need to reschedule or have any questions beforehand.\n See you soon!`;
+
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const handleToggleStatus = async (id, currentStatus) => {
     const nextStatus = currentStatus === 'pending' ? 'active' : 'pending';
     
@@ -258,7 +284,6 @@ export default function DashboardAppointmentsPage() {
     return days;
   };
 
-  // Pre-calculate booked slots for the active editing appointment
   const currentRecordId = editingAppointment ? (editingAppointment._id || editingAppointment.id) : null;
   const bookedSet = editingAppointment ? getBookedSlotsForDate(editingAppointment.preferredDate, currentRecordId) : new Set();
 
@@ -294,7 +319,6 @@ export default function DashboardAppointmentsPage() {
           </div>
         )}
 
-        {/* Search and Filter Controls Bar */}
         <div className="bg-white p-4 sm:p-6 rounded-[24px] border border-[#E0DED8]/80 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-end gap-4 justify-between">
           <div className="w-full lg:w-1/2">
             <label className="block text-xs font-sans uppercase tracking-wider text-[#514C48]/70 mb-1.5">
@@ -402,7 +426,16 @@ export default function DashboardAppointmentsPage() {
                           </span>
                         </td>
                         <td className="p-4 text-right">
-                          <div className="flex items-center justify-end">
+                          <div className="flex items-center justify-end gap-2">
+                            {/* Direct WhatsApp Quick Button */}
+                            <button
+                              onClick={() => handleSendWhatsAppConfirmation(app)}
+                              className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer shadow-sm text-sm"
+                              title="Send WhatsApp Confirmation"
+                            >
+                              💬
+                            </button>
+
                             <button
                               onClick={(e) => handleToggleDropdown(e, recordId)}
                               className="w-9 h-9 rounded-xl bg-[#FAF7F3] border border-[#E0DED8] flex items-center justify-center text-[#111] hover:border-[#111] transition-all cursor-pointer shadow-sm font-bold text-lg"
@@ -421,7 +454,6 @@ export default function DashboardAppointmentsPage() {
           </div>
         </div>
 
-        {/* Absolutely Positioned Dropdown Menu */}
         {openDropdownId && (
           <div
             ref={dropdownRef}
@@ -430,7 +462,7 @@ export default function DashboardAppointmentsPage() {
               top: `${dropdownCoords.top}px`,
               right: `${dropdownCoords.right}px`,
             }}
-            className="z-50 w-48 bg-white border border-[#E0DED8] rounded-2xl shadow-2xl py-2 text-left space-y-1"
+            className="z-50 w-52 bg-white border border-[#E0DED8] rounded-2xl shadow-2xl py-2 text-left space-y-1"
           >
             {(() => {
               const app = appointments.find((a) => (a._id || a.id) === openDropdownId);
@@ -441,6 +473,15 @@ export default function DashboardAppointmentsPage() {
 
               return (
                 <>
+                  <button
+                    onClick={() => {
+                      setOpenDropdownId(null);
+                      handleSendWhatsAppConfirmation(app);
+                    }}
+                    className="w-full px-4 py-2.5 text-xs font-sans uppercase tracking-wider text-emerald-800 hover:bg-emerald-50 transition flex items-center gap-2.5 cursor-pointer font-medium"
+                  >
+                    <span>💬</span> Send WhatsApp Confirm
+                  </button>
                   <button
                     onClick={() => {
                       setOpenDropdownId(null);
@@ -495,7 +536,6 @@ export default function DashboardAppointmentsPage() {
           </div>
         )}
 
-        {/* Edit Date & Time Modal */}
         {editingAppointment && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-[24px] border border-[#E0DED8] max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
@@ -513,7 +553,6 @@ export default function DashboardAppointmentsPage() {
               </div>
 
               <form onSubmit={handleSaveEdit} className="space-y-6">
-                {/* Date Slider Section */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <button
@@ -581,7 +620,6 @@ export default function DashboardAppointmentsPage() {
                   </div>
                 </div>
 
-                {/* Time Slots Grid Section (9 AM to 9 PM) */}
                 <div className="space-y-3">
                   <label className="block text-xs font-sans uppercase tracking-wider text-[#514C48]/70">
                     Select Time Slot (30 mins) — Active Date: {editingAppointment.preferredDate || 'None'}
@@ -638,7 +676,6 @@ export default function DashboardAppointmentsPage() {
           </div>
         )}
 
-        {/* Customer Details Popup Modal */}
         {selectedCustomer && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-[24px] border border-[#E0DED8] max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -646,7 +683,7 @@ export default function DashboardAppointmentsPage() {
                 <div>
                   <h3 className="text-xl font-serif font-medium text-[#111]">{selectedCustomer.name}</h3>
                   <p className="text-xs text-[#514C48]/70 font-sans mt-0.5">
-                    {selectedCustomer.phone} • {selectedCustomer.email} • <span className="uppercase">{selectedCustomer.patientType}</span>
+                    {selectedCustomer.phone} {selectedCustomer.email} <span className="uppercase">{selectedCustomer.patientType}</span>
                   </p>
                 </div>
                 <button
@@ -688,59 +725,17 @@ export default function DashboardAppointmentsPage() {
                             {cleanDate} at {app.preferredTime} {app.appointmentFor ? `• (${app.appointmentFor})` : ''}
                           </p>
                         </div>
-                        
-                        <div className="flex items-center gap-2 self-end sm:self-auto">
-                          <button
-                            onClick={() => {
-                              setSelectedCustomer(null);
-                              console.log('--- OPENING EDIT MODAL FROM CUSTOMER DETAILS FOR ---', app);
-                              const cleanDate = app.preferredDate ? app.preferredDate.split('T')[0] : getTodayString();
-                              if (cleanDate) {
-                                const today = new Date();
-                                today.setHours(0,0,0,0);
-                                const target = new Date(cleanDate + 'T00:00:00');
-                                const diffTime = target.getTime() - today.getTime();
-                                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                                setEditDayOffset(Math.max(0, diffDays));
-                              } else {
-                                setEditDayOffset(0);
-                              }
-                              setEditingAppointment({ ...app, preferredDate: cleanDate });
-                            }}
-                            className="px-3 py-1.5 rounded-lg text-[10px] font-sans uppercase tracking-wider bg-white border border-[#E0DED8] text-[#111] hover:border-[#111] transition-all cursor-pointer shadow-sm whitespace-nowrap"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleToggleStatus(recordId, status)}
-                            className={`px-3 py-1.5 rounded-lg text-[10px] font-sans uppercase tracking-wider transition-all cursor-pointer shadow-sm whitespace-nowrap ${
-                              isActive
-                                ? 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'
-                                : 'bg-[#111] text-white hover:bg-[#7A5C58]'
-                            }`}
-                          >
-                            {isActive ? 'Deactivate' : 'Activate'}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(recordId)}
-                            className="px-3 py-1.5 rounded-lg text-[10px] font-sans uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-all cursor-pointer shadow-sm whitespace-nowrap"
-                          >
-                            Delete
-                          </button>
-                        </div>
+
+                        <button
+                          onClick={() => handleSendWhatsAppConfirmation(app)}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 self-start sm:self-auto"
+                        >
+                          <span>💬</span> Confirm on WhatsApp
+                        </button>
                       </div>
                     );
                   })}
                 </div>
-              </div>
-
-              <div className="pt-4 border-t border-[#E0DED8] flex justify-end">
-                <button
-                  onClick={() => setSelectedCustomer(null)}
-                  className="px-6 py-2.5 bg-[#111] text-white rounded-xl text-xs font-sans uppercase tracking-widest hover:bg-[#333] transition cursor-pointer"
-                >
-                  Close
-                </button>
               </div>
             </div>
           </div>

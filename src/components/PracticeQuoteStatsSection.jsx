@@ -2,10 +2,10 @@ import Image from 'next/image';
 
 export default function PracticeQuoteStatsSection() {
   const stats = [
-    { number: '10', label: 'Incredible doctors' },
-    { number: '25', label: 'Years of combined experience' },
-    { number: '8', label: 'Communities served' },
-    { number: '15K', label: 'Happy patients' },
+    { number: '10', label: 'Personalized assessment' },
+    { number: '25', label: 'Doctor-led care' },
+    { number: '8', label: 'Preventive approach' },
+    { number: '15K', label: 'Realistic expectations' },
   ];
 
   return (
@@ -37,12 +37,12 @@ export default function PracticeQuoteStatsSection() {
 
               {/* Quote Text */}
               <p className="font-serif text-lg sm:text-xl italic leading-relaxed mb-6 text-white/95">
-                “Our practice proudly provides high quality cosmetic care in a timely manner. Your safety and comfort will always be our first priority.”
+                “Every treatment plan starts with understanding you: your skin, your health and your goals.”
               </p>
 
               {/* Author */}
               <span className="text-xs font-sans tracking-[0.2em] uppercase text-white/75 font-medium">
-                Dr. Maynard
+                Dr. Warda Sikander
               </span>
             </div>
 

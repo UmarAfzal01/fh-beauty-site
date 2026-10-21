@@ -30,7 +30,7 @@ export default function TeamSection() {
     return (
       <section className="w-full bg-[#FAF7F3] text-[#514C48] py-24 px-6 md:px-12 xl:px-20 text-center">
         <span className="text-xs font-sans uppercase tracking-[0.25em] text-[#8D4D5D] mb-3 block">
-          MEET OUR TEAM
+          Meet Your Doctor and Team
         </span>
         <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-serif font-normal text-[#111] mb-16">
           Friendly Faces, Personalized Care

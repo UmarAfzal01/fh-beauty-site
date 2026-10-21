@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import { CartProvider } from "@/context/CartContext";
 import FloatingCart from "@/components/FloatingCart";
 import CartSidebar from "@/components/CartSidebar";
+import AppointmentBanner from "@/components/AppointmentBanner";
 
 export default async function RootLayout({ children }) {
   const session = await auth();
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }) {
             <CartProvider>
               <CartSidebar />
               {children}
+              <AppointmentBanner/>
               <FloatingCart />
             </CartProvider>
             <Toaster />

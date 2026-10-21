@@ -4,22 +4,26 @@ export default function AboutSection() {
   return (
     <section className="w-full bg-[#FAF7F3] text-[#514C48] py-24 px-6 md:px-12 xl:px-20 border-t border-[#E0DED8]">
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-        
         {/* Small Subtitle */}
         <span className="text-xs font-sans uppercase tracking-[0.25em] text-[#514C48]/60 mb-6">
           Obesity Expert | Aesthetician | Wellness Expert
         </span>
 
         {/* Main Headline */}
-        <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-[2.1rem] font-serif font-normal leading-[1.35] text-[#111] max-w-4xl mb-10">
-          Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence
+        <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-[2.1rem] font-serif font-normal leading-[1.35] text-[#111] max-w-3xl mb-10">
+          Science-Based Aesthetic and Weight-Management Care in Pakistan
         </h2>
-         <p className="text-0.5xl sm:text-1xl md:text-1xl lg:text-[1.4rem] font-serif font-light  leading-[1.35] text-[#111] max-w-4xl mb-10">
-          Dr. Warda Sikandar (Gold Medalist & Pioneer in Lifestyle Medicine) and her expert clinical team at Pakistan Wellness Center are bringing international treatment standards directly to you.
+        <p className="text-0.5xl sm:text-1xl md:text-1xl lg:text-[1.4rem] font-serif font-light  leading-[1.35] text-[#111] max-w-4xl mb-10">
+          Dr. Warda Sikandar is a Gold Medalist medical doctor, obesity expert
+          and aesthetician, and Director of Pakistan Wellness Center. Her work
+          brings together skin and facial aesthetics, non-surgical body
+          contouring, clinical nutrition and preventive wellness. Every plan
+          begins with an assessment of your goals, health history and
+          suitability, so the treatments you choose are personalized and your
+          expectations stay realistic.
         </p>
 
         {/* Discover More Button */}
-        
 
         {/* Three Columns Features Grid with Dividers */}
         {/* <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 items-center">
@@ -57,7 +61,6 @@ export default function AboutSection() {
           </div>
 
         </div> */}
-
       </div>
     </section>
   );

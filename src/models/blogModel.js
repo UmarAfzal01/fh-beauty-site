@@ -8,7 +8,7 @@ const BlogModel = new mongoose.Schema({
   category: String,
   imgalt: String,
   description: String,
-  metaDescription: { // ADDED THIS FIELD
+  metaDescription: {
     type: String,
     default: "",
   },
