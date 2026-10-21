@@ -5,6 +5,7 @@
   import FeaturedTreatment from "@/components/FeaturedTreatment";
   import TopTreatments from "@/components/TopTreatments";
   import PopularTreatmentsSlider from "@/components/PopularTreatmentsSlider";
+  import ProductsSlider from "@/components/ProductsSlider";
   import ExperienceMissionSection from "@/components/ExperienceMissionSection";
   import TeamSection from "@/components/TeamSection";
   import PracticeQuoteStatsSection from "@/components/PracticeQuoteStatsSection";
@@ -68,6 +69,7 @@
         <AboutSection />
         <TransformSection />
         <FeaturedTreatment />
+        <ProductsSlider />
         <TopTreatments />
         <PopularTreatmentsSlider />
         <ExperienceMissionSection />

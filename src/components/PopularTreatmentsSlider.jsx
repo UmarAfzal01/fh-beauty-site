@@ -2,58 +2,36 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function PopularTreatmentsSlider() {
   const sliderRef = useRef(null);
   const [treatments, setTreatments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch treatments from your /api/services endpoint on mount
+  // Fetch items from your API endpoint on mount
   useEffect(() => {
-    const fetchTreatments = async () => {
+    async function fetchItems() {
       try {
-        const res = await fetch("/api/services");
-        const data = await res.json();
-        if (res.ok && data.success && data.services?.length > 0) {
-          setTreatments(data.services);
-        } else {
-          // Fallback items if API returns empty
-          setTreatments([
-            { hero: { name: "Hydrofacial", image: "/images/home-1-1.webp" } },
-            {
-              hero: {
-                name: "Laser Hair Removal",
-                image: "/images/home-1-2.webp",
-              },
-            },
-            {
-              hero: {
-                name: "Breast Augmentation",
-                image: "/images/home-1-3.webp",
-              },
-            },
-            {
-              hero: {
-                name: "Botulinum Therapy",
-                image: "/images/home-1-4.webp",
-              },
-            },
-            {
-              hero: {
-                name: "Advanced Chemical Peel",
-                image: "/images/home-1-5.webp",
-              },
-            },
-          ]);
+        const res = await fetch("/api/items");
+        if (res.ok) {
+          const data = await res.json();
+          const itemsArray = Array.isArray(data) ? data : data.items || data.services || [];
+          
+          // Filter only items of type "Service" or use all if type isn't restricted
+          const servicesOnly = itemsArray.filter(
+            (item) => !item.type || item.type.toLowerCase() === "service"
+          );
+
+          setTreatments(servicesOnly.length > 0 ? servicesOnly : itemsArray);
         }
       } catch (err) {
-        console.error("Failed to fetch services:", err);
+        console.error("Failed to fetch dashboard items:", err);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchTreatments();
+    }
+    fetchItems();
   }, []);
 
   const scroll = (direction) => {
@@ -81,14 +59,14 @@ export default function PopularTreatmentsSlider() {
         <div className="flex items-center gap-3 self-end sm:self-auto">
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors cursor-pointer"
             aria-label="Previous slide"
           >
             ←
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#514C48]/30 flex items-center justify-center text-[#514C48] hover:border-[#111] hover:text-[#111] transition-colors cursor-pointer"
             aria-label="Next slide"
           >
             →
@@ -102,6 +80,10 @@ export default function PopularTreatmentsSlider() {
           <div className="flex items-center justify-center h-[420px] font-serif text-sm text-[#514C48]/70">
             Loading treatments...
           </div>
+        ) : treatments.length === 0 ? (
+          <div className="flex items-center justify-center h-[200px] font-serif text-sm text-[#514C48]/70">
+            No treatments available.
+          </div>
         ) : (
           <div
             ref={sliderRef}
@@ -113,40 +95,50 @@ export default function PopularTreatmentsSlider() {
               aria-hidden="true"
             />
 
-            {treatments.map((item, index) => (
-              <div
-                key={item._id || index}
-                className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-[350px] h-[420px] sm:h-[460px] lg:h-[480px] rounded-[24px] sm:rounded-[30px] overflow-hidden relative snap-start shadow-xl shadow-[#514C48]/10 group bg-[#2A2625]"
-              >
-                <Image
-                  src={item.hero?.image || "/images/home-1-1.webp"}
-                  alt={item.hero?.name || "Treatment"}
-                  fill
-                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/60 pointer-events-none" />
+            {treatments.map((item, index) => {
+              // Extract image from images array or use fallback
+              const imageUrl = item.images?.[0]?.url || "/images/home-1-1.webp";
+              const title = item.name || "Treatment";
+              const description = item.description || "Experience premium medical care and aesthetic excellence.";
 
-                <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-7">
-                  <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-white/80">
-                    TREATMENTS
-                  </span>
+              return (
+                <div
+                  key={item._id || index}
+                  className="flex-shrink-0 w-[260px] sm:w-[300px] lg:w-[350px] h-[420px] sm:h-[460px] lg:h-[480px] rounded-[24px] sm:rounded-[30px] overflow-hidden relative snap-start shadow-xl shadow-[#514C48]/10 group bg-[#2A2625]"
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={title}
+                    fill
+                    className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/60 pointer-events-none" />
 
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-serif text-white mb-0 sm:mb-2">
-                      {item.hero?.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm font-serif text-white/90 mb-4 line-clamp-2">
-                      {item.hero.shortDesc.length > 90
-                        ? `${item.hero.shortDesc.substring(0, 90)}...`
-                        : item.hero.shortDesc}
-                    </p>
-                    <button className="w-full bg-white/15 backdrop-blur-md hover:bg-white hover:text-[#111] text-white text-[11px] sm:text-xs font-sans tracking-[0.2em] uppercase py-3 rounded-full border border-white/30 transition-all duration-300">
-                      VIEW DETAILS
-                    </button>
+                  <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-7">
+                    <span className="text-[10px] font-sans uppercase tracking-[0.25em] text-white/80">
+                      TREATMENTS
+                    </span>
+
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-serif text-white mb-2">
+                        {title}
+                      </h3>
+                      <p className="text-xs sm:text-sm font-serif text-white/90 mb-6 line-clamp-2">
+                        {description.length > 90
+                          ? `${description.substring(0, 90)}...`
+                          : description}
+                      </p>
+                      <Link
+                        href={`/services/${item.slug || encodeURIComponent(title.toLowerCase())}`}
+                        className="w-full inline-flex items-center justify-center bg-white/15 backdrop-blur-md hover:bg-white hover:text-[#111] text-white text-[11px] sm:text-xs font-sans tracking-[0.2em] uppercase py-3 rounded-full border border-white/30 transition-all duration-300"
+                      >
+                        VIEW DETAILS
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             <div
               className="flex-shrink-0 w-6 md:w-12 xl:w-20"
