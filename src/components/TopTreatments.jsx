@@ -85,7 +85,7 @@ export default function TopTreatments() {
             className="relative w-full max-w-lg aspect-[4/4.5] rounded-[30px] overflow-hidden shadow-xl shadow-[#514C48]/10 bg-[#EFECE6] will-change-transform transition-transform duration-75"
           >
             <Image
-              src="/images/home-1-5.webp"
+              src="https://res.cloudinary.com/wapixih0/image/upload/v1792669081/A-Complete-Range-of-Non-Surgical-Aesthetic-Care-Dr-Warda-Skikandar.webp"
               alt="Renew your confidence treatment"
               fill
               className="object-cover object-center"

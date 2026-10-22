@@ -44,7 +44,7 @@ export default function TransformSection() {
               className="relative w-full aspect-[4/5] max-w-[420px] ml-auto rounded-[30px] overflow-hidden shadow-xl shadow-[#514C48]/10 bg-[#EFECE6] will-change-transform transition-transform duration-75"
             >
               <Image 
-                src="/images/home-1-2.webp" 
+                src="https://res.cloudinary.com/wapixih0/image/upload/v1792669081/Aesthetic-Treatments-Tailored-2-Dr-Warda-Skikandar.webp" 
                 alt="Expert aesthetic procedures portrait" 
                 fill 
                 className="object-cover object-center"
@@ -57,7 +57,7 @@ export default function TransformSection() {
               className="absolute -bottom-8 left-4 sm:left-0 w-44 sm:w-56 aspect-[3/3] rounded-[24px] overflow-hidden shadow-2xl border-4 border-[#FAF7F3] bg-[#EFECE6] will-change-transform transition-transform duration-75 z-10"
             >
               <Image 
-                src="/images/home-1-3.webp" 
+                src="https://res.cloudinary.com/wapixih0/image/upload/v1792669082/Aesthetic-Treatments-Tailored-Dr-Warda-Skikandar.webp" 
                 alt="Treatment procedure in session" 
                 fill 
                 className="object-cover object-center"

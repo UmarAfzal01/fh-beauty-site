@@ -109,7 +109,7 @@ export default function ExperienceMissionSection() {
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative w-full max-w-lg aspect-[4/4.5] rounded-[30px] overflow-hidden shadow-2xl bg-[#5E4441]">
               <Image
-                src="/images/home-1-4.webp"
+                src="https://res.cloudinary.com/wapixih0/image/upload/v1792669081/Facial-Aesthetics-and-Skin-Treatments-2-Dr-Warda-Skikandar.webp"
                 alt="Our mission aesthetic model"
                 fill
                 className="object-cover object-center"

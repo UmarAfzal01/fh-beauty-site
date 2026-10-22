@@ -6,7 +6,7 @@ export default function FeaturedTreatment() {
       {/* Left Column: Full-Height Model Image with Overlay Card */}
       <div className="relative w-full h-[60vh] lg:h-auto min-h-[500px] bg-[#2A2625]">
         <Image
-          src="/images/home-1-4.webp"
+          src="https://res.cloudinary.com/wapixih0/image/upload/v1792669082/Facial-Aesthetics-and-Skin-Treatments-Dr-Warda-Skikandar.webp"
           alt="Featured Treatment Model"
           fill
           className="object-cover object-center"
