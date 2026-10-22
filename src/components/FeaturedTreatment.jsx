@@ -2,29 +2,10 @@ import Image from "next/image";
 
 export default function FeaturedTreatment() {
   return (
-    <section className="w-full min-h-[85vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
-      {/* Left Column: Full-Height Model Image with Overlay Card */}
-      <div className="relative w-full h-[60vh] lg:h-auto min-h-[500px] bg-[#2A2625]">
-        <Image
-          src="https://res.cloudinary.com/wapixih0/image/upload/v1792669082/Facial-Aesthetics-and-Skin-Treatments-Dr-Warda-Skikandar.webp"
-          alt="Featured Treatment Model"
-          fill
-          className="object-cover object-center"
-        />
-
-        {/* Floating Glassmorphism Badge (Top Left) */}
-        <div className="absolute top-8 left-8 z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 max-w-[240px] text-white shadow-lg">
-          <p className="text-xs font-sans tracking-wide mb-3 text-white/90">
-            Interested In Our Specials?
-          </p>
-          <a href="/contact" className="bg-transparent hover:bg-white text-white hover:text-[#111] text-xs font-sans tracking-widest px-5 py-2.5 rounded-full border border-white/60 transition-all duration-300">
-            CONTACT US
-          </a>
-        </div>
-      </div>
-
-      {/* Right Column: Content Area with Soft Pink Background */}
-      <div className="bg-[#F8EFEA] text-[#514C48] flex flex-col justify-center px-8 md:px-16 lg:px-20 py-20">
+    <section className="w-full min-h-[85vh] flex flex-col lg:grid lg:grid-cols-2 overflow-hidden">
+      
+      {/* Right Column (Content Area): Appears FIRST on mobile/tablet (order-1), SECOND on desktop (lg:order-2) */}
+      <div className="bg-[#F8EFEA] text-[#514C48] flex flex-col justify-center px-8 md:px-16 lg:px-20 py-16 lg:py-20 order-1 lg:order-2">
         <div className="max-w-xl">
           {/* Main Heading */}
           <h2 className="text-3xl sm:text-4xl lg:text-[3.3rem] font-serif font-normal leading-[1.2] text-[#111] mb-4">
@@ -56,6 +37,27 @@ export default function FeaturedTreatment() {
           </a>
         </div>
       </div>
+
+      {/* Left Column (Image Area): Appears SECOND on mobile/tablet (order-2), FIRST on desktop (lg:order-1) */}
+      <div className="relative w-full h-[60vh] lg:h-auto min-h-[500px] bg-[#2A2625] order-2 lg:order-1">
+        <Image
+          src="https://res.cloudinary.com/wapixih0/image/upload/v1792669082/Facial-Aesthetics-and-Skin-Treatments-Dr-Warda-Skikandar.webp"
+          alt="Featured Treatment Model"
+          fill
+          className="object-cover object-center"
+        />
+
+        {/* Floating Glassmorphism Badge (Top Left) */}
+        <div className="absolute top-8 left-8 z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 max-w-[240px] text-white shadow-lg">
+          <p className="text-xs font-sans tracking-wide mb-3 text-white/90">
+            Interested In Our Specials?
+          </p>
+          <a href="/contact" className="bg-transparent hover:bg-white text-white hover:text-[#111] text-xs font-sans tracking-widest px-5 py-2.5 rounded-full border border-white/60 transition-all duration-300 inline-block">
+            CONTACT US
+          </a>
+        </div>
+      </div>
+
     </section>
   );
 }

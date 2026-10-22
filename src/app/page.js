@@ -13,7 +13,7 @@ import Footer from '@/components/Footer';
 
 export const metadata = {
   title: {
-    default: 'Dr Warda Sikander | Gold Medalist & Pioneer in Lifestyle Medicine',
+    default: 'Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert',
     template: '%s | Dr Warda Sikander',
   },
   description: 'Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence',
@@ -24,7 +24,7 @@ export const metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://drwardasikander.com', // Replace with your actual live Vercel domain or custom domain
-    title: 'Dr Warda Sikander | Gold Medalist & Pioneer in Lifestyle Medicine',
+    title: 'Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert',
     description: 'Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence',
     siteName: 'Dr Warda Sikander',
     images: [
@@ -32,13 +32,13 @@ export const metadata = {
         url: '/images/og-image.webp', // Place your preview image inside the public/images folder
         width: 1200,
         height: 630,
-        alt: 'Dr Warda Sikander | Gold Medalist & Pioneer in Lifestyle Medicine',
+        alt: 'Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dr Warda Sikander | Gold Medalist & Pioneer in Lifestyle Medicine',
+    title: 'Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert',
     description: 'Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence',
     images: ['/images/og-image.webp'],
   },

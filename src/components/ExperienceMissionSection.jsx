@@ -80,17 +80,15 @@ export default function ExperienceMissionSection() {
 
       {/* PART 3: Our Mission Section */}
       <div className="w-full py-24 px-6 md:px-12 xl:px-20 border-t border-white/10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Column: Mission Content & Signature */}
-          <div className="flex flex-col items-start max-w-xl">
+        <div className="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Column: Mission Content & Signature — Appears SECOND on mobile/tablet (order-2), FIRST on desktop (lg:order-1) */}
+          <div className="flex flex-col items-start max-w-xl order-2 lg:order-1">
             <span className="text-xs font-sans uppercase tracking-[0.25em] text-white/70 mb-4">
               OUR MISSION
             </span>
-
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-serif font-normal leading-[1.2] text-white mb-6">
               Personalized Care, Realistic Expectations
             </h2>
-
             <p className="text-sm sm:text-base text-white/85 font-sans leading-relaxed mb-10">
               Our approach is built on preventive wellness, professional
               guidance and sustainable habits. We assess each client
@@ -98,15 +96,14 @@ export default function ExperienceMissionSection() {
               language, and never promise guaranteed results. Your informed
               choice comes first.
             </p>
-
             {/* Signature Graphic Mockup */}
             <div className="text-white/85 font-serif italic text-2xl tracking-widest opacity-90 select-none">
               Dr. Warda Sikandar
             </div>
           </div>
 
-          {/* Right Column: Mission Portrait Image */}
-          <div className="relative flex justify-center lg:justify-end">
+          {/* Right Column: Mission Portrait Image — Appears FIRST on mobile/tablet (order-1), SECOND on desktop (lg:order-2) */}
+          <div className="relative flex justify-center lg:justify-end w-full order-1 lg:order-2">
             <div className="relative w-full max-w-lg aspect-[4/4.5] rounded-[30px] overflow-hidden shadow-2xl bg-[#5E4441]">
               <Image
                 src="https://res.cloudinary.com/wapixih0/image/upload/v1792669081/Facial-Aesthetics-and-Skin-Treatments-2-Dr-Warda-Skikandar.webp"
