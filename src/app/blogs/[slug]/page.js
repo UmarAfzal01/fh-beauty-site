@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import BlogViewTracker from "@/components/BlogViewTracker";
 import VideoRenderer from "@/components/VideoRenderer";
 import { PiLinkBold } from "react-icons/pi";
+import EmbeddedServiceCard from "@/components/EmbeddedServiceCard";
 
 // Optional: Base URL for absolute Open Graph image paths
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
@@ -235,9 +236,23 @@ export default async function SingleBlogPage({ params }) {
         );
       case "youtube":
         return <VideoRenderer key={index} url={item.value} index={index} />;
-      case "embed-link":
+case "embed-link":
         const linkUrl = item.value || "#";
         const linkDisplay = item.linkText || linkUrl;
+
+        // Check if the link contains a service slug (e.g., service/hydrofacial or services/hydrofacial)
+        const isServiceLink = /(?:services?\/)([^\/\?\#]+)/i.test(linkUrl);
+
+        if (isServiceLink || item.displayType === "card") {
+          return (
+            <EmbeddedServiceCard
+              key={index}
+              linkUrl={linkUrl}
+              fallbackText={linkDisplay}
+            />
+          );
+        }
+
         if (item.displayType === "button") {
           return (
             <div key={index} className="my-6 w-full flex">
