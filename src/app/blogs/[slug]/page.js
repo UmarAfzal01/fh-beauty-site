@@ -64,7 +64,7 @@ export async function generateMetadata({ params }) {
     }
   }
 
-  // 2. Resolve image URL with absolute path fallback
+  // Exact original image handling preserved
   const seoImage = blog.img
     ? blog.img.startsWith("http")
       ? blog.img
