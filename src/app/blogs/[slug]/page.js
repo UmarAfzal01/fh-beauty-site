@@ -42,8 +42,29 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const seoTitle = blog.title || "Blog Post";
-  const seoDescription = blog.description || seoTitle;
+  // 1. Parsing Meta Title & Description from single textarea input (metaDescription)
+  let seoTitle = blog.title || "Blog Post";
+  let seoDescription = blog.description || seoTitle;
+
+  if (blog.metaDescription && typeof blog.metaDescription === "string" && blog.metaDescription.trim()) {
+    // Split lines by newline break
+    const lines = blog.metaDescription
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    if (lines.length > 0) {
+      // First non-empty line becomes Meta Title
+      seoTitle = lines[0];
+
+      // Second line (or joining remaining lines) becomes Meta Description
+      if (lines.length > 1) {
+        seoDescription = lines.slice(1).join(" ");
+      }
+    }
+  }
+
+  // 2. Resolve image URL with absolute path fallback
   const seoImage = blog.img
     ? blog.img.startsWith("http")
       ? blog.img
