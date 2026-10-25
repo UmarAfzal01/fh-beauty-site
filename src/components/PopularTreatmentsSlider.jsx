@@ -129,7 +129,7 @@ export default function PopularTreatmentsSlider() {
                           : description}
                       </p>
                       <Link
-                        href={`/services/${item.slug || encodeURIComponent(title.toLowerCase())}`}
+                        href={`/service/${item.slug || encodeURIComponent(title.toLowerCase())}`}
                         className="w-full inline-flex items-center justify-center bg-white/15 backdrop-blur-md hover:bg-white hover:text-[#111] text-white text-[11px] sm:text-xs font-sans tracking-[0.2em] uppercase py-3 rounded-full border border-white/30 transition-all duration-300"
                       >
                         VIEW DETAILS

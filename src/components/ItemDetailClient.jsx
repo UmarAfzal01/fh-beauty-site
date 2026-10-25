@@ -27,6 +27,91 @@ const getAlignClass = (align) =>
       : "text-left";
 
 /* ------------------------------------------------------------------ */
+/* Individual Accordion Item for "How It Works" Steps                */
+/* ------------------------------------------------------------------ */
+function HowItWorksStepItem({ pt, pIdx }) {
+  const [isOpen, setIsOpen] = useState(pIdx === 0); // First step open by default
+
+  return (
+    <div className="border-b border-white/10 pb-4 transition-all duration-300">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between text-left py-2 group cursor-pointer focus:outline-none"
+      >
+        <div className="space-y-1">
+          <span className="text-[10px] uppercase font-sans tracking-widest text-white/60 font-bold block">
+            Step {String(pIdx + 1).padStart(2, "0")}
+          </span>
+          {pt.heading && (
+            <h3 className="text-xl font-serif font-medium group-hover:text-white/80 transition">
+              {pt.heading}
+            </h3>
+          )}
+        </div>
+        <span className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold transition-transform duration-300 ${isOpen ? 'rotate-180 bg-white/20' : ''}`}>
+          ↓
+        </span>
+      </button>
+
+      {/* Collapsible Content */}
+      <div 
+        className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? 'grid-rows-[1fr] opacity-100 pt-3' : 'grid-rows-[0fr] opacity-0 pt-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          {pt.description && (
+            <p className="text-sm font-sans text-white/80 leading-relaxed whitespace-pre-line pb-2">
+              {pt.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Individual Accordion Item for Quick Questions FAQ                 */
+/* ------------------------------------------------------------------ */
+function QuickQuestionFaqItem({ faq }) {
+  const [isOpen, setIsOpen] = useState(false); // All closed by default
+
+  return (
+    <div className="bg-white px-8 py-6 rounded-2xl border border-[#EBE4DE] shadow-2xs transition-all duration-300">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between text-left group cursor-pointer focus:outline-none"
+      >
+        <h3 className="text-lg font-serif font-medium text-[#2C2623] group-hover:text-[#8D4D5D] transition">
+          {faq.heading}
+        </h3>
+        <span className={`w-8 h-8 rounded-full bg-[#FAF7F3] border border-[#EBE4DE] flex items-center justify-center text-xs font-bold text-[#2C2623] transition-transform duration-300 ml-4 shrink-0 ${isOpen ? 'rotate-180 bg-[#2C2623] text-white' : ''}`}>
+          ↓
+        </span>
+      </button>
+
+      {/* Collapsible Answer */}
+      <div 
+        className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? 'grid-rows-[1fr] opacity-100 pt-4 border-t border-[#EBE4DE] mt-4' : 'grid-rows-[0fr] opacity-0 pt-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          {faq.description && (
+            <p className="text-sm font-sans text-[#514C48]/80 leading-relaxed whitespace-pre-line">
+              {faq.description}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Dynamic section renderer                                            */
 /* ------------------------------------------------------------------ */
 function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
@@ -177,28 +262,9 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
           key={key}
           className={`grid grid-cols-1 ${img ? "lg:grid-cols-2" : ""} bg-[#6b3846] text-white`}
         >
-          <div className="p-12 lg:p-24 flex flex-col justify-center space-y-8">
-            <h2 className="text-4xl lg:text-5xl font-normal font-serif">
-              {sec.heading || "How It Works"}
-            </h2>
-            <div className="space-y-6">
-              {sec.points?.map((pt, pIdx) => (
-                <div key={pIdx} className="space-y-2 border-b border-white/10 pb-6">
-                  <span className="text-[10px] uppercase font-sans tracking-widest text-white/60 font-bold">
-                    Step {String(pIdx + 1).padStart(2, "0")}
-                  </span>
-                  {pt.heading && <h3 className="text-xl font-serif font-medium">{pt.heading}</h3>}
-                  {pt.description && (
-                    <p className="text-sm font-sans text-white/80 leading-relaxed whitespace-pre-line">
-                      {pt.description}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Image Column - First on mobile/tablet (order-1), second on desktop (lg:order-2) */}
           {img && (
-            <div className="relative min-h-[400px] lg:min-h-full">
+            <div className="relative min-h-[400px] lg:min-h-full order-1 lg:order-2">
               <img
                 src={img}
                 alt={sec.alt || "How it works"}
@@ -206,6 +272,18 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
               />
             </div>
           )}
+
+          {/* Content Column - Second on mobile/tablet (order-2), first on desktop (lg:order-1) */}
+          <div className="p-12 lg:p-24 flex flex-col justify-center space-y-8 order-2 lg:order-1">
+            <h2 className="text-4xl lg:text-5xl font-normal font-serif">
+              {sec.heading || "How It Works"}
+            </h2>
+            <div className="space-y-4">
+              {sec.points?.map((pt, pIdx) => (
+                <HowItWorksStepItem key={pIdx} pt={pt} pIdx={pIdx} />
+              ))}
+            </div>
+          </div>
         </section>
       );
     }
@@ -259,17 +337,9 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
             <h2 className="text-3xl font-normal text-[#2C2623] text-center mb-12">
               {sec.heading || "Quick answers to questions you may have"}
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {sec.points?.map((faq, fIdx) => (
-                <div
-                  key={fIdx}
-                  className="bg-white p-8 rounded-2xl border border-[#EBE4DE] shadow-2xs space-y-3"
-                >
-                  <h3 className="text-lg font-serif font-medium text-[#2C2623]">{faq.heading}</h3>
-                  <p className="text-sm font-sans text-[#514C48]/80 leading-relaxed whitespace-pre-line">
-                    {faq.description}
-                  </p>
-                </div>
+                <QuickQuestionFaqItem key={fIdx} faq={faq} />
               ))}
             </div>
             <div className="text-center mt-12">
@@ -360,6 +430,7 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 export default function ItemDetailClient({ item }) {
+  
   const router = useRouter();
   const { addToCart } = useCart();
 

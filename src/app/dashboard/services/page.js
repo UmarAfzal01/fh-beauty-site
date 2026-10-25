@@ -290,7 +290,7 @@ export default function AdminServicesPage() {
                       <IoIosCreate size={15} /> Edit
                     </button>
                     <a 
-                      href={`/services/${s?.slug}`} 
+                      href={`/service/${s?.slug}`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="flex-1 text-xs font-sans uppercase tracking-wider bg-white py-2.5 rounded-xl border border-[#EBE4DE] text-[#2C2623] font-medium text-center hover:bg-[#FAF7F3] hover:border-[#2C2623] transition-all flex items-center justify-center gap-1.5 shadow-sm"

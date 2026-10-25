@@ -175,7 +175,7 @@ export default function Header() {
                     {services.map((service) => (
                       <Link
                         key={service._id || service.slug}
-                        href={`/services/${service.slug}`}
+                        href={`/service/${service.slug}`}
                         onClick={() => setMobileMenuOpen(false)}
                         className="text-[11px] tracking-wider text-[#514C48] hover:text-[#111] truncate"
                       >

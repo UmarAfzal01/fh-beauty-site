@@ -63,7 +63,7 @@ export default function EmbeddedServiceCard({ linkUrl, fallbackText }) {
     const title = service.name || 'Clinical Treatment';
     const description = service.description || 'Professional medical care tailored to your skin and aesthetic goals.';
     const price = service.price ? `PKR ${service.price.toLocaleString()}` : null;
-    const targetHref = `/services/${service.slug || slug}`;
+    const targetHref = `/service/${service.slug || slug}`;
 
     return (
       <div className="my-8 w-full max-w-xl bg-white border border-[#E0DED8] rounded-[24px] overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group">

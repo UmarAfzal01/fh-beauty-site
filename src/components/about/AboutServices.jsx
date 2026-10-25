@@ -89,7 +89,7 @@ export default function AboutServices({ serviceIds = [] }) {
                     {title}
                   </h3>
                   <Link
-                    href={`/services/${slug}`}
+                    href={`/service/${slug}`}
                     className="inline-block border border-white/40 hover:border-white text-white text-xs font-sans uppercase tracking-wider px-5 py-2.5 rounded-full backdrop-blur-sm transition bg-white/10"
                   >
                     View Details
