@@ -94,9 +94,9 @@ export default function Header() {
         <Link href="/blogs" className="hover:text-[#111] transition">
           BLOGS
         </Link>
-        <Link href="/contacts" className="hover:text-[#111] transition">
+        {/* <Link href="/contacts" className="hover:text-[#111] transition">
           CONTACTS
-        </Link>
+        </Link> */}
       </nav>
 
       {/* Right: Phone, CTA Button & Mobile Hamburger Toggle */}
@@ -207,13 +207,13 @@ export default function Header() {
               >
                 BLOGS
               </Link>
-              <Link 
+              {/* <Link 
                 href="/contacts" 
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
               >
                 CONTACTS
-              </Link>
+              </Link> */}
             </nav>
 
             {/* Drawer Footer Contact & CTA */}

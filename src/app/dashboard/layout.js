@@ -78,7 +78,8 @@ export default function DashboardLayout({ children }) {
       label: "Content & Pages",
       items: [
         { href: "/dashboard/blogs", label: "Blogs", icon: MdArticle },
-        { href: "/dashboard/about", label: "About Page", icon: MdInfo }
+        { href: "/dashboard/about", label: "About Page", icon: MdInfo },
+        { href: "/dashboard/banner-select", label: "Main Popup", icon: MdArticle }
       ]
     }
   ];

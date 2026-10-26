@@ -5,14 +5,23 @@ import { FiCalendar, FiX, FiArrowRight } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+const DISMISS_KEY = "appointment_modal_dismissed";
+
 export default function AppointmentBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const [bannerImage, setBannerImage] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    // 1. Check if user already dismissed it
-    const isDismissed = localStorage.getItem("appointment_modal_dismissed");
+    // 1. Check if the user already dismissed it in THIS browser session.
+    // sessionStorage survives a refresh, but is cleared when the tab/browser
+    // is closed, so the modal shows again on their next visit.
+    let isDismissed = false;
+    try {
+      isDismissed = sessionStorage.getItem(DISMISS_KEY) === "true";
+    } catch (err) {
+      // Storage can be blocked (private mode, etc.); just show the modal
+    }
     if (!isDismissed) {
       setIsVisible(true);
     }
@@ -33,14 +42,22 @@ export default function AppointmentBanner() {
     fetchBannerImage();
   }, []);
 
+  const markDismissed = () => {
+    try {
+      sessionStorage.setItem(DISMISS_KEY, "true");
+    } catch (err) {
+      // ignore storage errors
+    }
+  };
+
   const handleDismiss = () => {
     setIsVisible(false);
-    localStorage.setItem("appointment_modal_dismissed", "true");
+    markDismissed();
   };
 
   const handleBookNow = () => {
     setIsVisible(false);
-    localStorage.setItem("appointment_modal_dismissed", "true");
+    markDismissed();
     router.push("/appointment");
   };
 

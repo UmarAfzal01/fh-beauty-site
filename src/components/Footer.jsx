@@ -89,7 +89,7 @@ export default function Footer() {
             <Link href="/" className="hover:text-[#8D4D5D] transition-colors">Home</Link>
             <Link href="/services" className="hover:text-[#8D4D5D] transition-colors">Services</Link>
             <Link href="/blogs" className="hover:text-[#8D4D5D] transition-colors">Blogs</Link>
-            <Link href="/contacts" className="hover:text-[#8D4D5D] transition-colors">Contacts</Link>
+            {/* <Link href="/contacts" className="hover:text-[#8D4D5D] transition-colors">Contacts</Link> */}
           </div>
 
           {/* Copyright Text */}
