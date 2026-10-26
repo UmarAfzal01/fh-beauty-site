@@ -3,6 +3,9 @@ import dbConnect from "@/lib/dbConnect";
 import Appointment from "@/models/Appointment";
 import nodemailer from "nodemailer";
 
+// Doctor's address that receives a copy of every booking
+const ADMIN_EMAIL = "drwardasikander@gmail.com";
+
 // Configure Nodemailer transporter (uses Gmail service shortcut)
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -83,14 +86,22 @@ export async function POST(request) {
       status: "pending",
     });
 
-    // Conditionally send email if an email address is provided
-    if (email && email.trim() !== "") {
-      try {
-        await transporter.sendMail({
-          from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-          to: email,
-          subject: `Appointment Request Received: ${newAppointment.service}`,
-          html: `
+    // Recipients:
+    // - Client (if provided) goes in "to"
+    // - Doctor + the sending account are BCC'd so the client doesn't see them
+    // - If there is no client email, the doctor becomes the main recipient
+    const clientEmail = email && email.trim() !== "" ? email.trim() : null;
+    const senderEmail = process.env.EMAIL_USER;
+
+    const bccList = [ADMIN_EMAIL, senderEmail].filter(Boolean);
+
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: clientEmail || ADMIN_EMAIL,
+        bcc: clientEmail ? bccList : [senderEmail].filter(Boolean),
+        subject: `Appointment Request Received: ${newAppointment.service}`,
+        html: `
             <div style="font-family: Georgia, serif; color: #514C48; background-color: #FAF7F3; padding: 50px 20px; max-width: 620px; margin: 0 auto;">
               
               <!-- Container Card -->
@@ -155,10 +166,9 @@ export async function POST(request) {
               </div>
             </div>
           `,
-        });
-      } catch (emailError) {
-        console.error("Auto-mail sending failed:", emailError);
-      }
+      });
+    } catch (emailError) {
+      console.error("Auto-mail sending failed:", emailError);
     }
 
     return NextResponse.json(
