@@ -64,13 +64,22 @@ export async function generateMetadata({ params }) {
 
   const canonicalUrl = `${BASE_URL}/${type}/${slug}`;
 
+  // Correctly extract and map url strings from the images object array
   const images = (item.images || [])
     .filter((img) => img?.url)
-    .slice(0, 4)
-    .map((img) => ({
-      url: img.url,
-      alt: img.alt || item.name,
-    }));
+    .slice(0, 1)
+    .map((img) => {
+      let imageUrl = img.url;
+      if (imageUrl.startsWith("/")) {
+        imageUrl = `${BASE_URL}${imageUrl}`;
+      }
+      return {
+        url: imageUrl,
+        width: 1200, // WhatsApp required dimensions for scraper preview
+        height: 630,
+        alt: img.alt || item.name,
+      };
+    });
 
   return {
     title,
