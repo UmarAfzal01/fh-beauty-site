@@ -121,7 +121,7 @@ export default function DashboardAppointmentsPage() {
     const serviceName = app.service || "Clinical Treatment";
     const appointmentTime = app.preferredTime || "Scheduled Time";
 
-    const message = `Hello ${patientName},\nYour appointment has been confirmed!\n *Service:* ${serviceName}\n *Date:* ${cleanDate}\n *Time:* ${appointmentTime}\nThank you for choosing our clinic. Please let us know if you need to reschedule or have any questions beforehand.\n See you soon!`;
+    const message = `Hello ${patientName},\nYour appointment has been confirmed!\n \n *Service:* ${serviceName}\n *Date:* ${cleanDate}\n *Time:* ${appointmentTime}\n \n Thank you for choosing our clinic.\n \n Please let us know if you need to reschedule or have any questions beforehand.\n See you soon!`;
 
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
