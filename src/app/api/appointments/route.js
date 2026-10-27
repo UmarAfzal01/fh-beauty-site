@@ -15,6 +15,30 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+// "2026-10-31" -> "31 Oct 2026"
+// Parsed manually (not via new Date) to avoid UTC/timezone off-by-one issues.
+function formatDate(dateStr) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr || "");
+  if (!match) return dateStr; // fall back to the raw value if format is unexpected
+  const [, year, month, day] = match;
+  return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
+}
+
+// Escape user-provided text before placing it inside the HTML email
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function GET(request) {
   try {
     await dbConnect();
@@ -95,6 +119,12 @@ export async function POST(request) {
 
     const bccList = [ADMIN_EMAIL, senderEmail].filter(Boolean);
 
+    // Safe values for the email template
+    const safeName = escapeHtml(fullName);
+    const safeService = escapeHtml(newAppointment.service);
+    const safeDate = escapeHtml(formatDate(preferredDate));
+    const safeTime = escapeHtml(preferredTime);
+
     try {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
@@ -114,7 +144,7 @@ export async function POST(request) {
 
                 <!-- Subtitle Top -->
                 <p style="font-family: sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; color: #514C48; margin-bottom: 12px; font-weight: 600;">
-                  THANK YOU • ${fullName}
+                  THANK YOU • ${safeName}
                 </p>
 
                 <!-- Main Heading -->
@@ -124,7 +154,7 @@ export async function POST(request) {
 
                 <!-- Sub-description -->
                 <p style="font-size: 15px; color: #514C48; line-height: 1.6; max-width: 440px; margin: 0 auto 36px auto;">
-                  We have received your appointment request for <strong>${newAppointment.service}</strong>. Our care team is reviewing your details.
+                  We have received your appointment request for <strong>${safeService}</strong>. Our care team is reviewing your details.
                 </p>
 
                 <!-- Appointment Details Summary Box -->
@@ -132,15 +162,15 @@ export async function POST(request) {
                   <table style="width: 100%; border-collapse: collapse; font-size: 13px; font-family: Georgia, serif;">
                     <tr>
                       <td style="padding: 6px 0; color: #514C48; opacity: 0.7;">Service:</td>
-                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${newAppointment.service}</td>
+                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${safeService}</td>
                     </tr>
                     <tr>
                       <td style="padding: 6px 0; color: #514C48; opacity: 0.7;">Preferred Date:</td>
-                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${preferredDate}</td>
+                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${safeDate}</td>
                     </tr>
                     <tr>
                       <td style="padding: 6px 0; color: #514C48; opacity: 0.7;">Preferred Time:</td>
-                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${preferredTime}</td>
+                      <td style="padding: 6px 0; color: #111; font-weight: bold; text-align: right;">${safeTime}</td>
                     </tr>
                     <tr>
                       <td style="padding: 6px 0; color: #514C48; opacity: 0.7;">Status:</td>
@@ -151,7 +181,7 @@ export async function POST(request) {
 
                 <!-- Action Button -->
                 <div style="margin-bottom: 40px;">
-                  <a href="https://www.drwardasikandar.com" target="_blank" rel="noopener noreferrer" style="background-color: #111; color: #FAF7F3; padding: 14px 32px; border-radius: 50px; font-family: sans-serif; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; text-decoration: none; display: inline-block;">
+                  <a href="https://drwardasikandar.com" target="_blank" rel="noopener noreferrer" style="background-color: #111; color: #FAF7F3; padding: 14px 32px; border-radius: 50px; font-family: sans-serif; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.2em; text-decoration: none; display: inline-block;">
                     VISIT OUR WEBSITE →
                   </a>
                 </div>
