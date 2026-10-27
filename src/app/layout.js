@@ -11,6 +11,12 @@ import FloatingCart from "@/components/FloatingCart";
 import CartSidebar from "@/components/CartSidebar";
 import AppointmentBanner from "@/components/AppointmentBanner";
 
+export const metadata = {
+  verification: {
+    google: "kgrDi4pq78vKUm3DVWzkFDRSoQ_CQG_FBQ1r47a-f-4",
+  },
+};
+
 export default async function RootLayout({ children }) {
   const session = await auth();
 
@@ -55,7 +61,7 @@ export default async function RootLayout({ children }) {
             <CartProvider>
               <CartSidebar />
               {children}
-              <AppointmentBanner/>
+              <AppointmentBanner />
               <FloatingCart />
             </CartProvider>
             <Toaster />

@@ -1,39 +1,49 @@
 import dbConnect from "@/lib/dbConnect";
-import Product from "@/models/Product"; // adjust to your model
+import { Item } from "@/models/Item"; // named export; adjust the path if your file is named differently
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://drwardasikandar.com";
 
-// Regenerate at most once an hour so new products show up without a redeploy
 export const revalidate = 3600;
 
-export default async function sitemap() {
-  // Static pages: edit this list to match your real routes
-  const staticRoutes = ["", "/about", "/services", "/contact", "/appointment", "/products", "/bundles"].map(
-    (path) => ({
-      url: `${BASE_URL}${path}`,
-      lastModified: new Date(),
-      changeFrequency: path === "" ? "weekly" : "monthly",
-      priority: path === "" ? 1 : 0.7,
-    }),
-  );
+// URL prefix for each Item type. Edit these to match your real detail routes.
+const TYPE_PATHS = {
+  Product: "/product",
+  Bundle: "/bundle",
+  Service: "/service",
+};
 
-  // Dynamic pages: /product/[slug]
-  let productRoutes = [];
+export default async function sitemap() {
+  const staticRoutes = [
+    "",
+    "/about",
+    "/services",
+    "/contact",
+    "/appointment",
+    "/products",
+    "/bundles",
+    "/doctors",
+  ].map((path) => ({
+    url: `${BASE_URL}${path}`,
+    changeFrequency: path === "" ? "weekly" : "monthly",
+    priority: path === "" ? 1 : 0.7,
+  }));
+
+  let itemRoutes = [];
   try {
     await dbConnect();
-    const products = await Product.find({}, "slug updatedAt").lean();
-    productRoutes = products
-      .filter((p) => p.slug)
-      .map((p) => ({
-        url: `${BASE_URL}/product/${p.slug}`,
-        lastModified: p.updatedAt || new Date(),
+    // Projection keeps the reviews array (and other heavy fields) out of the query
+    const items = await Item.find({}, "slug type updatedAt").lean();
+    itemRoutes = items
+      .filter((item) => item.slug && TYPE_PATHS[item.type])
+      .map((item) => ({
+        url: `${BASE_URL}${TYPE_PATHS[item.type]}/${item.slug}`,
+        lastModified: item.updatedAt || new Date(),
         changeFrequency: "weekly",
-        priority: 0.8,
+        priority: item.type === "Product" ? 0.8 : 0.7,
       }));
   } catch (err) {
-    // Don't fail the sitemap (or the build) if the DB is unreachable
-    console.error("Sitemap: failed to load products", err);
+    console.error("Sitemap: failed to load items", err);
   }
 
-  return [...staticRoutes, ...productRoutes];
+  return [...staticRoutes, ...itemRoutes];
 }
