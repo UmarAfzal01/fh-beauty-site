@@ -37,9 +37,9 @@ export default function Hero() {
           
           {/* Top Left Heading Text with Playfair/Serif styling */}
           <div className="flex flex-col justify-start items-start lg:absolute lg:top-[-10vh] lg:left-0 z-20">
-            <h2 className="text-xl md:text-2xl lg:text-[1.75rem] leading-[1.3] text-[#111] max-w-xs font-serif font-normal">
+            <h1 className="text-xl md:text-2xl lg:text-[1.75rem] leading-[1.3] text-[#111] max-w-xs font-serif font-normal">
               Pakistan Wellness Center by Dr. Warda Sikandar
-            </h2>
+            </h1>
           </div>
 
           {/* Center Image Column with Centered Button Positioned at Bottom */}
