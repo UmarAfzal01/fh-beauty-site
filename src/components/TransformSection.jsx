@@ -65,7 +65,7 @@ export default function TransformSection() {
             >
               <Image
                 src="https://res.cloudinary.com/wapixih0/image/upload/v1792669082/Aesthetic-Treatments-Tailored-Dr-Warda-Skikandar.webp"
-                alt="Treatment procedure in session"
+                alt="Dr. Warda Sikandar"
                 fill
                 className="object-cover object-center"
               />

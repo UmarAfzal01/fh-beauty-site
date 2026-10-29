@@ -14,13 +14,13 @@ export default function Header() {
   useEffect(() => {
     async function fetchServices() {
       try {
-        const res = await fetch('/api/items');
+        const res = await fetch("/api/items");
         const data = await res.json();
         const items = Array.isArray(data) ? data : data.items || [];
-        
+
         // Filter items where type is Service
         const fetchedServices = items.filter(
-          (item) => item.type?.toLowerCase() === 'service'
+          (item) => item.type?.toLowerCase() === "service",
         );
         setServices(fetchedServices);
       } catch (err) {
@@ -35,10 +35,14 @@ export default function Header() {
       {/* Left: Brand Logo & Name */}
       <Link href="/" className="flex items-center gap-3.5 group">
         <div className="w-20 h-20 flex items-center justify-center text-[#8C6D6B] font-serif text-lg">
-          <img className="w-full h-full object-cover" src="https://res.cloudinary.com/wapixih0/image/upload/v1790707283/Logo.png" alt="Logo" />
+          <img
+            className="w-full h-full object-cover"
+            src="https://res.cloudinary.com/wapixih0/image/upload/v1790707283/Logo.png"
+            alt="Logo"
+          />
         </div>
         <span className="font-serif tracking-[0.2em] text-[#111] text-lg sm:text-xl font-normal">
-          Pakistan Wellness Center 
+          Pakistan Wellness Center
         </span>
       </Link>
 
@@ -48,15 +52,21 @@ export default function Header() {
           HOME
         </Link>
 
+        <Link href="/about" className="hover:text-[#111] transition">
+          ABOUT
+        </Link>
         {/* Services Dropdown with Hover */}
-        <div 
+        <div
           className="relative py-2"
           onMouseEnter={() => setIsDropdownOpen(true)}
           onMouseLeave={() => setIsDropdownOpen(false)}
         >
           <div className="flex items-center gap-1 cursor-pointer hover:text-[#111] transition">
             <span>SERVICES</span>
-            <IoIosArrowDown size={12} className={`transform transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            <IoIosArrowDown
+              size={12}
+              className={`transform transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`}
+            />
           </div>
 
           {/* Dropdown Menu Box */}
@@ -79,7 +89,9 @@ export default function Header() {
                   </Link>
                 ))
               ) : (
-                <span className="px-5 py-2 text-xs text-[#514C48]/60 font-sans">Loading services...</span>
+                <span className="px-5 py-2 text-xs text-[#514C48]/60 font-sans">
+                  Loading services...
+                </span>
               )}
             </div>
           )}
@@ -128,7 +140,6 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity">
           <div className="w-full max-w-xs bg-[#FAF7F3] h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
-            
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-6 border-b border-[#E6DEC9]">
               <span className="font-serif tracking-widest text-[#111] text-sm uppercase font-normal">
@@ -145,8 +156,8 @@ export default function Header() {
 
             {/* Drawer Nav Links */}
             <nav className="flex flex-col gap-5 py-6 text-xs font-sans tracking-[0.15em] text-[#514C48]">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
               >
@@ -155,12 +166,15 @@ export default function Header() {
 
               {/* Mobile Services Accordion */}
               <div className="border-b border-[#E6DEC9]/40 pb-2">
-                <div 
+                <div
                   onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
                   className="flex items-center justify-between py-2 cursor-pointer hover:text-[#111] transition"
                 >
                   <span>SERVICES</span>
-                  <IoIosArrowDown size={14} className={`transform transition-transform duration-300 ${mobileServicesOpen ? 'rotate-180' : ''}`} />
+                  <IoIosArrowDown
+                    size={14}
+                    className={`transform transition-transform duration-300 ${mobileServicesOpen ? "rotate-180" : ""}`}
+                  />
                 </div>
 
                 {mobileServicesOpen && (
@@ -186,22 +200,22 @@ export default function Header() {
                 )}
               </div>
 
-              <Link 
-                href="/products" 
+              <Link
+                href="/products"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
               >
                 PRODUCTS
               </Link>
-              <Link 
-                href="/bundles" 
+              <Link
+                href="/bundles"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
               >
                 BUNDLES
               </Link>
-              <Link 
-                href="/blogs" 
+              <Link
+                href="/blogs"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2 hover:text-[#111] transition border-b border-[#E6DEC9]/40"
               >
@@ -218,8 +232,8 @@ export default function Header() {
 
             {/* Drawer Footer Contact & CTA */}
             <div className="mt-auto pt-6 border-t border-[#E6DEC9] flex flex-col gap-4">
-              <a 
-                href="tel:+923254777981" 
+              <a
+                href="tel:+923254777981"
                 className="text-xs font-sans font-medium text-[#111] tracking-wider"
               >
                 +92 325 4777981
@@ -232,7 +246,6 @@ export default function Header() {
                 Book A Visit
               </Link>
             </div>
-
           </div>
         </div>
       )}
