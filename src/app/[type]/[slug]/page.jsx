@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 
 // Use your live domain as the fallback base URL for production on Vercel
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const SITE_NAME = "Dr Warda Sikander";
+const SITE_NAME = "Dr Warda Sikandar";
 
 // cache() makes generateMetadata and the page share ONE fetch per request
 const getItemData = cache(async (type, slug) => {

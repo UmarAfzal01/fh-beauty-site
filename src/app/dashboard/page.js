@@ -101,7 +101,7 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1">
               <h1 className="text-3xl font-serif font-normal text-[#111] flex items-center gap-2">
-                Welcome, Dr Warda Sikander{" "}
+                Welcome, Dr Warda Sikandar{" "}
                 <span className="inline-block animate-wave">👋</span>
               </h1>
               <p className="text-sm font-serif text-[#514C48]/70">

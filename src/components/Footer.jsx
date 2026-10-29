@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Left Column: Logo & Brand Name */}
           <div className="lg:col-span-5 flex items-center gap-4">
             <span className="text-2xl sm:text-3xl font-serif tracking-[0.18em] text-[#111] uppercase font-normal">
-              Dr Warda Sikander
+              Dr Warda Sikandar
             </span>
           </div>
 
@@ -47,9 +47,9 @@ export default function Footer() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
                 +92 325 4777981
               </a>
-              <a href="mailto:drwardasikander@gmail.com" className="flex items-center gap-2 text-[#514C48]/90 hover:text-[#111] font-medium tracking-wide transition">
+              <a href="mailto:drwardaSikandar@gmail.com" className="flex items-center gap-2 text-[#514C48]/90 hover:text-[#111] font-medium tracking-wide transition">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#8D4D5D]"></span>
-                drwardasikander@gmail.com
+                drwardaSikandar@gmail.com
               </a>
             </div>
 
@@ -94,7 +94,7 @@ export default function Footer() {
 
           {/* Copyright Text */}
           <p className="text-[11px] text-[#514C48]/60 text-center sm:text-right">
-            Dr Warda Sikander &copy; 2026 - All Rights Reserved
+            Dr Warda Sikandar &copy; 2026 - All Rights Reserved
           </p>
 
         </div>

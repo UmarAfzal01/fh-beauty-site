@@ -4,7 +4,7 @@ import Appointment from "@/models/Appointment";
 import nodemailer from "nodemailer";
 
 // Doctor's address that receives a copy of every booking
-const ADMIN_EMAIL = "drwardasikander@gmail.com";
+const ADMIN_EMAIL = "drwardaSikandar@gmail.com";
 
 // Configure Nodemailer transporter (uses Gmail service shortcut)
 const transporter = nodemailer.createTransport({
@@ -189,7 +189,7 @@ export async function POST(request) {
                 <!-- Footer Sharing / Social Section -->
                 <div style="border-top: 1px solid #E6DEC9; padding-top: 24px; margin-top: 24px;">
                   <p style="font-size: 11px; color: rgba(81, 76, 72, 0.6); margin-top: 24px;">
-                    Dr Warda Sikander • Thank you for choosing our care.
+                    Dr Warda Sikandar • Thank you for choosing our care.
                   </p>
                 </div>
 

@@ -17,27 +17,27 @@
     title: {
       default:
         "Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert",
-      template: "%s | Dr Warda Sikander",
+      template: "%s | Dr Warda Sikandar",
     },
     description:
       "Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence",
     keywords: [
       "Aesthetic Medicine",
       "Dermatology",
-      "Dr Warda Sikander",
+      "Dr Warda Sikandar",
       "Skin Care",
       "Pakistan",
     ],
-    authors: [{ name: "Dr Warda Sikander" }],
-    creator: "Dr Warda Sikander",
+    authors: [{ name: "Dr Warda Sikandar" }],
+    creator: "Dr Warda Sikandar",
     openGraph: {
       type: "website",
       locale: "en_US",
-      url: "https://drwardasikander.com", // Replace with your actual live Vercel domain or custom domain
+      url: "https://drwardaSikandar.com", // Replace with your actual live Vercel domain or custom domain
       title: "Dr. Warda Sikandar | Obesity Expert | Aesthetician | Wellness Expert",
       description:
         "Transform your health and aesthetics with science-backed, non-surgical solutions led by Dr. Warda Sikandar. Experience personalized care designed for lasting wellness, radiant skin, and effortless confidence",
-      siteName: "Dr Warda Sikander",
+      siteName: "Dr Warda Sikandar",
       images: [
         {
           url: "/images/og-image.webp", // Place your preview image inside the public/images folder

@@ -44,7 +44,7 @@ export default async function InstagramFeedSection() {
             rel="noopener noreferrer"
             className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] text-[#514C48] hover:text-[#8D4D5D] transition-colors"
           >
-            INSTAGRAM <span className="text-[#8D4D5D] font-medium">@DrWardaSikander</span>
+            INSTAGRAM <span className="text-[#8D4D5D] font-medium">@DrWardaSikandar</span>
           </a>
         </div>
 

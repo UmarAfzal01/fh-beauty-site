@@ -100,7 +100,7 @@ export default function PracticeQuoteStatsSection() {
 
               {/* Author */}
               <span className="text-xs font-sans tracking-[0.2em] uppercase text-white/75 font-medium">
-                Dr. Warda Sikander
+                Dr. Warda Sikandar
               </span>
             </div>
 
