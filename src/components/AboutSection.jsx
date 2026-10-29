@@ -15,7 +15,7 @@ export default function AboutSection() {
         </h2>
         <p className="text-0.5xl sm:text-1xl md:text-1xl lg:text-[1.4rem] font-serif font-light  leading-[1.35] text-[#111] max-w-4xl mb-10">
           Dr. Warda Sikandar is a Gold Medalist medical doctor, obesity expert
-          and aesthetician, and Director of Pakistan Wellness Center. Her work
+          and aesthetician, and CEO & Founder of Pakistan Wellness Center. Her work
           brings together skin and facial aesthetics, non-surgical body
           contouring, clinical nutrition and preventive wellness. Every plan
           begins with an assessment of your goals, health history and

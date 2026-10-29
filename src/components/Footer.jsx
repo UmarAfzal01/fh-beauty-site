@@ -70,7 +70,7 @@ export default function Footer() {
                 <AiFillInstagram size={18} />
               </a>
               <a 
-                href="https://www.linkedin.com/in/dr-warda-sikandar-" 
+                href="https://www.linkedin.com/in/dr-warda-sikandar" 
                 aria-label="LinkedIn"
                 className="w-10 h-10 rounded-full bg-white/80 hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-[#EBE4DE]"
               >
