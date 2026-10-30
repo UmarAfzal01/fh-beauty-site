@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { 
-  MdDashboard, 
-  MdArticle, 
-  MdEventNote, 
-  MdLogout, 
-  MdInfo, 
+import {
+  MdDashboard,
+  MdArticle,
+  MdEventNote,
+  MdLogout,
+  MdInfo,
   MdLocalHospital,
   MdMenu,
   MdClose,
@@ -17,15 +17,51 @@ import {
   MdShoppingBag,
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
-  MdAssessment
+  MdAssessment,
 } from "react-icons/md";
+import { LuHandshake, LuPanelTopOpen } from "react-icons/lu";
 import { FaPeopleGroup } from "react-icons/fa6";
+
+const navCategories = [
+  {
+    key: "overview",
+    label: "Overview",
+    items: [{ href: "/dashboard", label: "Dashboard", icon: MdDashboard }],
+  },
+  {
+    key: "ecommerce",
+    label: "E-Commerce",
+    items: [
+      { href: "/dashboard/items", label: "Items", icon: MdInventory2 },
+      { href: "/dashboard/orders", label: "Orders", icon: MdShoppingBag },
+    ],
+  },
+  {
+    key: "operations",
+    label: "Operations",
+    items: [
+      { href: "/dashboard/appointments", label: "Appointments", icon: MdEventNote },
+      { href: "/dashboard/customers", label: "Customers", icon: FaPeopleGroup },
+      { href: "/dashboard/doctors", label: "Doctors", icon: MdLocalHospital },
+      { href: "/dashboard/reports", label: "Patient Reports", icon: MdAssessment },
+    ],
+  },
+  {
+    key: "content",
+    label: "Content & Pages",
+    items: [
+      { href: "/dashboard/blogs", label: "Blogs", icon: MdArticle },
+      { href: "/dashboard/about", label: "About Page", icon: MdInfo },
+      { href: "/dashboard/banner-select", label: "Main Popup", icon: LuPanelTopOpen },
+      { href: "/dashboard/collaborations", label: "Collaborations", icon: LuHandshake },
+    ],
+  },
+];
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
 
-  // Define categorized menu groups with collapsible dropdown support
   const [openCategories, setOpenCategories] = useState({
     overview: true,
     ecommerce: true,
@@ -33,88 +69,50 @@ export default function DashboardLayout({ children }) {
     content: true,
   });
 
-  const toggleCategory = (categoryKey) => {
-    setOpenCategories((prev) => ({
-      ...prev,
-      [categoryKey]: !prev[categoryKey],
-    }));
-  };
+  const toggleCategory = (key) =>
+    setOpenCategories((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  // Set initial sidebar state based on screen size (open on desktop, closed on mobile)
+  // Closed by default on mobile
   useEffect(() => {
-    if (window.innerWidth < 768) {
-      setIsSidebarOpen(false);
-    }
+    if (window.innerWidth < 768) setIsSidebarOpen(false);
   }, []);
 
-  const navCategories = [
-    {
-      key: "overview",
-      label: "Overview",
-      items: [
-        { href: "/dashboard", label: "Dashboard", icon: MdDashboard }
-      ]
-    },
-    {
-      key: "ecommerce",
-      label: "E-Commerce",
-      items: [
-        { href: "/dashboard/items", label: "Items", icon: MdInventory2 },
-        { href: "/dashboard/orders", label: "Orders", icon: MdShoppingBag }
-      ]
-    },
-    {
-      key: "operations",
-      label: "Operations",
-      items: [
-        { href: "/dashboard/appointments", label: "Appointments", icon: MdEventNote },
-        { href: "/dashboard/customers", label: "Customers", icon: FaPeopleGroup },
-        { href: "/dashboard/doctors", label: "Doctors", icon: MdLocalHospital },
-        { href: "/dashboard/reports", label: "Patient Reports", icon: MdAssessment }
-      ]
-    },
-    {
-      key: "content",
-      label: "Content & Pages",
-      items: [
-        { href: "/dashboard/blogs", label: "Blogs", icon: MdArticle },
-        { href: "/dashboard/about", label: "About Page", icon: MdInfo },
-        { href: "/dashboard/banner-select", label: "Main Popup", icon: MdArticle }
-      ]
-    }
-  ];
+  // Active on exact match, or on nested routes (e.g. /dashboard/items/edit/123)
+  const isActiveRoute = (href) =>
+    href === "/dashboard"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FAF7F3] via-[#F5EFEB] to-[#EFE7DD] text-[#514C48] flex selection:bg-[#E6DEC9] selection:text-[#111]">
-      
-      {/* Mobile Backdrop Overlay */}
+
+      {/* Mobile Backdrop */}
       {isSidebarOpen && (
-        <div 
+        <div
           onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/25 backdrop-blur-xs z-40 md:hidden transition-opacity"
+          className="fixed inset-0 bg-black/25 backdrop-blur-xs z-40 md:hidden"
         />
       )}
 
-      {/* Sidebar Navigation */}
-      <aside 
-        className={`fixed md:sticky top-0 inset-y-0 left-0 z-50 h-[100svh] bg-[#F8F4EC]/95 md:bg-[#F3EDE2]/60 backdrop-blur-md border-r border-[#E6DEC9] flex flex-col justify-between shrink-0 transition-all duration-300 ease-in-out overflow-y-auto ${
-          isSidebarOpen 
-            ? "translate-x-0 w-72 p-6 opacity-100 shadow-2xl md:shadow-none" 
-            : "-translate-x-full md:translate-x-0 md:w-0 md:p-0 md:opacity-0 md:border-none md:overflow-hidden"
+      {/* Sidebar: outer shell only animates width/position and never scrolls */}
+      <aside
+        inert={!isSidebarOpen}
+        className={`fixed md:sticky top-0 left-0 z-50 h-[100svh] shrink-0 overflow-hidden bg-[#F8F4EC]/95 md:bg-[#F3EDE2]/60 backdrop-blur-md border-r border-[#E6DEC9] transition-[width,transform] duration-300 ease-in-out ${
+          isSidebarOpen
+            ? "translate-x-0 w-72 shadow-2xl md:shadow-none"
+            : "-translate-x-full md:translate-x-0 w-72 md:w-0 md:border-r-0"
         }`}
       >
-        <div className="space-y-6 w-72">
-          {/* Logo / Brand & Mobile Close Button */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#E6DEC9]">
+        {/* Fixed-width inner column keeps content from squishing while collapsing */}
+        <div className="flex h-full w-72 flex-col p-6">
+
+          {/* Header (pinned) */}
+          <div className="flex items-center justify-between pb-4 border-b border-[#E6DEC9] shrink-0">
             <div>
-              <h2 className="text-xl font-serif font-medium text-[#111]">
-                Admin Panel
-              </h2>
-              <p className="text-xs text-[#514C48]/60 font-serif mt-0.5">
-                Management Dashboard
-              </p>
+              <h2 className="text-xl font-serif font-medium text-[#111]">Admin Panel</h2>
+              <p className="text-xs text-[#514C48]/60 font-serif mt-0.5">Management Dashboard</p>
             </div>
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(false)}
               className="md:hidden p-2 rounded-xl text-[#514C48] hover:bg-[#E6DEC9]/40 transition cursor-pointer"
               aria-label="Close Sidebar"
@@ -123,27 +121,26 @@ export default function DashboardLayout({ children }) {
             </button>
           </div>
 
-          {/* Categorized Dropdown Navigation */}
-          <nav className="space-y-4 font-serif">
+          {/* Nav (the only scrolling part) */}
+          <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain py-4 -mr-3 pr-3 space-y-4 font-serif [scrollbar-width:thin] [scrollbar-color:#E6DEC9_transparent]">
             {navCategories.map((cat) => {
               const isOpen = openCategories[cat.key];
               return (
                 <div key={cat.key} className="space-y-1">
-                  {/* Category Dropdown Header */}
                   <button
                     onClick={() => toggleCategory(cat.key)}
-                    className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-widest font-semibold text-[#514C48]/70 hover:text-[#111] transition rounded-lg hover:bg-[#FAF7F3]"
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs uppercase tracking-widest font-semibold text-[#514C48]/70 hover:text-[#111] transition rounded-lg hover:bg-[#FAF7F3] cursor-pointer"
                   >
                     <span>{cat.label}</span>
                     {isOpen ? <MdKeyboardArrowUp size={16} /> : <MdKeyboardArrowDown size={16} />}
                   </button>
 
-                  {/* Category Items Accordion */}
                   {isOpen && (
                     <div className="space-y-1 pl-2">
                       {cat.items.map((item) => {
                         const Icon = item.icon;
-                        const isActive = pathname === item.href;
+                        const active = isActiveRoute(item.href);
                         return (
                           <Link
                             key={item.href}
@@ -152,7 +149,7 @@ export default function DashboardLayout({ children }) {
                               if (window.innerWidth < 768) setIsSidebarOpen(false);
                             }}
                             className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition border text-sm ${
-                              isActive
+                              active
                                 ? "bg-white text-[#111] border-[#E6DEC9] shadow-xs font-semibold"
                                 : "text-[#514C48] hover:bg-[#FAF7F3] hover:text-[#111] border-transparent hover:border-[#E6DEC9]"
                             }`}
@@ -168,28 +165,26 @@ export default function DashboardLayout({ children }) {
               );
             })}
           </nav>
-        </div>
 
-        {/* Bottom Section / Logout */}
-        <div className="pt-6 border-t border-[#E6DEC9] w-72">
-          <button
-            type="button"
-            onClick={() => signOut({ redirectTo: "/login" })}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-700 hover:bg-rose-500/10 transition font-serif text-sm font-medium cursor-pointer"
-          >
-            <MdLogout size={18} className="shrink-0" />
-            <span>Logout</span>
-          </button>
+          {/* Logout (pinned) */}
+          <div className="pt-4 border-t border-[#E6DEC9] shrink-0">
+            <button
+              type="button"
+              onClick={() => signOut({ redirectTo: "/login" })}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-rose-700 hover:bg-rose-500/10 transition font-serif text-sm font-medium cursor-pointer"
+            >
+              <MdLogout size={18} className="shrink-0" />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* Sticky Top Header Bar with Sidebar Toggle */}
         <header className="sticky top-0 z-30 h-16 px-4 sm:px-8 border-b border-[#E6DEC9]/70 bg-white/60 backdrop-blur-md flex items-center justify-between shrink-0">
           <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={() => setIsSidebarOpen((v) => !v)}
             className="p-2.5 rounded-xl bg-white/80 border border-[#E6DEC9] text-[#111] hover:bg-white transition shadow-xs flex items-center justify-center cursor-pointer"
             aria-label="Toggle Sidebar"
           >
@@ -201,11 +196,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        {/* Page Content Flow */}
-        <main className="flex-1">
-          {children}
-        </main>
-
+        <main className="flex-1 min-w-0">{children}</main>
       </div>
     </div>
   );

@@ -1,94 +1,92 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 
-const CartContext = createContext();
+const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  // Lazy initialization: Load from localStorage immediately on first render
-  const [cart, setCart] = useState(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const savedCart = localStorage.getItem("cart");
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (e) {
-      console.error("Failed to parse cart from localStorage", e);
-      return [];
-    }
-  });
-
+  const [cart, setCart] = useState([]);
+  const [hydrated, setHydrated] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Save to localStorage whenever cart changes
+  // Load once after mount
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      if (saved) setCart(JSON.parse(saved));
+    } catch (e) {
+      console.error("Failed to parse cart from localStorage", e);
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist only after the initial load, otherwise the first run
+  // overwrites the saved cart with []
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       localStorage.setItem("cart", JSON.stringify(cart));
     } catch (e) {
       console.error("Failed to save cart to localStorage", e);
     }
-  }, [cart]);
+  }, [cart, hydrated]);
 
   const addToCart = (product, quantity = 1, selectedOption = "Standard", price = product.price) => {
     setCart((prevCart) => {
       const productId = product._id || product.id || product.slug;
       const cartItemId = `${productId}-${selectedOption}`;
+      const existing = prevCart.find((item) => item.cartItemId === cartItemId);
 
-      const existingIndex = prevCart.findIndex((item) => item.cartItemId === cartItemId);
-
-      if (existingIndex > -1) {
-        return prevCart.map((item, index) =>
-          index === existingIndex
+      if (existing) {
+        return prevCart.map((item) =>
+          item.cartItemId === cartItemId
             ? { ...item, quantity: item.quantity + Number(quantity) }
             : item
         );
-      } else {
-        return [
-          ...prevCart,
-          {
-            cartItemId,
-            productId,
-            name: product.name,
-            price: Number(price),
-            image: product.image || product.images?.[0]?.url || "",
-            selectedOption,
-            quantity: Number(quantity),
-          },
-        ];
       }
+      return [
+        ...prevCart,
+        {
+          cartItemId,
+          productId,
+          name: product.name,
+          price: Number(price),
+          image: product.image || product.images?.[0]?.url || "",
+          selectedOption,
+          quantity: Number(quantity),
+        },
+      ];
     });
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (cartItemId) => {
+  const removeFromCart = (cartItemId) =>
     setCart((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
-  };
 
   const updateQuantity = (cartItemId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(cartItemId);
-      return;
-    }
+    if (quantity <= 0) return removeFromCart(cartItemId);
     setCart((prev) =>
-      prev.map((item) => (item.cartItemId === cartItemId ? { ...item, quantity: Number(quantity) } : item))
+      prev.map((item) =>
+        item.cartItemId === cartItemId ? { ...item, quantity: Number(quantity) } : item
+      )
     );
   };
 
-  const clearCart = () => {
-    setCart([]);
-  };
+  const clearCart = () => setCart([]);
 
-  const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const subtotal = useMemo(
+    () => cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    [cart]
+  );
+  const totalItems = useMemo(
+    () => cart.reduce((acc, item) => acc + (item.quantity || 1), 0),
+    [cart]
+  );
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        subtotal,
-        isCartOpen,
-        setIsCartOpen,
+        cart, hydrated, addToCart, removeFromCart, updateQuantity, clearCart,
+        subtotal, totalItems, isCartOpen, setIsCartOpen,
       }}
     >
       {children}
@@ -97,5 +95,7 @@ export function CartProvider({ children }) {
 }
 
 export function useCart() {
-  return useContext(CartContext);
-}
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be used inside <CartProvider>");
+  return ctx;
+} 

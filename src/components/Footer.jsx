@@ -55,13 +55,13 @@ export default function Footer() {
 
             {/* Social Icons */}
             <div className="flex items-center gap-3">
-              <a 
+              {/* <a 
                 href="https://www.facebook.com/pakistanobesitycenter" 
                 aria-label="Facebook"
                 className="w-10 h-10 rounded-full bg-white/80 hover:bg-[#8D4D5D] hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-[#EBE4DE]"
               >
                 <FaFacebook size={16} />
-              </a>
+              </a> */}
               <a 
                 href="https://www.instagram.com/drwardasikandar" 
                 aria-label="Instagram"

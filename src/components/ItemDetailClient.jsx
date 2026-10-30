@@ -49,15 +49,19 @@ function HowItWorksStepItem({ pt, pIdx }) {
             </h3>
           )}
         </div>
-        <span className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold transition-transform duration-300 ${isOpen ? 'rotate-180 bg-white/20' : ''}`}>
+        <span
+          className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold transition-transform duration-300 ${isOpen ? "rotate-180 bg-white/20" : ""}`}
+        >
           ↓
         </span>
       </button>
 
       {/* Collapsible Content */}
-      <div 
+      <div
         className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? 'grid-rows-[1fr] opacity-100 pt-3' : 'grid-rows-[0fr] opacity-0 pt-0'
+          isOpen
+            ? "grid-rows-[1fr] opacity-100 pt-3"
+            : "grid-rows-[0fr] opacity-0 pt-0"
         }`}
       >
         <div className="overflow-hidden">
@@ -88,15 +92,19 @@ function QuickQuestionFaqItem({ faq }) {
         <h3 className="text-lg font-serif font-medium text-[#2C2623] group-hover:text-[#8D4D5D] transition">
           {faq.heading}
         </h3>
-        <span className={`w-8 h-8 rounded-full bg-[#FAF7F3] border border-[#EBE4DE] flex items-center justify-center text-xs font-bold text-[#2C2623] transition-transform duration-300 ml-4 shrink-0 ${isOpen ? 'rotate-180 bg-[#2C2623] text-white' : ''}`}>
+        <span
+          className={`w-8 h-8 rounded-full bg-[#FAF7F3] border border-[#EBE4DE] flex items-center justify-center text-xs font-bold text-[#2C2623] transition-transform duration-300 ml-4 shrink-0 ${isOpen ? "rotate-180 bg-[#2C2623] text-white" : ""}`}
+        >
           ↓
         </span>
       </button>
 
       {/* Collapsible Answer */}
-      <div 
+      <div
         className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? 'grid-rows-[1fr] opacity-100 pt-4 border-t border-[#EBE4DE] mt-4' : 'grid-rows-[0fr] opacity-0 pt-0'
+          isOpen
+            ? "grid-rows-[1fr] opacity-100 pt-4 border-t border-[#EBE4DE] mt-4"
+            : "grid-rows-[0fr] opacity-0 pt-0"
         }`}
       >
         <div className="overflow-hidden">
@@ -123,9 +131,14 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
       const text = sec.text || sec.heading;
       if (!text) return null;
       return (
-        <section key={key} className="pt-20 pb-4 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]">
+        <section
+          key={key}
+          className="pt-20 pb-4 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]"
+        >
           <div className="max-w-4xl mx-auto">
-            <h2 className={`text-4xl lg:text-5xl font-normal text-[#2C2623] ${getAlignClass(sec.align)}`}>
+            <h2
+              className={`text-4xl lg:text-5xl font-normal text-[#2C2623] ${getAlignClass(sec.align)}`}
+            >
               {text}
             </h2>
           </div>
@@ -154,10 +167,15 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
     case "heading_desc": {
       if (!sec.heading && !sec.description) return null;
       return (
-        <section key={key} className="py-20 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]">
+        <section
+          key={key}
+          className="py-20 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]"
+        >
           <div className="max-w-4xl mx-auto space-y-6">
             {sec.heading && (
-              <h2 className={`text-4xl lg:text-5xl font-normal text-[#2C2623] ${getAlignClass(sec.align)}`}>
+              <h2
+                className={`text-4xl lg:text-5xl font-normal text-[#2C2623] ${getAlignClass(sec.align)}`}
+              >
                 {sec.heading}
               </h2>
             )}
@@ -222,7 +240,10 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
       const hasImage = !!sec.imageUrl;
       if (!hasImage && !sec.heading && !sec.description) return null;
       return (
-        <section key={key} className="py-24 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]">
+        <section
+          key={key}
+          className="py-24 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]"
+        >
           <div
             className={`max-w-6xl mx-auto grid grid-cols-1 ${hasImage ? "lg:grid-cols-2" : ""} gap-12 items-center`}
           >
@@ -237,7 +258,9 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
                 </div>
               </div>
             )}
-            <div className={`space-y-5 ${imageRight ? "lg:order-1" : "lg:order-2"}`}>
+            <div
+              className={`space-y-5 ${imageRight ? "lg:order-1" : "lg:order-2"}`}
+            >
               {sec.heading && (
                 <h2 className="text-3xl lg:text-4xl font-normal text-[#2C2623] leading-tight">
                   {sec.heading}
@@ -364,7 +387,10 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
       if (selected.length === 0) return null;
 
       return (
-        <section key={key} className="py-24 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]">
+        <section
+          key={key}
+          className="py-24 px-6 lg:px-32 bg-white border-t border-[#EBE4DE]"
+        >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl lg:text-4xl font-normal text-[#2C2623] text-center mb-12">
               {sec.heading || "Select Services"}
@@ -387,18 +413,22 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
                       </div>
                     )}
                     <div className="flex flex-col flex-1 p-6 space-y-3">
-                      <h3 className="text-lg font-serif font-medium text-[#2C2623]">{srv.name}</h3>
+                      <h3 className="text-lg font-serif font-medium text-[#2C2623]">
+                        {srv.name}
+                      </h3>
                       {srv.description && (
                         <p className="text-sm font-sans text-[#514C48]/80 leading-relaxed line-clamp-3">
                           {srv.description}
                         </p>
                       )}
                       <div className="flex items-baseline gap-3 mt-auto pt-2">
-                        {srv.price !== undefined && srv.price !== null && srv.price !== "" && (
-                          <span className="text-lg font-serif font-medium text-[#2C2623]">
-                            {formatPKR(srv.price)}
-                          </span>
-                        )}
+                        {srv.price !== undefined &&
+                          srv.price !== null &&
+                          srv.price !== "" && (
+                            <span className="text-lg font-serif font-medium text-[#2C2623]">
+                              {formatPKR(srv.price)}
+                            </span>
+                          )}
                         {srv.cutPrice && (
                           <span className="text-sm font-serif text-[#514C48]/40 line-through">
                             {formatPKR(srv.cutPrice)}
@@ -430,19 +460,24 @@ function SectionRenderer({ sec, idx, item, fallbackImage, services }) {
 /* Page                                                                */
 /* ------------------------------------------------------------------ */
 export default function ItemDetailClient({ item }) {
-  
   const router = useRouter();
   const { addToCart } = useCart();
 
   const itemTypeLower = item.type?.toLowerCase() || "";
-  const [primaryImage, setPrimaryImage] = useState(item?.images?.[0]?.url || "");
+  const [primaryImage, setPrimaryImage] = useState(
+    item?.images?.[0]?.url || "",
+  );
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedOption, setSelectedOption] = useState(item.options?.[0] || null);
+  const [selectedOption, setSelectedOption] = useState(
+    item.options?.[0] || null,
+  );
 
   // Services are only needed when a "select_services" block exists
   const [services, setServices] = useState([]);
-  const hasServiceSection = item.sections?.some((s) => s.type === "select_services");
+  const hasServiceSection = item.sections?.some(
+    (s) => s.type === "select_services",
+  );
 
   useEffect(() => {
     if (!hasServiceSection) return;
@@ -482,7 +517,18 @@ export default function ItemDetailClient({ item }) {
     handleAddToCart();
     router.push("/checkout");
   };
+  const priceNum = Number(currentPrice);
+  const cutNum = Number(currentCutPrice);
 
+  // Works whichever way the two prices are entered: the higher one is the
+  // "original" and the lower one is what the customer pays
+  const hasDiscount = priceNum > 0 && cutNum > 0 && priceNum !== cutNum;
+  const highPrice = Math.max(priceNum, cutNum);
+  const lowPrice = Math.min(priceNum, cutNum);
+  const discountPercent = hasDiscount
+    ? Math.round(((highPrice - lowPrice) / highPrice) * 100)
+    : 0;
+  const savings = highPrice - lowPrice;
   return (
     <main className="min-h-screen bg-[#FAF7F3] text-[#514C48] overflow-hidden font-serif">
       {/* 1. Hero Section */}
@@ -504,7 +550,10 @@ export default function ItemDetailClient({ item }) {
                 >
                   <img
                     src={imgObj.url}
-                    alt={imgObj.alt || `${item.name || "Item"} thumbnail ${idx + 1}`}
+                    alt={
+                      imgObj.alt ||
+                      `${item.name || "Item"} thumbnail ${idx + 1}`
+                    }
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -513,6 +562,15 @@ export default function ItemDetailClient({ item }) {
           )}
 
           <div className="relative w-full max-w-[560px] lg:max-w-[620px] aspect-square rounded-3xl overflow-hidden bg-white border border-[#E6DEC9]/60 order-1 sm:order-2 shadow-xl shadow-[#514C48]/5">
+            {/* Blink animation */}
+            <style>{`
+  @keyframes badgeRing {
+    0%   { box-shadow: 0 0 0 0 rgba(141, 77, 93, 0.55); }
+    70%  { box-shadow: 0 0 0 14px rgba(141, 77, 93, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(141, 77, 93, 0); }
+  }
+`}</style>
+
             {primaryImage ? (
               <img
                 src={primaryImage}
@@ -522,6 +580,24 @@ export default function ItemDetailClient({ item }) {
             ) : (
               <div className="flex items-center justify-center h-full text-[#514C48]/40 font-serif">
                 No Image Available
+              </div>
+            )}
+
+            {/* Big blinking discount badge */}
+            {discountPercent > 0 && (
+              <div
+                className="absolute top-4 left-4 z-10 flex flex-col items-center justify-center bg-[#8D4D5D] text-white rounded-2xl px-5 py-3 border-2 border-white/80 motion-reduce:!animate-none"
+                style={{ animation: "badgeRing 2.4s ease-out infinite" }}
+              >
+                <span className="text-3xl sm:text-4xl font-serif font-bold leading-none">
+                  {discountPercent}%
+                </span>
+                <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold mt-1">
+                  OFF
+                </span>
+                <span className="text-[10px] font-sans mt-1.5 pt-1.5 border-t border-white/40 whitespace-nowrap">
+                  Save {formatPKR(savings)}
+                </span>
               </div>
             )}
           </div>
@@ -585,7 +661,10 @@ export default function ItemDetailClient({ item }) {
                             : "bg-white text-[#514C48] border-[#E6DEC9] hover:border-[#111]"
                         }`}
                       >
-                        {opt.name} {opt.price !== undefined && opt.price !== null ? `(${formatPKR(opt.price)})` : ""}
+                        {opt.name}{" "}
+                        {opt.price !== undefined && opt.price !== null
+                          ? `(${formatPKR(opt.price)})`
+                          : ""}
                       </button>
                     ))}
                   </div>
