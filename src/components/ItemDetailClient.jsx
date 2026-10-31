@@ -584,22 +584,6 @@ export default function ItemDetailClient({ item }) {
             )}
 
             {/* Big blinking discount badge */}
-            {discountPercent > 0 && (
-              <div
-                className="absolute top-4 left-4 z-10 flex flex-col items-center justify-center bg-[#8D4D5D] text-white rounded-2xl px-5 py-3 border-2 border-white/80 motion-reduce:!animate-none"
-                style={{ animation: "badgeRing 2.4s ease-out infinite" }}
-              >
-                <span className="text-3xl sm:text-4xl font-serif font-bold leading-none">
-                  {discountPercent}%
-                </span>
-                <span className="text-[11px] sm:text-xs uppercase tracking-[0.25em] font-semibold mt-1">
-                  OFF
-                </span>
-                <span className="text-[10px] font-sans mt-1.5 pt-1.5 border-t border-white/40 whitespace-nowrap">
-                  Save {formatPKR(savings)}
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
@@ -616,31 +600,44 @@ export default function ItemDetailClient({ item }) {
               {item.type || "Catalog Item"}
             </span>
           </div>
-
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-normal text-[#2C2623] mb-4 font-serif leading-tight">
             {item.name}
           </h1>
-
           {item.description && (
             <p className="text-[#514C48]/80 leading-relaxed text-sm sm:text-base font-sans mb-6 whitespace-pre-line">
               {item.description}
             </p>
           )}
 
-          {/* Price */}
-          {(currentPrice || currentCutPrice) && (
-            <div className="flex items-baseline gap-4 py-4 border-t border-b border-[#EBE4DE] mb-6">
-              <span className="text-3xl font-serif font-medium text-[#2C2623]">
-                {formatPKR(currentPrice)}
-              </span>
-              {currentCutPrice && (
-                <span className="text-lg font-serif text-[#514C48]/40 line-through">
-                  {formatPKR(currentCutPrice)}
-                </span>
-              )}
-            </div>
-          )}
+{/* Price Section */}
+{(currentPrice || currentCutPrice) && (
+  <div className="flex flex-col py-4 border-t border-b border-[#EBE4DE] mb-6 ">
+    {/* Main Row: Discount Percentage + Current Price */}
+    <div className="flex items-baseline gap-3">
+      {/* Red Percentage Tag (-X%) in Poppins */}
+      {discountPercent > 0 && (
+        <span className="text-3xl sm:text-4xl font-meduim text-[#CC0C39] tracking-tight font-['Poppins',sans-serif] ">
+          -{discountPercent}%
+        </span>
+      )}
 
+      {/* Main Price in Poppins */}
+      <span className="text-3xl sm:text-4xl font-meduim text-[#0F1111] tracking-tight">
+        {formatPKR(currentPrice)}
+      </span>
+    </div>
+
+    {/* Sub Row: Typical / Original Strikethrough Price */}
+    {currentCutPrice && (
+      <div className="flex items-center gap-1.5 text-xs text-[#565959] mt-1 font-normal">
+        <span>Normal price:</span>
+        <span className="line-through">
+          {formatPKR(currentCutPrice)}
+        </span>
+      </div>
+    )}
+  </div>
+)}
           {/* PRODUCT: options & quantity */}
           {itemTypeLower === "product" && (
             <div className="space-y-6 mb-6">
